@@ -2,36 +2,90 @@
 
 #include <PWM.h>
 
-Robot::Robot(Config_Robot config):
-    moteurs{ Moteur(config.pinMoteurs[0]), Moteur(config.pinMoteurs[1]) }
+// Serial print helpers
+template<class T> inline Print &operator <<(Print &obj, T arg) { obj.print(arg); return obj; }
+const char endl = '\n';
+
+Robot::Robot()
 {
 	InitTimersSafe();
-	moteurs[GAUCHE].setup();
-	moteurs[DROITE].setup();
 }
 
 Robot::~Robot()
 {}
 
 
-void Robot::setup()
+void Robot::setup(Config_Robot _config)
 {
+    config = _config;
+
 	/* TODO: Calcul chemin */
 
+    setup_moteurs();
 	setup_capteurs();
 	setup_actionneurs();
 }
 
+void Robot::setup_moteurs()
+{
+	moteurs[GAUCHE].setup(config.pinMoteurs[0]);
+	moteurs[DROITE].setup(config.pinMoteurs[1]);
+}
+
 void Robot::loop()
 {
+    if (elapsedTime() > config.dureeMatch)
+        arret();
+
 	loop_debug();
 
 	loop_capteurs();
+	loop_actionneurs();
 
 	loop_avancer();
 	loop_tourner();
-	loop_actionneurs();
 }
+
+void Robot::arret()
+{
+    Serial << "Arret complet du robot" << endl;
+
+    consigneMoteur(0, 0);
+    arret_moteurs();
+    arret_actionneurs();
+   
+    while(1); 
+}
+
+void Robot::arret_moteurs()
+{
+    consigneMoteur(0, 0);
+    Moteur::stop = true;
+}
+
+
+void Robot::waitTirette()
+{
+    Serial << "En attente de la tirette sur la pin " << config.pinTirette << endl;
+    
+    pinMode(config.pinTirette, INPUT_PULLUP);
+    while (true)
+    {
+        if (digitalRead(config.pinTirette) == HIGH)
+            break;
+
+        delay(500);
+    }
+
+    Serial << "Demabut du match!" << endl;
+    debutMatch = millis();
+}
+
+unsigned long Robot::elapsedTime()
+{
+    return millis() - debutMatch;
+}
+
 
 // Deplacement
 int calcDistDiagonal(int posx, int posy, int posxinit, int posyinit);

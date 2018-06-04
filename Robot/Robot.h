@@ -1,6 +1,6 @@
-#include <SimpleTimer.h>
+#pragma once
 
-#include "Moteur.h"
+#include <Moteur.h>
 
 #define DEBUG_BUF_SIZE 255
 
@@ -9,21 +9,37 @@
 #define SEULEMENT 2
 
 
-struct Config_Robot;
+struct Config_Robot
+{
+	int couleur;
+	unsigned long dureeMatch;
+
+	int pinTirette;
+	int pinMoteurs[2][3];
+};
+
 class Robot
 {
 	public:
-		Robot(Config_Robot config);
+		Robot();
 		virtual ~Robot();
 
-		void setup();
-		void loop();
-
+				void setup(Config_Robot _config);
+				void setup_moteurs();
 		virtual void setup_capteurs() = 0;
 		virtual void setup_actionneurs() = 0;
 
+				void loop();
 		virtual void loop_capteurs() = 0;
 		virtual void loop_actionneurs() = 0;
+
+				void arret();
+				void arret_moteurs();
+		virtual void arret_actionneurs() = 0;
+
+
+		void waitTirette();
+		unsigned long elapsedTime();
 
 		// Deplacement
 		virtual float getX() = 0;
@@ -33,9 +49,11 @@ class Robot
 		void setup_avancer(int distance);
 		void setup_tourner(int angle);
 
-		// DEBUG helpers
-		void loop_debug();
 		virtual void commande_debug(String command, int param);
+
+		Config_Robot config;
+		unsigned long debutMatch;
+
 
 	private:
 		void loop_avancer();
@@ -44,10 +62,6 @@ class Robot
 		void sendConsigneMoteur(int vitesse, float erreur);
 		void consigneMoteur(int consigne_vitesse1, int consigne_vitesse2);
 
-		int couleur;
-		SimpleTimer timer;
-
-		// Deplacement
 		Moteur moteurs[2];
 
 		boolean consigne_avancer = false;
@@ -61,14 +75,6 @@ class Robot
 		int a;
 
 		// DEBUG helpers
+		void loop_debug();
 		String fullCommand;
-};
-
-struct Config_Robot
-{
-	int couleur;
-	int dureeMatch;
-
-	int pinTirette;
-	int pinMoteurs[2][3];
 };

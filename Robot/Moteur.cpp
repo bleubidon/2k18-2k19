@@ -4,25 +4,22 @@
 
 bool Moteur::stop = false;
 
-Moteur::Moteur(int _pinA, int _pinB, int _pinPWM):
-	pinA(_pinA), pinB(_pinB), pinPWM(_pinPWM)
+
+void Moteur::setup(int _pinA, int _pinB, int _pinPWM)
 {
     SetPinFrequencySafe(pinPWM, 20000);
-}
 
-Moteur::Moteur(int _pins[3]):
-	Moteur(_pins[0], _pins[1], _pins[2])
-{ }
-
-
-void Moteur::setup()
-{
 	pinMode(pinA, OUTPUT);
 	pinMode(pinB, OUTPUT);
 	pinMode(pinPWM, OUTPUT);
 	
 	digitalWrite(pinA, LOW);
 	digitalWrite(pinB, LOW);
+}
+
+void Moteur::setup(int _pins[3])
+{
+	setup(_pins[0], _pins[1], _pins[2]);
 }
 
 void Moteur::consigne(int sens, int val)
