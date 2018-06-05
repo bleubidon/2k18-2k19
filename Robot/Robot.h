@@ -24,16 +24,17 @@ class Robot
 		Robot();
 		virtual ~Robot();
 
-				void setup(Config_Robot _config);
+		virtual void setup(Config_Robot _config);
 				void setup_moteurs();
 		virtual void setup_capteurs() = 0;
 		virtual void setup_actionneurs() = 0;
 
-				void loop();
+		virtual void loop();
+			 // void loop_moteurs(); // pour l'asserv ?
 		virtual void loop_capteurs() = 0;
 		virtual void loop_actionneurs() = 0;
 
-				void arret();
+		virtual void arret();
 				void arret_moteurs();
 		virtual void arret_actionneurs() = 0;
 

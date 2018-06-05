@@ -28,8 +28,8 @@ void Robot::setup_moteurs()
 {
     Serial << "Setup des moteurs" << endl;
 
-	moteurs[GAUCHE].setup(config.pinMoteurs[0]);
-	moteurs[DROITE].setup(config.pinMoteurs[1]);
+	moteurs[GAUCHE].setup(config.pinMoteurs[GAUCHE]);
+	moteurs[DROITE].setup(config.pinMoteurs[DROITE]);
 }
 
 void Robot::loop()
@@ -161,12 +161,12 @@ void Robot::loop_tourner()
     {
         if (restant >= d[i])
         {
-            consigneMoteur(-v[i], -v[i]);
+            consigneMoteur(v[i], v[i]);
             break;
         }
-        else if (restant <= -d[i])
+        if (restant <= -d[i])
         {
-            consigneMoteur(v[i], v[i]);
+            consigneMoteur(-v[i], -v[i]);
             break;
         }
     }
@@ -255,18 +255,18 @@ void Robot::sendConsigneMoteur(int vitesse, float erreur) // sens : 0 pour recul
         consigneMoteur(vg, vd);
 }
 
-void Robot::consigneMoteur(int consigne_vitesse1, int consigne_vitesse2)
+void Robot::consigneMoteur(int consigne_gauche, int consigne_droite)
 {
-	consigne_vitesse1 = max(-255, min(consigne_vitesse1, 255));
-	consigne_vitesse2 = max(-255, min(consigne_vitesse2, 255));
+	consigne_gauche = max(-255, min(consigne_gauche, 255));
+	consigne_droite = max(-255, min(consigne_droite, 255));
 
-	if (consigne_vitesse1 > 0)
-		moteurs[0].consigne(CCW, consigne_vitesse1);
+	if (consigne_gauche > 0)
+		moteurs[GAUCHE].consigne(CCW, consigne_gauche);
 	else
-		moteurs[0].consigne(CW, -consigne_vitesse1);
+		moteurs[GAUCHE].consigne(CW, -consigne_gauche);
 
-	if (consigne_vitesse2 > 0)
-		moteurs[1].consigne(CW, consigne_vitesse2);
+	if (consigne_droite > 0)
+		moteurs[DROITE].consigne(CW, consigne_droite);
 	else
-		moteurs[1].consigne(CCW, -consigne_vitesse2);
+		moteurs[DROITE].consigne(CCW, -consigne_droite);
 } 

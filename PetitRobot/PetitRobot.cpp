@@ -3,6 +3,16 @@
 PetitRobot::PetitRobot()
 { }
 
+void PetitRobot::setup(Config_Robot config)
+{
+    ecran.setup(42);
+    ecran.send("couleur"); // Commande de choix de couleur
+
+    config.couleur = atoi(ecran.receive());
+
+    Robot::setup(config);
+}
+
 void PetitRobot::setup_capteurs()
 {
     codeuse.setup(11);
@@ -13,7 +23,10 @@ void PetitRobot::setup_capteurs()
 }
 
 void PetitRobot::setup_actionneurs()
-{}
+{
+
+
+}
 
 
 void PetitRobot::loop_capteurs()

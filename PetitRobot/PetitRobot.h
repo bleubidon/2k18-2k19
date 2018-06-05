@@ -8,20 +8,24 @@
 #include <Gyroscope.h>
 #include <Sick.h>
 
+#include <Ecran.h>
+
 
 class PetitRobot: public Robot
 {
 	public:
     PetitRobot();
     
+		void setup(Config_Robot _config);
 		void setup_capteurs();
 		void setup_actionneurs();
 
 		void loop_capteurs();
 		void loop_actionneurs();
 
-    void arret_actionneurs();
+    	void arret_actionneurs();
 		
+
 		float getX();
 		float getY();
 		float getAlpha();
@@ -30,6 +34,7 @@ class PetitRobot: public Robot
 		
 	private:
 		PositionDuPetitRobot position;
+		Ecran ecran;
 		
 		/// Capteurs
 			Encodeur codeuse;

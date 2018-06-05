@@ -12,8 +12,8 @@ void setup()
 
 		.pinTirette = 27,
 		.pinMoteurs = {
-			{7, 8, 5},
-			{4, 9, 6}
+			{4, 9, 6},
+			{7, 8, 5}
 		}
 	};
 
