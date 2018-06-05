@@ -1,5 +1,7 @@
 #include "PetitRobot.h"
 
+PetitRobot::PetitRobot()
+{ }
 
 void PetitRobot::setup_capteurs()
 {
@@ -16,11 +18,12 @@ void PetitRobot::setup_actionneurs()
 
 void PetitRobot::loop_capteurs()
 {
+    Serial << getAlpha() << endl;
+
     position.majPosition(codeuse.getCounter(), gyro.getOrientation());
     
     if (sicks[GAUCHE].active() || sicks[DROITE].active())
     {
-        Serial.println("obstacle");
         arret_moteurs();
     }
     else
@@ -41,6 +44,8 @@ void PetitRobot::commande_debug(String command, int param)
     {
         
     }
+    else
+      Robot::commande_debug(command, param);
 }
 
 

@@ -13,7 +13,7 @@ class Moteur
 		void setup(int _pinA, int _pinB, int _pinPWM);
 		void setup(int _pins[3]);
 
-		void consigne(int sens, int val);
+		void consigne(uint8_t sens, uint8_t val);
 
 		static bool stop;
 

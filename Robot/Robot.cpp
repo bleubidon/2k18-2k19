@@ -2,10 +2,6 @@
 
 #include <PWM.h>
 
-// Serial print helpers
-template<class T> inline Print &operator <<(Print &obj, T arg) { obj.print(arg); return obj; }
-const char endl = '\n';
-
 Robot::Robot()
 {
 	InitTimersSafe();
@@ -24,10 +20,14 @@ void Robot::setup(Config_Robot _config)
     setup_moteurs();
 	setup_capteurs();
 	setup_actionneurs();
+
+    waitTirette();
 }
 
 void Robot::setup_moteurs()
 {
+    Serial << "Setup des moteurs" << endl;
+
 	moteurs[GAUCHE].setup(config.pinMoteurs[0]);
 	moteurs[DROITE].setup(config.pinMoteurs[1]);
 }
@@ -66,18 +66,17 @@ void Robot::arret_moteurs()
 
 void Robot::waitTirette()
 {
-    Serial << "En attente de la tirette sur la pin " << config.pinTirette << endl;
-    
     pinMode(config.pinTirette, INPUT_PULLUP);
-    while (true)
-    {
-        if (digitalRead(config.pinTirette) == HIGH)
-            break;
 
-        delay(500);
+    if (digitalRead(config.pinTirette) == HIGH)
+        Serial << "En attente de la tirette sur la pin " << config.pinTirette << endl;
+    else
+    {
+        do { delay(500); }
+        while (digitalRead(config.pinTirette) == HIGH);
     }
 
-    Serial << "Demabut du match!" << endl;
+    Serial << "Debut du match!" << endl;
     debutMatch = millis();
 }
 
@@ -157,18 +156,22 @@ void Robot::loop_tourner()
     if (getAlpha() > 180)
         restant += 360.0f;
 
-    int vitesse = 1;
+    int i;
+    for (i = 0; i < numV; i++)
+    {
+        if (restant >= d[i])
+        {
+            consigneMoteur(-v[i], -v[i]);
+            break;
+        }
+        else if (restant <= -d[i])
+        {
+            consigneMoteur(v[i], v[i]);
+            break;
+        }
+    }
 
-    if (abs(restant) < 20.0f)
-        vitesse = 3;
-
-    if (restant > precision)
-        consigneMoteur(v[vitesse], v[vitesse]);
-
-    else if (restant < -precision)
-        consigneMoteur(-v[vitesse], -v[vitesse]);
-
-    else
+    if (i == numV)
     {
         consigne_tourner = false;
         consigneMoteur(0, 0);
@@ -186,10 +189,11 @@ void Robot::loop_debug()
 		{
 			int splitPos = fullCommand.indexOf(' ');
 
-			String command = fullCommand.substring(0, splitPos+1);
+			String command = fullCommand.substring(0, splitPos);
 			int param = fullCommand.substring(splitPos).toInt();
 
 			commande_debug(command, param);
+            fullCommand.remove(0); // empty string
 		}
 		else
 			fullCommand.concat(c);
@@ -197,7 +201,18 @@ void Robot::loop_debug()
 }
 
 void Robot::commande_debug(String command, int param)
-{ }
+{
+    if (command.equals("avancer"))
+    {
+        Serial << "avance de " << param << endl;
+        setup_avancer(param);
+    }
+    else if (command.equals("tourner"))
+    {
+        Serial << "rotation de " << param << endl;
+        setup_tourner(param);
+    }
+}
 
 
 /// Helpers

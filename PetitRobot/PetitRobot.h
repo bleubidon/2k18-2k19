@@ -12,13 +12,15 @@
 class PetitRobot: public Robot
 {
 	public:
+    PetitRobot();
+    
 		void setup_capteurs();
 		void setup_actionneurs();
 
 		void loop_capteurs();
 		void loop_actionneurs();
 
-        void arret_actionneurs();
+    void arret_actionneurs();
 		
 		float getX();
 		float getY();

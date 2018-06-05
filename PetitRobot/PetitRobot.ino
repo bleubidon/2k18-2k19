@@ -5,7 +5,7 @@ PetitRobot paschair;
 void setup()
 {
 	Serial.begin(9600);
-
+	
 	Config_Robot config = {
 		.couleur = GAUCHE,
 		.dureeMatch = 90000L, // 90 secondes
@@ -22,5 +22,5 @@ void setup()
 
 void loop()
 {
-    paschair.loop();
+	paschair.loop();
 }
