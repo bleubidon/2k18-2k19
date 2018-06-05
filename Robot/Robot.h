@@ -1,12 +1,10 @@
 #pragma once
 
+#include <Parser.h>
 #include <Moteur.h>
-
-#define DEBUG_BUF_SIZE 255
 
 #define GAUCHE 0
 #define DROITE 1
-#define SEULEMENT 2
 
 
 struct Config_Robot
@@ -16,6 +14,8 @@ struct Config_Robot
 
 	int pinTirette;
 	int pinMoteurs[2][3];
+
+	Parser* parser;
 };
 
 class Robot
@@ -50,21 +50,24 @@ class Robot
 		void setup_avancer(int distance);
 		void setup_tourner(int angle);
 
-		virtual void commande_debug(String command, int param);
-
+	protected:
 		Config_Robot config;
-		unsigned long debutMatch;
-
 
 	private:
+		void loop_debug();
+
 		void loop_avancer();
 		void loop_tourner();
 
 		void sendConsigneMoteur(int vitesse, float erreur);
 		void consigneMoteur(int consigne_vitesse1, int consigne_vitesse2);
 
+		unsigned long debutMatch;
+		String cmd;
+
 		Moteur moteurs[2];
 
+		// Deplacement
 		boolean consigne_avancer = false;
 		boolean consigne_tourner = false;
 
@@ -74,10 +77,6 @@ class Robot
 
 		int sens, h, xInitial, yInitial, angleInitial;
 		int a;
-
-		// DEBUG helpers
-		void loop_debug();
-		String fullCommand;
 };
 
 

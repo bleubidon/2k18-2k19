@@ -178,40 +178,23 @@ void Robot::loop_tourner()
     }
 }
 
-// DEBUG
 void Robot::loop_debug()
 {
+    if (config.parser != NULL)
+        return;
+
 	while (Serial.available())
 	{
 		char c = Serial.read();
 
 		if (c == '\n')
 		{
-			int splitPos = fullCommand.indexOf(' ');
-
-			String command = fullCommand.substring(0, splitPos);
-			int param = fullCommand.substring(splitPos).toInt();
-
-			commande_debug(command, param);
-            fullCommand.remove(0); // empty string
+			config.parser->parse(cmd.c_str());
+            cmd.remove(0); // clear string
 		}
 		else
-			fullCommand.concat(c);
+			cmd.concat(c);
 	}
-}
-
-void Robot::commande_debug(String command, int param)
-{
-    if (command.equals("avancer"))
-    {
-        Serial << "avance de " << param << endl;
-        setup_avancer(param);
-    }
-    else if (command.equals("tourner"))
-    {
-        Serial << "rotation de " << param << endl;
-        setup_tourner(param);
-    }
 }
 
 

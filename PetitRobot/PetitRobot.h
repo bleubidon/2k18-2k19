@@ -8,7 +8,7 @@
 #include <Gyroscope.h>
 #include <Sick.h>
 
-#include <Ecran.h>
+//#include <Ecran.h>
 
 
 class PetitRobot: public Robot
@@ -29,12 +29,10 @@ class PetitRobot: public Robot
 		float getX();
 		float getY();
 		float getAlpha();
-
-		void commande_debug(String command, int param);
 		
 	private:
 		PositionDuPetitRobot position;
-		Ecran ecran;
+		//Ecran ecran;
 		
 		/// Capteurs
 			Encodeur codeuse;

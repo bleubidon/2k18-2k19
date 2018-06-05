@@ -3,14 +3,16 @@
 PetitRobot::PetitRobot()
 { }
 
-void PetitRobot::setup(Config_Robot config)
+void PetitRobot::setup(Config_Robot _config)
 {
+    /*
     ecran.setup(42);
     ecran.send("couleur"); // Commande de choix de couleur
 
-    config.couleur = atoi(ecran.receive());
+    _config.couleur = atoi(ecran.receive());
+    */
 
-    Robot::setup(config);
+    Robot::setup(_config);
 }
 
 void PetitRobot::setup_capteurs()
@@ -49,17 +51,6 @@ void PetitRobot::loop_actionneurs()
 
 void PetitRobot::arret_actionneurs()
 {}
-
-
-void PetitRobot::commande_debug(String command, int param)
-{
-    if (command.equals("abeille"))
-    {
-        
-    }
-    else
-      Robot::commande_debug(command, param);
-}
 
 
 float PetitRobot::getX()

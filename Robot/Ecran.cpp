@@ -1,9 +1,9 @@
-#include "Sick.h"
+#include "Ecran.h"
     
-#include "Arduino.h"
+#include <Wire.h>
 
 
-void Ecran::setup(byte _address)
+void Ecran::setup(int _address)
 {
 	address = _address;
 	
@@ -13,7 +13,7 @@ void Ecran::setup(byte _address)
 bool Ecran::send(String command)
 {
     Wire.beginTransmission(address);
-    Wire.write(command);
+    Wire.write(command.c_str());
 
     return Wire.endTransmission() == 0; // 0 means success
 }
