@@ -7,13 +7,13 @@ void setup()
 {
 	Serial.begin(9600);
 
-    parser.add("avancer", avancer);
-    parser.add("tourner", tourner);
+    parser.add("mv", deplacement);
+    parser.add("test", testMoteurs);
 
     
 	Config_Robot config = {
 		.couleur = GAUCHE,
-		.dureeMatch = 90000L, // 90 secondes
+		.dureeMatch = -1, // 90000L // 90 secondes
 
 		.pinTirette = 27,
 		.pinMoteurs = {
@@ -30,29 +30,34 @@ void setup()
 
 void loop()
 {
-	paschair.loop();
+	//paschair.loop();
+    paschair.consigneMoteurs(50, 50);
 }
 
 // Commands
-void avancer(int argc, char **argv)
+void deplacement(int argc, char **argv)
 {
-    if (argc < 2)
+    if (argc != 3)
         return;
 
-    int dist = atoi(argv[1]);
-    
-    Serial << "avance de " << dist << endl;
-    paschair.setup_avancer(dist);
+    int val = atoi(argv[2]);
+
+    if (!strcmp(argv[1], "t"))
+    {
+        Serial << "avance de " << val << endl;
+        paschair.setup_avancer(val);
+    }
+    else if (!strcmp(argv[1], "r"))
+    {
+        Serial << "rotation de " << val << endl;
+        paschair.setup_tourner(val);
+    }
 }
 
-void tourner(int argc, char **argv)
+void testMoteurs(int argc, char **argv)
 {
-    if (argc < 2)
-        return;
+    int v = atoi(argv[1]);
 
-    int angle = atoi(argv[1]);
-    
-    Serial << "rotation de " << angle << endl;
-    paschair.setup_tourner(angle);
+    Serial << "consigne moteur: " << v << endl;
+    paschair.consigneMoteurs(v, v);
 }
-

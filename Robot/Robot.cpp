@@ -50,7 +50,6 @@ void Robot::arret()
 {
     Serial << "Arret complet du robot" << endl;
 
-    consigneMoteur(0, 0);
     arret_moteurs();
     arret_actionneurs();
    
@@ -59,7 +58,7 @@ void Robot::arret()
 
 void Robot::arret_moteurs()
 {
-    consigneMoteur(0, 0);
+    consigneMoteurs(0, 0);
     Moteur::stop = true;
 }
 
@@ -132,7 +131,7 @@ void Robot::loop_avancer()
     {
         if (restant >= d[i])
         {
-            sendConsigneMoteur(v[i], erreurAngle);
+            sendConsigneMoteurs(v[i], erreurAngle);
             break;
         }
     }
@@ -140,7 +139,7 @@ void Robot::loop_avancer()
     if (i == numV)
     {
         consigne_avancer = false;
-        consigneMoteur(0, 0);
+        consigneMoteurs(0, 0);
     }
 }
 
@@ -161,12 +160,12 @@ void Robot::loop_tourner()
     {
         if (restant >= d[i])
         {
-            consigneMoteur(v[i], v[i]);
+            consigneMoteurs(v[i], v[i]);
             break;
         }
         if (restant <= -d[i])
         {
-            consigneMoteur(-v[i], -v[i]);
+            consigneMoteurs(-v[i], -v[i]);
             break;
         }
     }
@@ -174,13 +173,13 @@ void Robot::loop_tourner()
     if (i == numV)
     {
         consigne_tourner = false;
-        consigneMoteur(0, 0);
+        consigneMoteurs(0, 0);
     }
 }
 
 void Robot::loop_debug()
 {
-    if (config.parser != NULL)
+    if (config.parser == NULL)
         return;
 
 	while (Serial.available())
@@ -207,7 +206,7 @@ int calcDistDiagonal(int posx, int posy, int posxinit, int posyinit)
     return sqrt(x*x + y*y);
 }
 
-void Robot::sendConsigneMoteur(int vitesse, float erreur) // sens : 0 pour reculer, 1 pour avancer
+void Robot::sendConsigneMoteurs(int vitesse, float erreur) // sens : 0 pour reculer, 1 pour avancer
 {
     int f = 20;
 	int vg = vitesse, vd = vitesse;
@@ -221,24 +220,24 @@ void Robot::sendConsigneMoteur(int vitesse, float erreur) // sens : 0 pour recul
     if (erreur > 0)
     {
         if (sens == 0)
-            consigneMoteur(vg, vd + f*erreur);
+            consigneMoteurs(vg, vd + f*erreur);
         else
-            consigneMoteur(vg, vd - f*erreur);
+            consigneMoteurs(vg, vd - f*erreur);
     }
 
     else if (erreur < 0)
     {
         if (sens == 0)
-            consigneMoteur(vg + f*erreur, vd);
+            consigneMoteurs(vg + f*erreur, vd);
         else
-            consigneMoteur(vg - f*erreur, vd);
+            consigneMoteurs(vg - f*erreur, vd);
     }
 
     else
-        consigneMoteur(vg, vd);
+        consigneMoteurs(vg, vd);
 }
 
-void Robot::consigneMoteur(int consigne_gauche, int consigne_droite)
+void Robot::consigneMoteurs(int consigne_gauche, int consigne_droite)
 {
 	consigne_gauche = max(-255, min(consigne_gauche, 255));
 	consigne_droite = max(-255, min(consigne_droite, 255));

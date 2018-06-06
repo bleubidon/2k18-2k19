@@ -33,8 +33,6 @@ void PetitRobot::setup_actionneurs()
 
 void PetitRobot::loop_capteurs()
 {
-    Serial << getAlpha() << endl;
-
     position.majPosition(codeuse.getCounter(), gyro.getOrientation());
     
     if (sicks[GAUCHE].active() || sicks[DROITE].active())

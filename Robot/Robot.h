@@ -50,17 +50,17 @@ class Robot
 		void setup_avancer(int distance);
 		void setup_tourner(int angle);
 
-	protected:
+	//protected:
 		Config_Robot config;
 
-	private:
+	//private:
 		void loop_debug();
 
 		void loop_avancer();
 		void loop_tourner();
 
-		void sendConsigneMoteur(int vitesse, float erreur);
-		void consigneMoteur(int consigne_vitesse1, int consigne_vitesse2);
+		void sendConsigneMoteurs(int vitesse, float erreur);
+		void consigneMoteurs(int consigne_vitesse1, int consigne_vitesse2);
 
 		unsigned long debutMatch;
 		String cmd;
@@ -72,7 +72,7 @@ class Robot
 		boolean consigne_tourner = false;
 
 		static const int numV = 4;
-		int v[numV] = {150, 150, 150, 90};
+		int v[numV] = {150, 110, 80, 30};
 		int d[numV] = {250, 150, 10, 2};
 
 		int sens, h, xInitial, yInitial, angleInitial;

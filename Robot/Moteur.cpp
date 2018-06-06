@@ -45,6 +45,7 @@ void Moteur::consigne(uint8_t sens, uint8_t val)
 			digitalWrite(pinB, LOW);
 
 
+		Serial.println(val);
 		analogWrite(pinPWM, val);
 	}
 }
