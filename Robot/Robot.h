@@ -63,7 +63,6 @@ class Robot
 		void consigneMoteurs(int consigne_vitesse1, int consigne_vitesse2);
 
 		unsigned long debutMatch;
-		String cmd;
 
 		Moteur moteurs[2];
 

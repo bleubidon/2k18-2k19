@@ -1,16 +1,16 @@
-#include "Ecran.h"
+#include "RemoteScreen.h"
     
 #include <Wire.h>
 
 
-void Ecran::setup(int _address)
+void RemoteScreen::setup(int _address)
 {
 	address = _address;
 	
     Wire.begin();
 }
 
-bool Ecran::send(String command)
+bool RemoteScreen::send(String command)
 {
     Wire.beginTransmission(address);
     Wire.write(command.c_str());
@@ -18,7 +18,7 @@ bool Ecran::send(String command)
     return Wire.endTransmission() == 0; // 0 means success
 }
 
-String Ecran::receive(int quantity)
+String RemoteScreen::receive(int quantity)
 {
     Wire.requestFrom(address, quantity);
 

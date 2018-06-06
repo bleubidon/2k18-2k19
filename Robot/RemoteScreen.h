@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 
-class Ecran
+class RemoteScreen
 {
     public:
         void setup(int _address);

@@ -3,12 +3,11 @@
 #include <Robot.h>
 
 #include <PositionDuPetitRobot.h>
+//#include <RemoteScreen.h>
 
 #include <Encodeur.h>
 #include <Gyroscope.h>
 #include <Sick.h>
-
-//#include <Ecran.h>
 
 
 class PetitRobot: public Robot
@@ -32,7 +31,7 @@ class PetitRobot: public Robot
 		
 	private:
 		PositionDuPetitRobot position;
-		//Ecran ecran;
+		//RemoteScreen ecran;
 		
 		/// Capteurs
 			Encodeur codeuse;

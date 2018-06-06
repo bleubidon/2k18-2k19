@@ -9,7 +9,7 @@ const char endl = '\n';
 
 
 Parser::Parser():
-    list(NULL)
+    list(NULL), cursor(buffer)
 {
 }
 
@@ -41,17 +41,15 @@ void Parser::add(const char* name, void (*func)(int argc, char **argv))
 
 void Parser::parse(char* command)
 {
-    static const int maxArg = 6;
-
     int argc, i = 0;
-    char *argv[maxArg];
+    char *argv[MAX_ARGS];
 
 
     argv[0] = strtok(command, " ");
     do {
         argv[++i] = strtok(NULL, " ");
     }
-    while ((i < maxArg) && (argv[i] != NULL));
+    while ((i < MAX_ARGS) && (argv[i] != NULL));
 
     argc = i;
     
@@ -73,4 +71,22 @@ void Parser::parse(const char* command)
 {
     char* copy = strdup(command);
     parse(copy);
+}
+
+void Parser::loop()
+{
+	while (Serial.available())
+	{
+		char c = Serial.read();
+
+		if (c == '\r')
+		{
+            *cursor = '\0';
+            cursor = buffer;
+
+			parse(buffer);
+		}
+		else
+			*cursor++ = c;
+	}
 }

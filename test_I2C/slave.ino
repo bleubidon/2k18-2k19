@@ -26,10 +26,10 @@
 
 #endif
 
-#define TS_MINX 116 * 2
-#define TS_MAXX 890 * 2
-#define TS_MINY 83 * 2
-#define TS_MAXY 913 * 2
+#define TS_MIN_X 116 * 2
+#define TS_MAX_X 890 * 2
+#define TS_MIN_Y 83 * 2
+#define TS_MAX_Y 913 * 2
 
 TouchScreen ts = TouchScreen(XP, YP, XM, YM);
 

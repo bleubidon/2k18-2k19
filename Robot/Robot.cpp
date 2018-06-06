@@ -179,21 +179,8 @@ void Robot::loop_tourner()
 
 void Robot::loop_debug()
 {
-    if (config.parser == NULL)
-        return;
-
-	while (Serial.available())
-	{
-		char c = Serial.read();
-
-		if (c == '\n')
-		{
-			config.parser->parse(cmd.c_str());
-            cmd.remove(0); // clear string
-		}
-		else
-			cmd.concat(c);
-	}
+    if (config.parser != NULL)
+        config.parser->loop();
 }
 
 
