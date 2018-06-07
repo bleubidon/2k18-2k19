@@ -8,6 +8,7 @@ void setup()
 	Serial.begin(9600);
 
 	parser.add("mv", deplacement);
+  parser.add("ecran", ecran);
     
 	Config_Robot config = {
 		.couleur = GAUCHE,
@@ -47,4 +48,10 @@ void deplacement(int argc, char **argv)
 		Serial << "rotation de " << val << endl;
 		paschair.setup_tourner(val);
     }
+}
+
+void ecran(int argc, char** argv)
+{
+  if (argc == 2)
+    paschair.ecran.parse(42, argv[1]);
 }

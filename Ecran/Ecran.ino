@@ -30,6 +30,7 @@ void setup()
   TFT_BL_ON;   // turn on the background light
   Tft.TFTinit(); // init TFT library
   
+  parser.add("menu", setup_menu);
   parser.add("couleur", setup_couleur);
   parser.add("timer", setup_timer);
 

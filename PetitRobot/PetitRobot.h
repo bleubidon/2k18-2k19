@@ -31,7 +31,7 @@ class PetitRobot: public Robot
 		float getY();
 		float getAlpha();
 		
-	private:
+	//private:
 		PositionDuPetitRobot position;
     I2CParser ecran;
 		
