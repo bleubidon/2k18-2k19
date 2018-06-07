@@ -10,6 +10,25 @@
 #include <Sick.h>
 
 
+struct Timer
+{
+  Timer(unsigned long _period): last(0), period(_period)
+  {}
+
+  bool on()
+  {
+    unsigned long current = millis();
+  
+    if (current - last < period)
+      return false;
+
+    last = current;
+    return true;
+  }
+  
+  unsigned long last, period;
+};
+
 class PetitRobot: public Robot
 {
 	public:
@@ -32,6 +51,8 @@ class PetitRobot: public Robot
 		float getAlpha();
 		
 	//private:
+    Timer timer;
+    
 		PositionDuPetitRobot position;
     I2CParser ecran;
 		

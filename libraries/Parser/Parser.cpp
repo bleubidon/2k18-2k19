@@ -71,7 +71,10 @@ bool Parser::parse(char* command)
 bool Parser::parse(const char* command)
 {
     char* copy = strdup(command);
-    return parse(copy);
+    bool ret = parse(copy);
+
+	free(copy);
+	return ret;
 }
 
 void Parser::loop()

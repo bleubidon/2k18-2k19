@@ -45,14 +45,16 @@ bool I2CParser::parse(uint8_t _address, char* command)
 bool I2CParser::parse(uint8_t _address, const char* command)
 {
     char* copy = strdup(command);
-    return parse(_address, copy);
+    bool ret = parse(_address, copy);
+
+	free(copy);
+	return ret;
 }
 
 
 void I2CParser::setAnswer(char* _answer)
 {
 	strcpy(I2Canswer, _answer);
-	Serial << "Will answer " << I2Canswer << endl;
 }
 
 char* I2CParser::requestFrom(uint8_t _address, uint8_t quantity)
@@ -102,7 +104,6 @@ void _receiveEvent(int length)
 		I2Crequest[i++] = Wire.read();
 
 	I2Crequest[i] = '\0';
-	Serial << "parser: " << I2Crequest << endl;
 }
 
 void _requestEvent()

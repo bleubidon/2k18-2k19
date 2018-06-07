@@ -1,6 +1,7 @@
 #include "PetitRobot.h"
 
-PetitRobot::PetitRobot()
+PetitRobot::PetitRobot():
+  timer(500)
 { }
 
 void PetitRobot::setup(Config_Robot _config)
@@ -15,12 +16,14 @@ void PetitRobot::setup(Config_Robot _config)
 
 void PetitRobot::requestColor()
 {
-    String answer;
+    Serial << "Enter a color" << endl;
+    
+    char* answer;
     do {
         delay(1000);
         answer = ecran.requestFrom(42, 1);
     }
-    while (answer.charAt(0) == '\0');
+    while (*answer == '\0');
 
     Serial << "Color is " << answer << endl;
 }
@@ -40,7 +43,6 @@ void PetitRobot::setup_actionneurs()
 
 }
 
-
 void PetitRobot::loop_capteurs()
 {
     position.majPosition(codeuse.getCounter(), gyro.getOrientation());
@@ -51,6 +53,15 @@ void PetitRobot::loop_capteurs()
     }
     else
         Moteur::stop = false;
+
+    if (timer.on())
+    {
+      static char command[15];
+      sprintf(command, "gyro %d", (int)getAlpha());
+      
+      ecran.parse(42, command);
+      Serial << command << endl;
+    }
 }
 
 void PetitRobot::loop_actionneurs()

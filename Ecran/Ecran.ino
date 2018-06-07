@@ -13,9 +13,10 @@ const char endl = '\n';
 #define MENU	0
 #define COULEUR 1
 #define TIMER 2
+#define GYRO 3
 
 void menu(), couleur(), timer();
-void (*modes[])() = {menu, couleur, timer};
+void (*modes[])() = {menu, couleur, timer, NULL};
 
 
 I2CParser parser;
@@ -33,6 +34,7 @@ void setup()
   parser.add("menu", setup_menu);
   parser.add("couleur", setup_couleur);
   parser.add("timer", setup_timer);
+  parser.add("gyro", setup_gyro);
 
   parser.setup(ADDRESS);
   setup_menu();
@@ -42,7 +44,7 @@ void loop()
 {
   parser.loop();
   
-	if (updateDisplay(PERIODE))
+	if (updateDisplay(PERIODE) && modes[mode] != NULL)
 		(*modes[mode])();
 }
 
@@ -96,7 +98,7 @@ void setup_timer()
   
   Tft.fillScreen();
   Tft.drawString("Timer", 60, 20, 4, WHITE);
-  Tft.drawNumber(x, 90, 60, 4, RED);
+  Tft.drawNumber(x, 90, 70, 4, RED);
 }
 
 void timer()
@@ -110,7 +112,24 @@ void timer()
   lastUpdate = current;
   
   Tft.fillRectangle(0, 60, MAX_X, 28, BLACK);
-  Tft.drawNumber(++x, 90, 60, 4, RED);
+  Tft.drawNumber(++x, 90, 70, 4, RED);
+}
+
+
+void setup_gyro(int argc, char** argv)
+{
+  if (mode != GYRO)
+  {
+    mode = GYRO;
+    
+    Tft.fillScreen();
+    Tft.drawString("Gyro", 60, 20, 4, WHITE);
+  }
+  else
+    Tft.fillRectangle(0, 70, MAX_X, 28, BLACK);
+
+  Serial << argv[1] << endl;
+  Tft.drawNumber(atoi(argv[1]), 90, 70, 4, RED);
 }
 
 
