@@ -5,31 +5,19 @@
 #define MAX_ARGS 6
 #define BUFFER_LENGTH 32
 
-struct Command
-{
-    const char* name;
-    void (*func)(int argc, char **argv);
-
-    Command* next;
-};
-
 class Parser
 {
-    public:
-        Parser();
-        ~Parser();
+	public:
+		Parser();
 
-        void add(const char* name, void (*func)(int argc, char **argv));
+		void add(const char* name, void (*func)(int argc, char **argv));
 
-        bool parse(char* command);
-        bool parse(const char* command);
-        
-        virtual void loop();
+		bool parse(char* command);
+		bool parse(const char* command);
 
-    protected:
-        char buffer[BUFFER_LENGTH];
-		char* cursor;
-        
-    private:
-        Command* list;
+		virtual void loop();
+
+	protected:
+		char buffer[BUFFER_LENGTH];
+		int cursor;
 };

@@ -11,7 +11,7 @@ void Moteur::setup(int _pinA, int _pinB, int _pinPWM)
 	pinB = _pinB;
 	pinPWM = _pinPWM;
 
-    SetPinFrequencySafe(pinPWM, 20000);
+	SetPinFrequencySafe(pinPWM, 20000);
 
 	pinMode(pinA, OUTPUT);
 	pinMode(pinB, OUTPUT);
@@ -28,8 +28,8 @@ void Moteur::setup(int _pins[3])
 
 void Moteur::consigne(uint8_t sens, uint8_t val)
 {
-    if (stop)
-        return;
+	if (stop)
+		return;
 
 	if (sens <= 4)
 	{

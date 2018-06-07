@@ -28,8 +28,8 @@ void Encodeur::setup(int _pin)
 	pin = _pin;
 	pinMode(pin, OUTPUT);
 
-    initCounter();
-    delay(500);
+	initCounter();
+	delay(500);
 }
 
 long Encodeur::getCounter()

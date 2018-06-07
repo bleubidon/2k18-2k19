@@ -9,33 +9,33 @@
 #include <Gyroscope.h>
 #include <Sick.h>
 
-
 struct Timer
 {
-  Timer(unsigned long _period): last(0), period(_period)
-  {}
+	Timer(unsigned long _period) :
+		last(0), period(_period)
+	{ }
 
-  bool on()
-  {
-    unsigned long current = millis();
-  
-    if (current - last < period)
-      return false;
+	bool on()
+	{
+		unsigned long current = millis();
 
-    last = current;
-    return true;
-  }
-  
-  unsigned long last, period;
+		if (current - last < period)
+			return false;
+
+		last = current;
+		return true;
+	}
+
+	unsigned long last, period;
 };
 
-class PetitRobot: public Robot
+class PetitRobot : public Robot
 {
 	public:
-    PetitRobot();
+		PetitRobot();
 
-    void requestColor();
-    
+		void requestColor();
+
 		void setup(Config_Robot _config);
 		void setup_capteurs();
 		void setup_actionneurs();
@@ -43,23 +43,22 @@ class PetitRobot: public Robot
 		void loop_capteurs();
 		void loop_actionneurs();
 
-    	void arret_actionneurs();
-		
+		void arret_actionneurs();
 
 		float getX();
 		float getY();
 		float getAlpha();
-		
-	//private:
-    Timer timer;
-    
+
+	// private:
+		Timer timer;
+
 		PositionDuPetitRobot position;
-    I2CParser ecran;
-		
+		I2CParser ecran;
+
 		/// Capteurs
 			Encodeur codeuse;
 			Gyroscope gyro;
-         
+
 			Sick sicks[2];
 
 		/// Actionneurs

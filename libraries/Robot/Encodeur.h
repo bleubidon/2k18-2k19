@@ -1,21 +1,21 @@
 #pragma once
-    
+	
 #include <Arduino.h>
 
 
 class Encodeur
 {
-    public:
-        void setup(int _pin);
+	public:
+		void setup(int _pin);
 
-        long getCounter();
-        void clearCounter();
+		long getCounter();
+		void clearCounter();
 
-    private:
-        static bool initialized;
+	private:
+		static bool initialized;
 
-        void initCounter();
-        void transfer(uint8_t order, uint8_t data);
+		void initCounter();
+		void transfer(uint8_t order, uint8_t data);
 
-        int pin;
+		int pin;
 };

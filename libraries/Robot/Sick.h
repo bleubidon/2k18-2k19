@@ -2,11 +2,11 @@
 
 class Sick
 {
-    public:
-        void setup(int _pin);
+	public:
+		void setup(int _pin);
 
-        bool active();
+		bool active();
 
-    private:
-        int pin;
+	private:
+		int pin;
 };

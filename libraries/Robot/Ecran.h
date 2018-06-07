@@ -5,12 +5,12 @@
 
 class Ecran
 {
-    public:
-        void setup(int _address);
+	public:
+		void setup(int _address);
 
-        bool send(String command);
-        String receive(int quantity);
+		bool send(String command);
+		String receive(int quantity);
 
-    private:
-        int address;
+	private:
+		int address;
 };
