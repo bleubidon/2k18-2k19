@@ -37,8 +37,6 @@ void Robot::loop()
     if (elapsedTime() > config.dureeMatch)
         arret();
 
-	loop_debug();
-
 	loop_capteurs();
 	loop_actionneurs();
 
@@ -175,12 +173,6 @@ void Robot::loop_tourner()
         consigne_tourner = false;
         consigneMoteurs(0, 0);
     }
-}
-
-void Robot::loop_debug()
-{
-    if (config.parser != NULL)
-        config.parser->loop();
 }
 
 

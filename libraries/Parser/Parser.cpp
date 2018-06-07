@@ -39,7 +39,7 @@ void Parser::add(const char* name, void (*func)(int argc, char **argv))
     list = cmd;
 }
 
-void Parser::parse(char* command)
+bool Parser::parse(char* command)
 {
     int argc, i = 0;
     char *argv[MAX_ARGS];
@@ -59,18 +59,19 @@ void Parser::parse(char* command)
         if (!strcmp(argv[0], cmd->name))
         {
             cmd->func(argc, argv);
-            return;
+            return true;
         }
     }
 
     // command not recognized
     Serial << "parser: " << argv[0] << ": command not found" << endl;
+    return false;
 }
 
-void Parser::parse(const char* command)
+bool Parser::parse(const char* command)
 {
     char* copy = strdup(command);
-    parse(copy);
+    return parse(copy);
 }
 
 void Parser::loop()
@@ -79,7 +80,7 @@ void Parser::loop()
 	{
 		char c = Serial.read();
 
-		if (c == '\r')
+		if (c == '\n')
 		{
             *cursor = '\0';
             cursor = buffer;

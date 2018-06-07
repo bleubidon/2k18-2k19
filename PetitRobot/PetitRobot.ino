@@ -7,9 +7,8 @@ void setup()
 {
 	Serial.begin(9600);
 
-    parser.add("mv", deplacement);
-    parser.add("test", testMoteurs);
-
+	parser.add("mv", deplacement);
+	parser.add("test", testMoteurs);
     
 	Config_Robot config = {
 		.couleur = GAUCHE,
@@ -19,45 +18,42 @@ void setup()
 		.pinMoteurs = {
 			{4, 9, 6},
 			{7, 8, 5}
-		},
-
-        .parser = &parser
+		}
 	};
 
-
-    paschair.setup(config);
+	paschair.setup(config);
 }
 
 void loop()
 {
-	//paschair.loop();
-    paschair.consigneMoteurs(50, 50);
+	parser.loop();
+	paschair.loop();
 }
 
 // Commands
 void deplacement(int argc, char **argv)
 {
-    if (argc != 3)
-        return;
+	if (argc != 3)
+		return;
 
-    int val = atoi(argv[2]);
+	int val = atoi(argv[2]);
 
-    if (!strcmp(argv[1], "t"))
+	if (!strcmp(argv[1], "t"))
+	{
+		Serial << "avance de " << val << endl;
+		paschair.setup_avancer(val);
+	}
+	else if (!strcmp(argv[1], "r"))
     {
-        Serial << "avance de " << val << endl;
-        paschair.setup_avancer(val);
-    }
-    else if (!strcmp(argv[1], "r"))
-    {
-        Serial << "rotation de " << val << endl;
-        paschair.setup_tourner(val);
+		Serial << "rotation de " << val << endl;
+		paschair.setup_tourner(val);
     }
 }
 
 void testMoteurs(int argc, char **argv)
 {
-    int v = atoi(argv[1]);
+	int v = atoi(argv[1]);
 
-    Serial << "consigne moteur: " << v << endl;
-    paschair.consigneMoteurs(v, v);
+	Serial << "consigne moteur: " << v << endl;
+	paschair.consigneMoteurs(v, v);
 }

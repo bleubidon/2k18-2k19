@@ -14,8 +14,6 @@ struct Config_Robot
 
 	int pinTirette;
 	int pinMoteurs[2][3];
-
-	Parser* parser;
 };
 
 class Robot
@@ -50,12 +48,10 @@ class Robot
 		void setup_avancer(int distance);
 		void setup_tourner(int angle);
 
-	//protected:
+	protected:
 		Config_Robot config;
 
-	//private:
-		void loop_debug();
-
+	private:
 		void loop_avancer();
 		void loop_tourner();
 

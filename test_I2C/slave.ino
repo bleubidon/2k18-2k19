@@ -47,8 +47,6 @@ const unsigned long displayDelay = 100;
 
 void setup_slave()
 {
-	Serial.begin(9600);
-
 	Wire.begin(ADDRESS);
 	Wire.onReceive(receiveEvent);
 	Wire.onRequest(requestEvent);

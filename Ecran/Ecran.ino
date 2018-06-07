@@ -1,5 +1,10 @@
-#include <Parser.h>
-#include "definitions.h"
+#include <I2CParser.h>
+#include <TFTv2.h>
+#include <SeeedTouchScreen.h>
+
+// Serial print helpers
+template<class T> inline Print &operator <<(Print &obj, T arg) { obj.print(arg); return obj; }
+const char endl = '\n';
 
 #define ADDRESS 42
 #define PERIODE 500 // millisecondes
@@ -7,29 +12,35 @@
 // SCREEN MODES
 #define MENU	0
 #define COULEUR 1
+#define TIMER 2
 
-void menu(), couleur();
-void (*modes[])() = {menu, couleur};
+void menu(), couleur(), timer();
+void (*modes[])() = {menu, couleur, timer};
 
 
-Parser parser;
+I2CParser parser;
 Point click;
-int mode;
+int mode, x;
 
 
 void setup()
 {
 	Serial.begin(9600);
 
-	setup_ecran(ADDRESS);
+  TFT_BL_ON;   // turn on the background light
+  Tft.TFTinit(); // init TFT library
+  
+  parser.add("couleur", setup_couleur);
+  parser.add("timer", setup_timer);
 
-	parser.add("couleur", setup_couleur);
+  parser.setup(ADDRESS);
+  setup_menu();
 }
 
 void loop()
 {
-	parser.loop(); // Note reads serial port for now (must read I2C)
-
+  parser.loop();
+  
 	if (updateDisplay(PERIODE))
 		(*modes[mode])();
 }
@@ -41,7 +52,8 @@ void setup_menu()
 {
 	mode = MENU;
 	
-	Tft.drawString("Menu", 60, 220, 4, WHITE);
+  Tft.fillScreen();
+	Tft.drawString("Menu", 70, 20, 4, WHITE);
 }
 
 void menu()
@@ -50,28 +62,84 @@ void menu()
 
 void setup_couleur(int argc, char** argv)
 {
+  Serial << "setup couleur " << argc << endl;
+  
 	mode = COULEUR;
 
 	INT16U c1 = BLUE, c2 = RED;
 	if (argc == 3)
-	{
+	{  
 		c1 = atoi(argv[1]);
 		c2 = atoi(argv[2]);
+   
+    Serial << argv[1] << " " << c1 << endl;
+    Serial << argv[2] << " " << c2 << endl;
 	}
 	
-	Tft.fillRectangle(0, 0, 250, 160, c1);
-	Tft.fillRectangle(0, 160, 250, 160, c2);
+	Tft.fillRectangle(MIN_X, MIN_Y, MAX_X, 160, c1);
+	Tft.fillRectangle(MIN_X, 160  , MAX_X, 160, c2);
 }
 
 void couleur()
 {
 	if (getPoint(&click))
 	{
-		if (click.y > 160)
-			Serial << 'Clicked on first' << endl;
+		if (click.y < 160)
+			Serial << "Clicked on first" << endl;
 		else
-			Serial << 'Clicked on second' << endl;
+			Serial << "Clicked on second" << endl;
 
 		setup_menu();
 	}
+}
+
+void setup_timer()
+{
+  mode = TIMER;
+  x = 0;
+  
+  Tft.fillScreen();
+  Tft.drawString("Timer", 60, 20, 4, WHITE);
+  Tft.drawNumber(x, 90, 60, 4, RED);
+}
+
+void timer()
+{
+  static unsigned long lastUpdate = 0;
+  unsigned long current = millis();
+
+  if (current - lastUpdate < 1000)
+    return;
+
+  lastUpdate = current;
+  
+  Tft.fillRectangle(0, 60, MAX_X, 28, BLACK);
+  Tft.drawNumber(++x, 90, 60, 4, RED);
+}
+
+
+/*** HELPERS ***/
+
+bool updateDisplay(unsigned long periode)
+{
+  static unsigned long lastUpdate = 0;
+  unsigned long current = millis();
+
+  if (current - lastUpdate < periode)
+    return false;
+
+  lastUpdate = current;
+
+  return true;
+}
+
+bool getPoint(Point* p)
+{
+ static TouchScreen ts = TouchScreen(XP, YP, XM, YM);
+
+  *p = ts.getPoint();
+  p->x = map(p->x, TS_MINX, TS_MAXX, MIN_X, MAX_X);
+  p->y = map(p->y, TS_MINY, TS_MAXY, MIN_Y, MAX_Y);
+
+  return p->z > __PRESSURE;
 }

@@ -3,7 +3,7 @@
 // inspired by https://github.com/joshmarinacci/CmdArduino
 
 #define MAX_ARGS 6
-#define MAX_COMMAND_LENGTH  30
+#define BUFFER_LENGTH 32
 
 struct Command
 {
@@ -21,14 +21,15 @@ class Parser
 
         void add(const char* name, void (*func)(int argc, char **argv));
 
-        void parse(char* command);
-        void parse(const char* command);
+        bool parse(char* command);
+        bool parse(const char* command);
         
-        void loop();
+        virtual void loop();
 
+    protected:
+        char buffer[BUFFER_LENGTH];
+		char* cursor;
+        
     private:
         Command* list;
-        
-        char buffer[MAX_COMMAND_LENGTH];
-		char* cursor;
 };
