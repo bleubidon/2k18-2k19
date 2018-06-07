@@ -3,7 +3,7 @@
 #include <Robot.h>
 
 #include <PositionDuPetitRobot.h>
-//#include <RemoteScreen.h>
+#include <I2CParser.h>
 
 #include <Encodeur.h>
 #include <Gyroscope.h>
@@ -14,6 +14,8 @@ class PetitRobot: public Robot
 {
 	public:
     PetitRobot();
+
+    void requestColor();
     
 		void setup(Config_Robot _config);
 		void setup_capteurs();
@@ -31,7 +33,7 @@ class PetitRobot: public Robot
 		
 	private:
 		PositionDuPetitRobot position;
-		//RemoteScreen ecran;
+    I2CParser ecran;
 		
 		/// Capteurs
 			Encodeur codeuse;

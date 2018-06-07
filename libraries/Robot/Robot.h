@@ -14,14 +14,13 @@ struct Config_Robot
 
 	int pinTirette;
 	int pinMoteurs[2][3];
+
+	Parser* parser;
 };
 
 class Robot
 {
 	public:
-		Robot();
-		virtual ~Robot();
-
 		virtual void setup(Config_Robot _config);
 				void setup_moteurs();
 		virtual void setup_capteurs() = 0;
@@ -48,10 +47,12 @@ class Robot
 		void setup_avancer(int distance);
 		void setup_tourner(int angle);
 
-	protected:
+	//protected:
 		Config_Robot config;
 
-	private:
+	//private:
+		void loop_debug();
+
 		void loop_avancer();
 		void loop_tourner();
 

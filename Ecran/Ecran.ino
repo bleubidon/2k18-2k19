@@ -62,8 +62,6 @@ void menu()
 
 void setup_couleur(int argc, char** argv)
 {
-  Serial << "setup couleur " << argc << endl;
-  
 	mode = COULEUR;
 
 	INT16U c1 = BLUE, c2 = RED;
@@ -71,9 +69,6 @@ void setup_couleur(int argc, char** argv)
 	{  
 		c1 = atoi(argv[1]);
 		c2 = atoi(argv[2]);
-   
-    Serial << argv[1] << " " << c1 << endl;
-    Serial << argv[2] << " " << c2 << endl;
 	}
 	
 	Tft.fillRectangle(MIN_X, MIN_Y, MAX_X, 160, c1);
@@ -85,9 +80,9 @@ void couleur()
 	if (getPoint(&click))
 	{
 		if (click.y < 160)
-			Serial << "Clicked on first" << endl;
+			parser.setAnswer("0");
 		else
-			Serial << "Clicked on second" << endl;
+      parser.setAnswer("1");
 
 		setup_menu();
 	}

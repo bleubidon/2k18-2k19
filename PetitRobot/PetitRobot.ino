@@ -8,7 +8,6 @@ void setup()
 	Serial.begin(9600);
 
 	parser.add("mv", deplacement);
-	parser.add("test", testMoteurs);
     
 	Config_Robot config = {
 		.couleur = GAUCHE,
@@ -48,12 +47,4 @@ void deplacement(int argc, char **argv)
 		Serial << "rotation de " << val << endl;
 		paschair.setup_tourner(val);
     }
-}
-
-void testMoteurs(int argc, char **argv)
-{
-	int v = atoi(argv[1]);
-
-	Serial << "consigne moteur: " << v << endl;
-	paschair.consigneMoteurs(v, v);
 }

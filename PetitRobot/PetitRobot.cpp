@@ -5,14 +5,24 @@ PetitRobot::PetitRobot()
 
 void PetitRobot::setup(Config_Robot _config)
 {
-    /*
-    ecran.setup(42);
-    ecran.send("couleur"); // Commande de choix de couleur
+    ecran.setup();
+    ecran.parse(42, "couleur 63488 1806"); // Commande de choix de couleur
 
-    _config.couleur = atoi(ecran.receive());
-    */
+    requestColor();
 
     Robot::setup(_config);
+}
+
+void PetitRobot::requestColor()
+{
+    String answer;
+    do {
+        delay(1000);
+        answer = ecran.requestFrom(42, 1);
+    }
+    while (answer.charAt(0) == '\0');
+
+    Serial << "Color is " << answer << endl;
 }
 
 void PetitRobot::setup_capteurs()

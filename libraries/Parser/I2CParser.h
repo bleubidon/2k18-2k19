@@ -12,7 +12,8 @@ class I2CParser: public Parser
         bool parse(uint8_t _address, char* command);
         bool parse(uint8_t _address, const char* command);
         
-        String request(uint8_t quantity);
+        void setAnswer(char* _answer);
+        char* requestFrom(uint8_t _address, uint8_t quantity);
         
         void loop();
         void loop(uint8_t _address);

@@ -2,14 +2,6 @@
 
 #include <PWM.h>
 
-Robot::Robot()
-{
-	InitTimersSafe();
-}
-
-Robot::~Robot()
-{}
-
 
 void Robot::setup(Config_Robot _config)
 {
@@ -28,6 +20,7 @@ void Robot::setup_moteurs()
 {
     Serial << "Setup des moteurs" << endl;
 
+    InitTimersSafe();
 	moteurs[GAUCHE].setup(config.pinMoteurs[GAUCHE]);
 	moteurs[DROITE].setup(config.pinMoteurs[DROITE]);
 }
@@ -36,6 +29,8 @@ void Robot::loop()
 {
     if (elapsedTime() > config.dureeMatch)
         arret();
+
+	loop_debug();
 
 	loop_capteurs();
 	loop_actionneurs();
@@ -173,6 +168,12 @@ void Robot::loop_tourner()
         consigne_tourner = false;
         consigneMoteurs(0, 0);
     }
+}
+
+void Robot::loop_debug()
+{
+    if (config.parser != NULL)
+        config.parser->loop();
 }
 
 

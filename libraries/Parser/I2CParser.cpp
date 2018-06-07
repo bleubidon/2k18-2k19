@@ -7,14 +7,17 @@ template<class T> inline Print &operator <<(Print &obj, T arg) { obj.print(arg);
 const char endl = '\n';
 
 
-char I2Cbuffer[BUFFER_LENGTH];
+char I2Crequest[BUFFER_LENGTH];
+char I2Canswer[BUFFER_LENGTH];
+
 void _receiveEvent(int);
 void _requestEvent();
 
 
 void I2CParser::setup()
 {
-	*I2Cbuffer = '\0';
+	*I2Crequest = '\0';
+	*I2Canswer = '\0';
 
     Wire.begin();
 }
@@ -22,7 +25,8 @@ void I2CParser::setup()
 void I2CParser::setup(uint8_t _address)
 {
 	address = _address;
-	*I2Cbuffer = '\0';
+	*I2Crequest = '\0';
+	*I2Canswer = '\0';
 	
     Wire.begin(_address);
 	Wire.onReceive(_receiveEvent);
@@ -45,29 +49,30 @@ bool I2CParser::parse(uint8_t _address, const char* command)
 }
 
 
-String I2CParser::request(uint8_t quantity)
+void I2CParser::setAnswer(char* _answer)
 {
-    Wire.requestFrom(address, quantity);
+	strcpy(I2Canswer, _answer);
+	Serial << "Will answer " << I2Canswer << endl;
+}
 
-	String answer;
-	int length = Wire.available();
-    if (length)
-    {
-		answer.reserve(length);
+char* I2CParser::requestFrom(uint8_t _address, uint8_t quantity)
+{
+	int i = 0;
+    Wire.requestFrom(_address, quantity);
 
-		while (length--)
-			answer.concat(Wire.read());
-    }
+	while (Wire.available())
+		I2Canswer[i++] = Wire.read();
         
-	return answer;
+	I2Canswer[i] = '\0';
+	return I2Canswer;
 }
 
 void I2CParser::loop()
 {
-	if (*I2Cbuffer != '\0')
+	if (*I2Crequest != '\0')
 	{
-		Parser::parse(I2Cbuffer);
-		*I2Cbuffer = '\0';
+		Parser::parse(I2Crequest);
+		*I2Crequest = '\0';
 	}
 }
 
@@ -94,15 +99,14 @@ void _receiveEvent(int length)
 {
 	int i = 0;
 	while (Wire.available() && i < BUFFER_LENGTH)
-		I2Cbuffer[i++] = Wire.read();
+		I2Crequest[i++] = Wire.read();
 
-	I2Cbuffer[i] = '\0';
-	Serial << "parser: " << I2Cbuffer << endl;
+	I2Crequest[i] = '\0';
+	Serial << "parser: " << I2Crequest << endl;
 }
 
 void _requestEvent()
 {
-	char response = '1';
-	Wire.write(response);
-	Serial << "Answering |" << response << "|   ASCII: " << (int)response << endl;
+	Wire.write(I2Canswer);
+	I2Canswer[0] = '\0';
 }
