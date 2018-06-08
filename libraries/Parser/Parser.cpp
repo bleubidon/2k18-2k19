@@ -1,11 +1,7 @@
 #include "Parser.h"
 
-#include <Arduino.h>
 #include <string.h>
 
-// Serial print helpers
-template<class T> inline Print &operator <<(Print &obj, T arg) { obj.print(arg); return obj; }
-const char endl = '\n';
 
 struct Command
 {
@@ -18,9 +14,37 @@ struct Command
 Command* list = NULL;
 
 
+
 Parser::Parser():
 	cursor(0)
 { }
+
+
+void Parser::setup(Stream* _stream)
+{
+	if (_stream == nullptr)
+		stream = &Serial;
+	else
+		stream = _stream;
+}
+
+void Parser::loop()
+{
+	while (stream->available())
+	{
+		char c = stream->read();
+
+		if (c == '\n')
+		{
+			buffer[cursor] = '\0';
+			cursor = 0;
+
+			parse(buffer);
+		}
+		else if (cursor < BUFFER_LENGTH)
+			buffer[cursor++] = c;
+	}
+}
 
 void Parser::add(const char* name, void (*func)(int argc, char **argv))
 {
@@ -31,6 +55,7 @@ void Parser::add(const char* name, void (*func)(int argc, char **argv))
 
 	list = cmd;
 }
+
 
 bool Parser::parse(char* command)
 {
@@ -56,8 +81,10 @@ bool Parser::parse(char* command)
 		}
 	}
 
-	// command not recognized
-	Serial << "parser: " << argv[0] << ": command not found" << endl;
+	stream->print("parser: ");
+	stream->print(argv[0]);
+	stream->println(": command not found");
+	
 	return false;
 }
 
@@ -65,22 +92,4 @@ bool Parser::parse(const char* command)
 {
 	strcpy(buffer, command);
 	return parse(buffer);
-}
-
-void Parser::loop()
-{
-	while (Serial.available())
-	{
-		char c = Serial.read();
-
-		if (c == '\n')
-		{
-			buffer[cursor] = '\0';
-			cursor = 0;
-
-			parse(buffer);
-		}
-		else if (cursor < BUFFER_LENGTH)
-			buffer[cursor++] = c;
-	}
 }

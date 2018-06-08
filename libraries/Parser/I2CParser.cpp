@@ -2,10 +2,6 @@
 
 #include <Wire.h>
 
-// Serial print helpers
-template<class T> inline Print &operator <<(Print &obj, T arg) { obj.print(arg); return obj; }
-const char endl = '\n';
-
 
 char* I2CBuffer;
 char* I2CAnswer;
@@ -15,8 +11,12 @@ void _receiveEvent(int);
 void _requestEvent();
 
 
-void I2CParser::setup()
+/*** Master ***/
+
+void I2CParser::setup(Stream* _stream)
 {
+	Parser::setup(_stream);
+
 	I2CBuffer = buffer;
 	I2CAnswer = answer;
 	I2CCursor = &cursor;
@@ -24,17 +24,22 @@ void I2CParser::setup()
 	Wire.begin();
 }
 
-void I2CParser::setup(uint8_t _address)
+void I2CParser::loop(uint8_t _address)
 {
-	I2CBuffer = buffer;
-	I2CAnswer = answer;
-	I2CCursor = &cursor;
-	
-	address = _address;
-	
-	Wire.begin(_address);
-	Wire.onReceive(_receiveEvent);
-	Wire.onRequest(_requestEvent);
+	while (stream->available())
+	{
+		char c = stream->read();
+
+		if (c == '\n')
+		{
+			buffer[cursor] = '\0';
+			cursor = 0;
+
+			parse(_address, buffer);
+		}
+		else if (cursor < BUFFER_LENGTH)
+			buffer[cursor++] = c;
+	}
 }
 
 
@@ -53,21 +58,34 @@ bool I2CParser::parse(uint8_t _address, const char* command)
 }
 
 
-void I2CParser::setAnswer(char* _answer)
-{
-	strcpy(answer, _answer);
-}
-
 char* I2CParser::requestFrom(uint8_t _address, uint8_t quantity)
 {
-	cursor = 0;
+	int i = 0;
 	Wire.requestFrom(_address, quantity);
 
 	while (Wire.available())
-		buffer[cursor++] = Wire.read();
+		answer[i++] = Wire.read();
 
-	buffer[cursor] = '\0';
-	return buffer;
+	answer[i] = '\0';
+	return answer;
+}
+
+
+/*** Slave ***/
+
+void I2CParser::setup(uint8_t _address, Stream* _stream)
+{
+	Parser::setup(_stream);
+
+	I2CBuffer = buffer;
+	I2CAnswer = answer;
+	I2CCursor = &cursor;
+	
+	address = _address;
+	
+	Wire.begin(_address);
+	Wire.onReceive(_receiveEvent);
+	Wire.onRequest(_requestEvent);
 }
 
 void I2CParser::loop()
@@ -79,22 +97,10 @@ void I2CParser::loop()
 	}
 }
 
-void I2CParser::loop(uint8_t _address)
+
+void I2CParser::setAnswer(char* _answer)
 {
-	while (Serial.available())
-	{
-		char c = Serial.read();
-
-		if (c == '\n')
-		{
-			buffer[cursor] = '\0';
-			cursor = 0;
-
-			parse(_address, buffer);
-		}
-		else if (cursor < BUFFER_LENGTH)
-			buffer[cursor++] = c;
-	}
+	strcpy(answer, _answer);
 }
 
 // Callbacks
