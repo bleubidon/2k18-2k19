@@ -19,5 +19,6 @@ class I2CParser: public Parser
 		void loop(uint8_t _address);
 
 	private:
+		char answer[BUFFER_LENGTH];
 		uint8_t address;
 };

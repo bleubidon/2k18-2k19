@@ -8,7 +8,8 @@ const char endl = '\n';
 
 
 char* I2CBuffer;
-int* I2Ccursor;
+char* I2CAnswer;
+int* I2CCursor;
 
 void _receiveEvent(int);
 void _requestEvent();
@@ -17,9 +18,8 @@ void _requestEvent();
 void I2CParser::setup()
 {
 	I2CBuffer = buffer;
-	I2Ccursor = &cursor;
-
-	buffer[0] = '\0';
+	I2CAnswer = answer;
+	I2CCursor = &cursor;
 
 	Wire.begin();
 }
@@ -27,10 +27,10 @@ void I2CParser::setup()
 void I2CParser::setup(uint8_t _address)
 {
 	I2CBuffer = buffer;
-	I2Ccursor = &cursor;
+	I2CAnswer = answer;
+	I2CCursor = &cursor;
 	
 	address = _address;
-	buffer[0] = '\0';
 	
 	Wire.begin(_address);
 	Wire.onReceive(_receiveEvent);
@@ -55,7 +55,7 @@ bool I2CParser::parse(uint8_t _address, const char* command)
 
 void I2CParser::setAnswer(char* _answer)
 {
-	strcpy(buffer, _answer);
+	strcpy(answer, _answer);
 }
 
 char* I2CParser::requestFrom(uint8_t _address, uint8_t quantity)
@@ -100,14 +100,14 @@ void I2CParser::loop(uint8_t _address)
 // Callbacks
 void _receiveEvent(int length)
 {
-	*I2Ccursor = 0;
-	while (Wire.available() && *I2Ccursor < BUFFER_LENGTH)
-		I2CBuffer[*I2Ccursor++] = Wire.read();
+	*I2CCursor = 0;
+	while (Wire.available() && *I2CCursor < BUFFER_LENGTH)
+		I2CBuffer[(*I2CCursor)++] = Wire.read();
 
-	I2CBuffer[*I2Ccursor] = '\0';
+	I2CBuffer[*I2CCursor] = '\0';
 }
 
 void _requestEvent()
 {
-	Wire.write(I2CBuffer);
+	Wire.write(I2CAnswer);
 }
