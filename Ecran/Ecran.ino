@@ -125,7 +125,7 @@ void setup_gyro(int argc, char **argv)
 		Tft.fillRectangle(0, 70, MAX_X, 28, BLACK);
 
 	Serial << argv[1] << endl;
-	Tft.drawNumber(atoi(argv[1]), 90, 70, 4, RED);
+	Tft.drawString(argv[1], 90, 70, 4, RED);
 }
 
 
