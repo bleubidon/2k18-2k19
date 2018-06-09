@@ -16,15 +16,13 @@ Command* list = NULL;
 
 
 Parser::Parser():
-	cursor(0)
+	stream(&Serial), cursor(0)
 { }
 
 
 void Parser::setup(Stream* _stream)
 {
-	if (_stream == nullptr)
-		stream = &Serial;
-	else
+	if (_stream != nullptr)
 		stream = _stream;
 }
 
