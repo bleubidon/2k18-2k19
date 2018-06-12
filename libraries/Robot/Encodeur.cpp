@@ -11,13 +11,13 @@
 #include "SPI.h"
 
 
-bool Encodeur::initialized = false;
+bool Encodeur::initializedSPI = false;
 
-void Encodeur::setup(int _pin)
+void Encodeur::setup(int _pin, int nb_pas_max, float rayon)
 {
-	if (!initialized)
+	if (!initializedSPI)
 	{
-		initialized = true;
+		initializedSPI = true;
 
 		SPI.begin(); //start SPI library
 		SPI.setBitOrder(MSBFIRST); //ordre des bits transferés, de gauche à droite ou de droite à gauche
@@ -28,8 +28,15 @@ void Encodeur::setup(int _pin)
 	pin = _pin;
 	pinMode(pin, OUTPUT);
 
+	ratio = 2.0*PI*rayon / nb_pas_max;
+
 	initCounter();
 	delay(500);
+}
+
+float Encodeur::getDistance()
+{
+	return getCounter() * ratio;
 }
 
 long Encodeur::getCounter()

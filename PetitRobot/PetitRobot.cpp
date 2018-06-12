@@ -7,15 +7,14 @@ PetitRobot::PetitRobot():
 void PetitRobot::setup(Config_Robot _config)
 {
 	ecran.setup();
-	ecran.parse(42, "couleur 63488 1806"); // Commande de choix de couleur
-
-	requestColor();
+	//requestColor();
 
 	Robot::setup(_config);
 }
 
 void PetitRobot::requestColor()
 {
+  ecran.parse(42, "couleur 63488 1806"); // Commande de choix de couleur
 	Serial << "Enter a color" << endl;
 		
 	char* answer;
@@ -30,7 +29,7 @@ void PetitRobot::requestColor()
 
 void PetitRobot::setup_capteurs()
 {
-	codeuse.setup(11);
+	codeuse.setup(11, 800, 2.4);
 	gyro.setup();
 
 	sicks[DROITE].setup(37);
@@ -57,10 +56,10 @@ void PetitRobot::loop_capteurs()
 	if (timer.on())
 	{
 	  static char command[15];
-	  sprintf(command, "gyro %d", (int)getAlpha());
+    
+	  sprintf(command, "pos %d %d", (int)getAlpha(), (int)codeuse.getDistance());
 	  
 	  ecran.parse(42, command);
-	  Serial << command << endl;
 	}
 }
 

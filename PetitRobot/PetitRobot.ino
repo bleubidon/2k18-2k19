@@ -1,4 +1,4 @@
-#include "PetitRobot.h"
+  #include "PetitRobot.h"
 
 Parser parser;
 PetitRobot paschair;
@@ -8,7 +8,7 @@ void setup()
 	Serial.begin(9600);
 
 	parser.add("mv", deplacement);
-	parser.add("ecran", ecran);
+	parser.add("ecran", commande_ecran);
 
 	Config_Robot config = {
 		.couleur = GAUCHE,
@@ -48,7 +48,7 @@ void deplacement(int argc, char **argv)
 	}
 }
 
-void ecran(int argc, char **argv)
+void commande_ecran(int argc, char **argv)
 {
 	if (argc == 2)
 		paschair.ecran.parse(42, argv[1]);

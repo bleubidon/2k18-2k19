@@ -13,7 +13,7 @@ const char endl = '\n';
 #define MENU 0
 #define COULEUR 1
 #define TIMER 2
-#define GYRO 3
+#define POS 3
 
 void couleur(), timer();
 void (*modes[])() = {NULL, couleur, timer, NULL};
@@ -32,7 +32,7 @@ void setup()
 	parser.add("menu", setup_menu);
 	parser.add("couleur", setup_couleur);
 	parser.add("timer", setup_timer);
-	parser.add("gyro", setup_gyro);
+	parser.add("pos", setup_pos);
 
 	parser.setup(ADDRESS);
 	setup_menu();
@@ -111,21 +111,28 @@ void timer()
 	Tft.drawNumber(++x, 90, 70, 4, RED);
 }
 
-// Gyro
-void setup_gyro(int argc, char **argv)
+// Display position
+void setup_pos(int argc, char **argv)
 {
-	if (mode != GYRO)
+  if (argc != 3)
+    return;
+    
+	if (mode != POS)
 	{
-		mode = GYRO;
+		mode = POS;
 
 		Tft.fillScreen();
-		Tft.drawString("Gyro", 60, 20, 4, WHITE);
+    Tft.drawString("Gyro", 60, 20, 4, WHITE);
+    Tft.drawString("Codeuse", 50, 130, 4, WHITE);
 	}
 	else
-		Tft.fillRectangle(0, 70, MAX_X, 28, BLACK);
+  {
+    Tft.fillRectangle(90, 70, MAX_X-90, 28, BLACK);
+    Tft.fillRectangle(90, 180, MAX_X-90, 28, BLACK);
+  }
 
-	Serial << argv[1] << endl;
-	Tft.drawString(argv[1], 90, 70, 4, RED);
+  Tft.drawString(argv[1], 90, 70, 4, RED);
+  Tft.drawString(argv[2], 90, 180, 4, RED);
 }
 
 
