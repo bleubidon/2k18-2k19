@@ -14,7 +14,7 @@ class Gyroscope
 
 		bool setup();
 
-		float getOrientation();
+		float getAlpha() const;
 
 	private:
 		Adafruit_BNO055 bno;

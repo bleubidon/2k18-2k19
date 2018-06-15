@@ -6,19 +6,19 @@
 class Position
 {
 
-  public:
-	Position();
+	public:
+		Position();
 
-	void update(Encodeur* codeuse, Gyroscope* gyro);
+		void update(const Encodeur& gauche, const Encodeur& droit);
+		void update(const Encodeur& codeuse, const Gyroscope& gyro);
+		
+		float getX();
+		float getY();
+		float getAlpha();
 	
-	float getX();
-	float getY();
-	float getAlpha();
-	
+	private:
+		float x, y;
+		float alpha;
 
-  private:
-	float x, y;
-	float alpha;
-
-	float Lprecedent;
+		float Lprecedent;
 };

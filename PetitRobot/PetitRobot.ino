@@ -1,4 +1,4 @@
-  #include "PetitRobot.h"
+#include "PetitRobot.h"
 
 Parser parser;
 PetitRobot paschair;
@@ -17,9 +17,12 @@ void setup()
 		.pinTirette = 27,
 		.pinMoteurs = {
 			{4, 9, 6},
-			{7, 8, 5}}};
+			{7, 8, 5}
+		}
+	};
 
 	paschair.setup(config);
+	paschair.waitTirette();
 }
 
 void loop()

@@ -12,8 +12,6 @@ void Robot::setup(Config_Robot _config)
 	setup_moteurs();
 	setup_capteurs();
 	setup_actionneurs();
-
-	waitTirette();
 }
 
 void Robot::setup_moteurs()
@@ -29,8 +27,6 @@ void Robot::loop()
 {
 	if (elapsedTime() > config.dureeMatch)
 		arret();
-
-	loop_debug();
 
 	loop_capteurs();
 	loop_actionneurs();
@@ -68,7 +64,7 @@ void Robot::waitTirette()
 		while (digitalRead(config.pinTirette) == HIGH);
 	}
 
-	Serial << "Debut du match!" << endl;
+	Serial << endl << "Debut du match!" << endl;
 	debutMatch = millis();
 }
 
@@ -79,17 +75,15 @@ unsigned long Robot::elapsedTime()
 
 
 // Deplacement
-int calcDistDiagonal(int posx, int posy, int posxinit, int posyinit);
-
 void Robot::setup_avancer(int distance)
 {
 	sens = (distance >= 0);
 	h = abs(distance);
 
-	xInitial = getX();
-	yInitial = getY();
+	xInitial = position.getX();
+	yInitial = position.getY();
 	
-	angleInitial = getAlpha();
+	angleInitial = position.getAlpha();
 	if (angleInitial > 180.0f)
 		angleInitial -= 360.0f;
 
@@ -106,17 +100,20 @@ void Robot::setup_tourner(int angle)
 }
 
 
+// private
+int distance(int ax, int ay, int bx, int by);
+
 void Robot::loop_avancer()
 {
 	if (!consigne_avancer)
 		return;
 
-	float erreurAngle = getAlpha() - angleInitial;
-	if (getAlpha() > 180)
+	float erreurAngle = position.getAlpha() - angleInitial;
+	if (position.getAlpha() > 180)
 		erreurAngle -= 360.0f;
 
 
-	int L = calcDistDiagonal(getX(), getY(), xInitial, yInitial); // parcourue
+	int L = distance((int)position.getX(), (int)position.getY(), xInitial, yInitial); // distance parcourue
 	int restant = h - L;
 	
 	int i;
@@ -129,7 +126,7 @@ void Robot::loop_avancer()
 		}
 	}
 
-	if (i == numV)
+	if (i == numV) // Consider we are close enough
 	{
 		consigne_avancer = false;
 		consigneMoteurs(0, 0);
@@ -144,8 +141,8 @@ void Robot::loop_tourner()
 		return;
 
 
-	float restant = a - getAlpha();
-	if (getAlpha() > 180)
+	float restant = a - position.getAlpha();
+	if (position.getAlpha() > 180)
 		restant += 360.0f;
 
 	int i;
@@ -170,18 +167,13 @@ void Robot::loop_tourner()
 	}
 }
 
-void Robot::loop_debug()
-{
-	if (config.parser != NULL)
-		config.parser->loop();
-}
 
 
 /// Helpers
-int calcDistDiagonal(int posx, int posy, int posxinit, int posyinit)
+int distance(int ax, int ay, int bx, int by)
 {
-	long x = posx - posxinit;
-	long y = posy - posyinit;
+	int x = ax - bx;
+	int y = ay - by;
 
 	return sqrt(x*x + y*y);
 }

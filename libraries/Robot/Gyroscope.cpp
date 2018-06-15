@@ -17,7 +17,7 @@ bool Gyroscope::setup()
 	return true;
 }
 
-float Gyroscope::getOrientation()
+float Gyroscope::getAlpha() const
 {
 	sensors_event_t event;
 	bno.getEvent(&event);

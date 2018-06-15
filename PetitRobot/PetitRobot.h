@@ -2,31 +2,27 @@
 
 #include <Robot.h>
 
-#include <PositionDuPetitRobot.h>
 #include <I2CParser.h>
-
-#include <Encodeur.h>
-#include <Gyroscope.h>
 #include <Sick.h>
 
 struct Timer
 {
-	Timer(unsigned long _period) :
-		last(0), period(_period)
-	{ }
+    Timer(unsigned long _period) :
+        last(0), period(_period)
+    { }
 
-	bool on()
-	{
-		unsigned long current = millis();
+    bool on()
+    {
+        unsigned long current = millis();
 
-		if (current - last < period)
-			return false;
+        if (current - last < period)
+            return false;
 
-		last = current;
-		return true;
-	}
+        last = current;
+        return true;
+    }
 
-	unsigned long last, period;
+    unsigned long last, period;
 };
 
 class PetitRobot : public Robot
@@ -45,14 +41,8 @@ class PetitRobot : public Robot
 
 		void arret_actionneurs();
 
-		float getX();
-		float getY();
-		float getAlpha();
-
 	// private:
 		Timer timer;
-
-		PositionDuPetitRobot position;
 		I2CParser ecran;
 
 		/// Capteurs

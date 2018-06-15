@@ -44,7 +44,7 @@ void PetitRobot::setup_actionneurs()
 
 void PetitRobot::loop_capteurs()
 {
-	position.majPosition(codeuse.getCounter(), gyro.getOrientation());
+	position.update(codeuse, gyro);
 		
 	if (sicks[GAUCHE].active() || sicks[DROITE].active())
 	{
@@ -57,7 +57,7 @@ void PetitRobot::loop_capteurs()
 	{
 	  static char command[15];
     
-	  sprintf(command, "pos %d %d", (int)getAlpha(), (int)codeuse.getDistance());
+	  sprintf(command, "pos %d %d", (int)position.getAlpha(), (int)codeuse.getDistance());
 	  
 	  ecran.parse(42, command);
 	}
@@ -69,19 +69,3 @@ void PetitRobot::loop_actionneurs()
 
 void PetitRobot::arret_actionneurs()
 {}
-
-
-float PetitRobot::getX()
-{
-	return position.getX();
-}
-
-float PetitRobot::getY()
-{
-	return position.getY();
-}
-
-float PetitRobot::getAlpha()
-{
-	return position.getAlpha();
-}

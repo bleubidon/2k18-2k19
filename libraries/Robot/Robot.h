@@ -2,6 +2,7 @@
 
 #include <Parser.h>
 #include <Moteur.h>
+#include <Position.h>
 
 #define GAUCHE 0
 #define DROITE 1
@@ -14,8 +15,6 @@ struct Config_Robot
 
 	int pinTirette;
 	int pinMoteurs[2][3];
-
-	Parser* parser;
 };
 
 class Robot
@@ -40,19 +39,14 @@ class Robot
 		unsigned long elapsedTime();
 
 		// Deplacement
-		virtual float getX() = 0;
-		virtual float getY() = 0;
-		virtual float getAlpha() = 0;
-
 		void setup_avancer(int distance);
 		void setup_tourner(int angle);
 
 	//protected:
 		Config_Robot config;
+		Position position;
 
 	//private:
-		void loop_debug();
-
 		void loop_avancer();
 		void loop_tourner();
 

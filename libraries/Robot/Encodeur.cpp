@@ -34,12 +34,12 @@ void Encodeur::setup(int _pin, int nb_pas_max, float rayon)
 	delay(500);
 }
 
-float Encodeur::getDistance()
+float Encodeur::getDistance() const
 {
 	return getCounter() * ratio;
 }
 
-long Encodeur::getCounter()
+long Encodeur::getCounter() const
 {
 	byte inbyte = 0;
 	long cntr = 0;

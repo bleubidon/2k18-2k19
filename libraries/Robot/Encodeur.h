@@ -8,9 +8,9 @@ class Encodeur
 	public:
 		void setup(int _pin, int nb_pas_max, float rayon);
 
-		float getDistance();
-
-		long getCounter();
+		float getDistance() const;
+		long getCounter() const;
+		
 		void clearCounter();
 
 	private:
