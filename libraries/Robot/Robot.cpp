@@ -3,72 +3,59 @@
 #include <PWM.h>
 
 
-void Robot::setup(Config_Robot _config)
+void Robot::setup(Robot::Config config)
 {
-	config = _config;
+	couleur = config.couleur;
+	dureeMatch = config.dureeMatch;
 
-	/* TODO: Calcul chemin */
-
-	setup_moteurs();
-	setup_capteurs();
-	setup_actionneurs();
-}
-
-void Robot::setup_moteurs()
-{
-	Serial << "Setup des moteurs" << endl;
+	position.setup(config.odometrie);
 
 	InitTimersSafe();
-	moteurs[GAUCHE].setup(config.pinMoteurs[GAUCHE]);
-	moteurs[DROITE].setup(config.pinMoteurs[DROITE]);
+	moteurs[GAUCHE].setup(config.moteurs[GAUCHE]);
+	moteurs[DROITE].setup(config.moteurs[DROITE]);
+
+	pinTirette = config.pinTirette;
+	
+	debutMatch = millis(); // In case waitTirette is not called
 }
 
 void Robot::loop()
 {
-	if (elapsedTime() > config.dureeMatch)
-		arret();
-
-	loop_capteurs();
-	loop_actionneurs();
+	if (getElapsedTime() > dureeMatch)
+		stop();
 
 	loop_avancer();
 	loop_tourner();
 }
 
-void Robot::arret()
+void Robot::stop()
 {
 	Serial << "Arret complet du robot" << endl;
 
-	arret_moteurs();
-	arret_actionneurs();
-   
-	while(1); 
-}
-
-void Robot::arret_moteurs()
-{
 	consigneMoteurs(0, 0);
 	Moteur::stop = true;
+   
+	while(1); 
 }
 
 
 void Robot::waitTirette()
 {
-	pinMode(config.pinTirette, INPUT_PULLUP);
+	pinMode(pinTirette, INPUT_PULLUP);
 
-	if (digitalRead(config.pinTirette) == HIGH)
-		Serial << "En attente de la tirette sur la pin " << config.pinTirette << endl;
+	if (digitalRead(pinTirette) == HIGH)
+		Serial << "En attente de la tirette sur la pin " << pinTirette << endl;
 	else
 	{
 		do { delay(500); }
-		while (digitalRead(config.pinTirette) == HIGH);
+		while (digitalRead(pinTirette) == HIGH);
 	}
 
 	Serial << endl << "Debut du match!" << endl;
 	debutMatch = millis();
 }
 
-unsigned long Robot::elapsedTime()
+unsigned long Robot::getElapsedTime()
 {
 	return millis() - debutMatch;
 }

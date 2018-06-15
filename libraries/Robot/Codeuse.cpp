@@ -1,19 +1,19 @@
 /*!
- * \file Encodeur.cpp
+ * \file Codeuse.cpp
  * \brief fonctions de communication avec les LS7366
  * \author Maximilien Courcelle
  * \author Adrien de Tocqueville
  * \version 2.0
  */
 
-#include "Encodeur.h"
+#include "Codeuse.h"
 
 #include "SPI.h"
 
 
-bool Encodeur::initializedSPI = false;
+bool Codeuse::initializedSPI = false;
 
-void Encodeur::setup(int _pin, int nb_pas_max, float rayon)
+void Codeuse::setup(Codeuse::Config config)
 {
 	if (!initializedSPI)
 	{
@@ -25,21 +25,21 @@ void Encodeur::setup(int _pin, int nb_pas_max, float rayon)
 		SPI.setClockDivider(SPI_CLOCK_DIV4); // data speed for SCK, pas sûr que ca soit 4Mhz le mieux
 	}
 	
-	pin = _pin;
+	pin = config.pin;
 	pinMode(pin, OUTPUT);
 
-	ratio = 2.0*PI*rayon / nb_pas_max;
+	ratio = 2.0*PI*config.rayon / config.nb_pas_max;
 
 	initCounter();
 	delay(500);
 }
 
-float Encodeur::getDistance() const
+float Codeuse::getDistance() const
 {
 	return getCounter() * ratio;
 }
 
-long Encodeur::getCounter() const
+long Codeuse::getCounter() const
 {
 	byte inbyte = 0;
 	long cntr = 0;
@@ -65,7 +65,7 @@ long Encodeur::getCounter() const
 	return cntr;
 }
 
-void Encodeur::clearCounter()
+void Codeuse::clearCounter()
 {
 	uint8_t order = 0x20; // order = CLEAR CNTR
 	digitalWrite(pin, LOW);
@@ -74,7 +74,7 @@ void Encodeur::clearCounter()
 }
 
 
-void Encodeur::initCounter()
+void Codeuse::initCounter()
 {
 	// order = WRITE_MDR0
 	// data = X1_QUADRATURE
@@ -97,7 +97,7 @@ void Encodeur::initCounter()
 	clearCounter();
 }
 
-void Encodeur::transfer(uint8_t order, uint8_t data)
+void Codeuse::transfer(uint8_t order, uint8_t data)
 {
 	digitalWrite(pin, LOW);
 	SPI.transfer(order);

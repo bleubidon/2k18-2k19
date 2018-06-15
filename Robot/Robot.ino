@@ -1,7 +1,9 @@
-#include "PetitRobot.h"
+#include "Actions.h"
+#include <Parser.h>
 
 Parser parser;
-PetitRobot paschair;
+Robot paschair;
+
 
 void setup()
 {
@@ -10,18 +12,33 @@ void setup()
 	parser.add("mv", deplacement);
 	parser.add("ecran", commande_ecran);
 
-	Config_Robot config = {
-		.couleur = GAUCHE,
-		.dureeMatch = -1, // 90000L // 90 secondes
-
-		.pinTirette = 27,
-		.pinMoteurs = {
-			{4, 9, 6},
-			{7, 8, 5}
+	Odometrie::Config odometrie = {
+		mode: CODEUSE_GYROSCOPE,
+		{
+			codeuse: {
+				pin: 11,
+				rayon: 2.4f,
+				nb_pas_max: 800
+            }
 		}
 	};
 
+	Robot::Config config = {
+		couleur: GAUCHE,
+		dureeMatch: -1, // illimité   // 90000L = 90 secondes
+
+		odometrie,
+		moteurs: {
+			{4, 9, 6},
+			{7, 8, 5}
+		},
+		pinTirette: 27
+	};
+
 	paschair.setup(config);
+
+	define_actions(paschair);
+
 	paschair.waitTirette();
 }
 
@@ -30,6 +47,7 @@ void loop()
 	parser.loop();
 	paschair.loop();
 }
+
 
 // Commands
 void deplacement(int argc, char **argv)
@@ -53,6 +71,6 @@ void deplacement(int argc, char **argv)
 
 void commande_ecran(int argc, char **argv)
 {
-	if (argc == 2)
-		paschair.ecran.parse(42, argv[1]);
+	// if (argc == 2)
+	// 	paschair.ecran.parse(42, argv[1]);
 }

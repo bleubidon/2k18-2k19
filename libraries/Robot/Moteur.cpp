@@ -5,11 +5,11 @@
 bool Moteur::stop = false;
 
 
-void Moteur::setup(int _pinA, int _pinB, int _pinPWM)
+void Moteur::setup(Moteur::Config config)
 {
-	pinA = _pinA;
-	pinB = _pinB;
-	pinPWM = _pinPWM;
+	pinA = config.pinA;
+	pinB = config.pinB;
+	pinPWM = config.pinPWM;
 
 	SetPinFrequencySafe(pinPWM, 20000);
 
@@ -21,31 +21,13 @@ void Moteur::setup(int _pinA, int _pinB, int _pinPWM)
 	digitalWrite(pinB, LOW);
 }
 
-void Moteur::setup(int _pins[3])
-{
-	setup(_pins[0], _pins[1], _pins[2]);
-}
-
 void Moteur::consigne(uint8_t sens, uint8_t val)
 {
 	if (stop)
 		return;
 
-	if (sens <= 4)
-	{
-		if (sens <=1)
-			digitalWrite(pinA, HIGH);
-		else
-			digitalWrite(pinA, LOW);
+	digitalWrite(pinA, sens == CW);
+	digitalWrite(pinB, sens == CCW);
 
-		// Set inB[motor]
-		if ((sens == 0) || (sens == 2))
-			digitalWrite(pinB, HIGH);
-		else
-			digitalWrite(pinB, LOW);
-
-
-		Serial.println(val);
-		analogWrite(pinPWM, val);
-	}
+	analogWrite(pinPWM, val);
 }

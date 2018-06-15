@@ -3,10 +3,18 @@
 #include <Arduino.h>
 
 
-class Encodeur
+class Codeuse
 {
 	public:
-		void setup(int _pin, int nb_pas_max, float rayon);
+		struct Config
+		{
+			int pin;
+			float rayon;
+			int nb_pas_max;
+		};
+
+
+		void setup(Codeuse::Config config);
 
 		float getDistance() const;
 		long getCounter() const;

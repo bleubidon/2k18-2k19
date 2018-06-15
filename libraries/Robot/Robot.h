@@ -1,52 +1,47 @@
 #pragma once
 
-#include <Parser.h>
+#include <Action.h>
 #include <Moteur.h>
-#include <Position.h>
+#include <Odometrie.h>
 
 #define GAUCHE 0
 #define DROITE 1
 
 
-struct Config_Robot
-{
-	int couleur;
-	unsigned long dureeMatch;
-
-	int pinTirette;
-	int pinMoteurs[2][3];
-};
-
 class Robot
 {
 	public:
-		virtual void setup(Config_Robot _config);
-				void setup_moteurs();
-		virtual void setup_capteurs() = 0;
-		virtual void setup_actionneurs() = 0;
+		struct Config
+		{
+			int couleur;
+			unsigned long dureeMatch;
 
-		virtual void loop();
-			 // void loop_moteurs(); // pour l'asserv ?
-		virtual void loop_capteurs() = 0;
-		virtual void loop_actionneurs() = 0;
+			Odometrie::Config odometrie;
+			Moteur::Config moteurs[2];
+			int pinTirette;
+		};
 
-		virtual void arret();
-				void arret_moteurs();
-		virtual void arret_actionneurs() = 0;
 
+		void setup(Robot::Config config);
+		void loop();
+		void stop();
 
 		void waitTirette();
-		unsigned long elapsedTime();
+		unsigned long getElapsedTime();
 
 		// Deplacement
 		void setup_avancer(int distance);
 		void setup_tourner(int angle);
 
-	//protected:
-		Config_Robot config;
-		Position position;
 
-	//private:
+		int couleur;
+		unsigned long dureeMatch;
+
+		Odometrie position;
+		Moteur moteurs[2];
+		int pinTirette;
+
+	private:
 		void loop_avancer();
 		void loop_tourner();
 
@@ -54,8 +49,6 @@ class Robot
 		void consigneMoteurs(int consigne_vitesse1, int consigne_vitesse2);
 
 		unsigned long debutMatch;
-
-		Moteur moteurs[2];
 
 		// Deplacement
 		boolean consigne_avancer = false;

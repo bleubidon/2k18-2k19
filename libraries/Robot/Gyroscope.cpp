@@ -1,9 +1,8 @@
 #include "Gyroscope.h"
+#include <Adafruit_BNO055.h>
 
+Adafruit_BNO055 bno(55);
 
-Gyroscope::Gyroscope():
-	bno(55)
-{ }
 
 bool Gyroscope::setup()
 {
