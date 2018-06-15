@@ -115,20 +115,20 @@ void timer()
 void setup_pos(int argc, char **argv)
 {
   if (argc != 3)
-    return;
-    
+	return;
+
 	if (mode != POS)
 	{
 		mode = POS;
 
 		Tft.fillScreen();
-    Tft.drawString("Gyro", 60, 20, 4, WHITE);
-    Tft.drawString("Codeuse", 50, 130, 4, WHITE);
+	Tft.drawString("Gyro", 60, 20, 4, WHITE);
+	Tft.drawString("Codeuse", 50, 130, 4, WHITE);
 	}
 	else
   {
-    Tft.fillRectangle(90, 70, MAX_X-90, 28, BLACK);
-    Tft.fillRectangle(90, 180, MAX_X-90, 28, BLACK);
+	Tft.fillRectangle(90, 70, MAX_X-90, 28, BLACK);
+	Tft.fillRectangle(90, 180, MAX_X-90, 28, BLACK);
   }
 
   Tft.drawString(argv[1], 90, 70, 4, RED);

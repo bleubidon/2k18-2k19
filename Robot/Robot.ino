@@ -19,7 +19,7 @@ void setup()
 				pin: 11,
 				rayon: 2.4f,
 				nb_pas_max: 800
-            }
+			}
 		}
 	};
 
