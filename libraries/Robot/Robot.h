@@ -55,8 +55,8 @@ class Robot
 		boolean consigne_tourner = false;
 
 		static const int numV = 4;
-		int v[numV] = {150, 110, 80, 30};
-		int d[numV] = {250, 150, 10, 2};
+		int v[numV] = {190, 150, 100, 70};
+		int d[numV] = {250, 150, 15, 2};
 
 		int sens, h, xInitial, yInitial, angleInitial;
 		int a;

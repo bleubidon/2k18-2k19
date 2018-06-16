@@ -61,6 +61,7 @@ void setup_menu()
 void setup_couleur(int argc, char **argv)
 {
 	mode = COULEUR;
+	parser.setAnswer(0);
 
 	INT16U c1 = BLUE, c2 = RED;
 	if (argc == 3)

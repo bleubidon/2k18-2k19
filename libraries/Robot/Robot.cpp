@@ -24,6 +24,8 @@ void Robot::loop()
 	if (getElapsedTime() > dureeMatch)
 		stop();
 
+	position.update();
+
 	loop_avancer();
 	loop_tourner();
 }
@@ -34,7 +36,7 @@ void Robot::stop()
 
 	consigneMoteurs(0, 0);
 	Moteur::stop = true;
-   
+
 	while(1); 
 }
 
@@ -69,6 +71,8 @@ void Robot::setup_avancer(int distance)
 
 	xInitial = position.getX();
 	yInitial = position.getY();
+
+	Serial << "xi: " << xInitial << "\tyi: " << yInitial << endl;
 	
 	angleInitial = position.getAlpha();
 	if (angleInitial > 180.0f)
@@ -115,6 +119,7 @@ void Robot::loop_avancer()
 
 	if (i == numV) // Consider we are close enough
 	{
+		Serial << "xf: " << position.getX() << "\tyf: " << position.getY() << endl;
 		consigne_avancer = false;
 		consigneMoteurs(0, 0);
 	}
@@ -170,9 +175,9 @@ void Robot::sendConsigneMoteurs(int vitesse, float erreur) // sens : 0 pour recu
 	int f = 20;
 	int vg = vitesse, vd = vitesse;
 
-	if (sens == 0) // reculer
+	if (sens == 0)	// reculer
 		vg = -vg;
-	else		   // avancer
+	else			// avancer
 		vd = -vd;
 		
 		

@@ -1,8 +1,13 @@
-#include "Actions.h"
-#include <Parser.h>
+#include <Timer.h>
+#include <I2CParser.h>
 
+#include "Actions.h"
+
+I2CParser ecran;
 Parser parser;
+
 Robot paschair;
+Timer timer(500);
 
 
 void setup()
@@ -10,7 +15,7 @@ void setup()
 	Serial.begin(9600);
 
 	parser.add("mv", deplacement);
-	parser.add("ecran", commande_ecran);
+	//parser.add("ecran", commande_ecran);
 
 	Odometrie::Config odometrie = {
 		mode: CODEUSE_GYROSCOPE,
@@ -37,17 +42,49 @@ void setup()
 
 	paschair.setup(config);
 
+	ecran.setup();
+	requestColor();
+
 	define_actions(paschair);
 
 	paschair.waitTirette();
 }
 
+void requestColor()
+{
+	ecran.parse(42, "couleur 63488 1806"); // Commande de choix de couleur
+	Serial << "Enter a color" << endl;
+
+	char* answer;
+	do {
+		delay(1000);
+		answer = ecran.requestFrom(42, 1);
+	}
+	while (*answer == '\0');
+
+	Serial << "Color is " << answer << endl;
+}
+
+
 void loop()
 {
 	parser.loop();
 	paschair.loop();
+
+	//loop_ecran();
 }
 
+void loop_ecran()
+{
+	if (timer.on())
+	{
+		static char command[15];
+
+		//sprintf(command, "pos %d %d", (int)paschair.position.getAlpha(), (int)paschair.position.codeuse.getDistance());
+
+		ecran.parse(42, command);
+	}
+}
 
 // Commands
 void deplacement(int argc, char **argv)
