@@ -7,8 +7,8 @@ void Odometrie::setup(Odometrie::Config config)
 	mode = config.mode;
 	if (mode == DOUBLE_CODEUSE)
 	{
-		gauche.setup(config.codeuses[0]);
-		droite.setup(config.codeuses[1]);
+		codeuses[GAUCHE].setup(config.gauche);
+		codeuses[DROITE].setup(config.droite);
 
 		ecart_entre_roues = config.ecart_entre_roues;
 	}
@@ -33,7 +33,7 @@ void Odometrie::update()
 
 void Odometrie::updateDoubleCodeuse()
 {
-	float Lg = gauche.getDistance(), Ld = droite.getDistance();
+	float Lg = codeuses[GAUCHE].getDistance(), Ld = codeuses[DROITE].getDistance();
 
 	alpha = -(Lg + Ld) / ecart_entre_roues;
 
@@ -72,4 +72,24 @@ float Odometrie::getY()
 float Odometrie::getAlpha()
 {
 	return alpha;
+}
+
+float Odometrie::getPositionCodeuse(int num)
+{
+	if (mode == DOUBLE_CODEUSE)
+	{
+		return codeuses[num].getDistance();
+	}
+	else
+	{
+		float c = codeuse.getDistance();
+		float g = gyro.getAlpha();
+		float e = ; // Ecart entre les roues
+
+		if (num == 0)
+			return -c - 0.5f*e*g;
+
+		else
+			return c - 0.5f*e*g;
+	}
 }

@@ -2,7 +2,6 @@
 	
 #include <Arduino.h>
 
-
 class Codeuse
 {
 	public:

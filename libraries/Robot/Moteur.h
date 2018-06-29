@@ -5,7 +5,6 @@
 #define CW   1
 #define CCW  2
 
-
 class Moteur
 {
 	public:

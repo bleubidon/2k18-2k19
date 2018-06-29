@@ -15,6 +15,8 @@ void setup()
 	Serial.begin(9600);
 
 	parser.add("mv", deplacement);
+	parser.add("pid", set_pid);
+	parser.add("consigne", set_consigne);
 	//parser.add("ecran", commande_ecran);
 
 	Odometrie::Config odometrie = {
@@ -110,4 +112,20 @@ void commande_ecran(int argc, char **argv)
 {
 	// if (argc == 2)
 	// 	paschair.ecran.parse(42, argv[1]);
+}
+
+void set_pid(int argc, char **argv)
+{
+	if (argc != 4)
+		return;
+		
+	paschair.set_coefs_PID(atof(argv[1]), atof(argv[2]), atof(argv[3]));
+}
+
+void set_consigne(int argc, char **argv)
+{
+	if (argc != 4)
+		return;
+	
+	paschair.set_consigne(atof(argv[1]), atof(argv[2]));
 }

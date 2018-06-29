@@ -4,15 +4,13 @@
 #include <Moteur.h>
 #include <Odometrie.h>
 
-#define GAUCHE 0
-#define DROITE 1
-
-
 class Robot
 {
 	public:
 		struct Config
 		{
+			// float P, I, D;
+			
 			int couleur;
 			unsigned long dureeMatch;
 
@@ -30,6 +28,9 @@ class Robot
 		unsigned long getElapsedTime();
 
 		// Deplacement
+		void set_consigne(float _consigne_g, float _consigne_d);
+		void set_coefs_PID(float P, float I, float D);
+
 		void setup_avancer(int distance);
 		void setup_tourner(int angle);
 
@@ -42,6 +43,7 @@ class Robot
 		int pinTirette;
 
 	private:
+		void asserv();
 		void loop_avancer();
 		void loop_tourner();
 
@@ -51,6 +53,10 @@ class Robot
 		unsigned long debutMatch;
 
 		// Deplacement
+		float coef_P, coef_I, coef_D;
+		float erreur_position, integrale;
+		float positions[2], vitesses[2];
+
 		boolean consigne_avancer = false;
 		boolean consigne_tourner = false;
 
@@ -62,6 +68,11 @@ class Robot
 		int a;
 };
 
+
+inline int clamp(int _min, int _val, int _max)
+{
+	return max(_min, min(_val, _max));
+}
 
 // Serial print helpers
 template<class T> inline Print &operator <<(Print &obj, T arg) { obj.print(arg); return obj; }

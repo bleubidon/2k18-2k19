@@ -6,6 +6,9 @@
 const int DOUBLE_CODEUSE = 0;
 const int CODEUSE_GYROSCOPE = 1;
 
+const int GAUCHE = 0;
+const int DROITE = 1;
+
 class Odometrie
 {
 	public:
@@ -17,7 +20,7 @@ class Odometrie
 			{
 				// DOUBLE_CODEUSE
 				struct {
-					Codeuse::Config codeuses[2];
+					Codeuse::Config gauche, droite;
 					float ecart_entre_roues;
 				};
 
@@ -34,6 +37,8 @@ class Odometrie
 		float getX();
 		float getY();
 		float getAlpha();
+
+		float getPositionCodeuse(int num);
 	
 	private:
 		int mode;
@@ -41,7 +46,7 @@ class Odometrie
 		{
 			// DOUBLE_CODEUSE
 			struct {
-				Codeuse gauche, droite;
+				Codeuse codeuses[2];
 				float ecart_entre_roues;
 			};
 
