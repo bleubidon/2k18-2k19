@@ -84,7 +84,7 @@ float Odometrie::getPositionCodeuse(int num)
 	{
 		float c = codeuse.getDistance();
 		float g = gyro.getAlpha();
-		float e = ; // Ecart entre les roues
+		float e = 20.0f; // Ecart entre les roues
 
 		if (num == 0)
 			return -c - 0.5f*e*g;

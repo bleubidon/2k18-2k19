@@ -1,6 +1,7 @@
 #include <Robot.h>
 
-void define_actions(Robot& bot);
+void setup_actions(Robot& bot);
+void loop_actions();
 
-void baisser_bras();
-void lever_bras();
+int setup_bras(void *data);
+int lever_bras();

@@ -1,15 +1,15 @@
 #pragma once
 
-#include <Action.h>
 #include <Moteur.h>
 #include <Odometrie.h>
+#include <TaskQueue.h>
 
 class Robot
 {
 	public:
 		struct Config
 		{
-			// float P, I, D;
+			float P, I, D;
 			
 			int couleur;
 			unsigned long dureeMatch;

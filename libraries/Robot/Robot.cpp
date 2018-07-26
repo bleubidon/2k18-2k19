@@ -5,9 +5,10 @@
 void Robot::setup(Robot::Config config)
 {
 	// init PID
-	// coef_P = config.P;
-	// coef_I = config.I;
-	// coef_D = config.D;
+	coef_P = config.P;
+	coef_I = config.I;
+	coef_D = config.D;
+	
 	erreur_position = integrale = 0.0f;
 	positions[0] = positions[1] = 0.0f;
 

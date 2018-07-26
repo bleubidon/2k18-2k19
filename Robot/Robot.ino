@@ -3,12 +3,13 @@
 
 #include "Actions.h"
 
+// NOTE Parser: mettre l'option fin de ligne dans la console Arduino pour pouvoir envoyer des commandes
+
 I2CParser ecran;
 Parser parser;
 
 Robot paschair;
 Timer timer(500);
-
 
 void setup()
 {
@@ -31,8 +32,12 @@ void setup()
 	};
 
 	Robot::Config config = {
+		P: 1.0,
+		I: 1.0,
+		D: 1.0,
+		
 		couleur: GAUCHE,
-		dureeMatch: -1, // illimité   // 90000L = 90 secondes
+		dureeMatch: 90000L, // = 90 secondes
 
 		odometrie,
 		moteurs: {
@@ -47,7 +52,7 @@ void setup()
 	ecran.setup();
 	requestColor();
 
-	define_actions(paschair);
+	setup_actions(paschair);
 
 	paschair.waitTirette();
 }
@@ -72,6 +77,8 @@ void loop()
 {
 	parser.loop();
 	paschair.loop();
+
+	loop_actions();
 
 	//loop_ecran();
 }
