@@ -7,7 +7,7 @@ class Codeuse
 	public:
 		struct Config
 		{
-			int pin;
+			uint8_t pin;
 			float rayon;
 			int nb_pas_max;
 		};
@@ -26,6 +26,6 @@ class Codeuse
 		void initCounter();
 		void transfer(uint8_t order, uint8_t data);
 
-		int pin;
+		uint8_t pin;
 		float ratio;
 };

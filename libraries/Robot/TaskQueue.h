@@ -2,11 +2,13 @@
 
 #include "Task.h"
 
-const int MAX_QUEUED_TASKS = 64;
-const int MAX_ACTIVE_TASKS = 16;
+const uint8_t MAX_QUEUED_TASKS = 64;
+const uint8_t MAX_ACTIVE_TASKS = 8;
 
 class TaskQueue
 {
+	friend class Task;
+
 	public:
 		TaskQueue();
 
@@ -28,6 +30,6 @@ class TaskQueue
 		Task queue[MAX_QUEUED_TASKS];
 		Task *active[MAX_ACTIVE_TASKS];
 
-		int queueSize, activeSize;
-		int index, locked;
+		uint8_t queueSize, activeSize;
+		uint8_t index, locked;
 };

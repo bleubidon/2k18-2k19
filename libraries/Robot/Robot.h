@@ -11,12 +11,12 @@ class Robot
 		{
 			float P, I, D;
 			
-			int couleur;
+			uint8_t couleur;
 			unsigned long dureeMatch;
 
 			Odometrie::Config odometrie;
 			Moteur::Config moteurs[2];
-			int pinTirette;
+			uint8_t pinTirette;
 		};
 
 
@@ -35,12 +35,12 @@ class Robot
 		void setup_tourner(int angle);
 
 
-		int couleur;
+		uint8_t couleur;
 		unsigned long dureeMatch;
 
 		Odometrie position;
 		Moteur moteurs[2];
-		int pinTirette;
+		uint8_t pinTirette;
 
 	private:
 		void asserv();
@@ -52,13 +52,14 @@ class Robot
 
 		unsigned long debutMatch;
 
-		// Deplacement
+		// Deplacement PID
 		float coef_P, coef_I, coef_D;
 		float erreur_position, integrale;
 		float positions[2], vitesses[2];
 
-		boolean consigne_avancer = false;
-		boolean consigne_tourner = false;
+		// Deplacement hugues
+		bool consigne_avancer = false;
+		bool consigne_tourner = false;
 
 		static const int numV = 4;
 		int v[numV] = {190, 150, 100, 70};

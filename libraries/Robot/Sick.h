@@ -1,12 +1,14 @@
 #pragma once
 
+#include <stdint.h>
+
 class Sick
 {
 	public:
-		void setup(int _pin);
+		void setup(uint8_t _pin);
 
 		bool active();
 
 	private:
-		int pin;
+		uint8_t pin;
 };

@@ -1,21 +1,21 @@
 #pragma once
 
-struct Task;
+#include <stdint.h>
+
 struct Event
 {
-	Task *registered;
+	bool completed;
 };
-
 
 struct Task
 {
 	enum {GOTO, TIMER, ACTION, BARRIER};
 
-	void init(int _type, Event *trigger);
+	void init(int _type, Event *_trigger);
 	bool setup();
 	bool loop();
 	
-	int type;
+	uint8_t type;
 
 	union
 	{
@@ -35,5 +35,5 @@ struct Task
 	};
 
 	Event event;
-	bool waitTrigger;
+	Event *trigger;
 };

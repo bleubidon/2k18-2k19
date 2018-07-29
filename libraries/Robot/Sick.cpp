@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 
-void Sick::setup(int _pin)
+void Sick::setup(uint8_t _pin)
 {
 	pin = _pin;
 	pinMode(pin, INPUT);

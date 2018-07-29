@@ -10,8 +10,8 @@ class Moteur
 	public:
 		struct Config
 		{
-			int pinA, pinB;
-			int pinPWM;
+			uint8_t pinA, pinB;
+			uint8_t pinPWM;
 		};
 
 		void setup(Moteur::Config config);
@@ -21,5 +21,5 @@ class Moteur
 		static bool stop;
 
 	private:
-		int pinA, pinB, pinPWM;
+		uint8_t pinA, pinB, pinPWM;
 };

@@ -1,21 +1,20 @@
 #include "Task.h"
+#include "TaskQueue.h"
 
-void Task::init(int _type, Event *trigger)
+void Task::init(int _type, Event *_trigger)
 {
 	type = _type;
-	event.registered = nullptr;
 
-	if (trigger != nullptr)
-	{
-		waitTrigger = true;
-		trigger->registered = this;
-	}
+	if (_trigger != nullptr)
+		trigger = _trigger;
 	else
-		waitTrigger = false;
+		_trigger = nullptr;
 }
 
 bool Task::setup()
 {
+	event.completed = false;
+
 	switch (type)
 	{
 	case GOTO:
@@ -25,6 +24,11 @@ bool Task::setup()
 		if (_setup)
 			return _setup(data);
 		break;
+
+	case BARRIER:
+		TaskQueue *tq = (TaskQueue*)data;
+		tq->locked++;
+		break;
 	}
 
 	return true;
@@ -32,7 +36,7 @@ bool Task::setup()
 
 bool Task::loop()
 {
-	if (waitTrigger)
+	if (!trigger->completed)
 		return true;
 
 	bool ret = false;
@@ -43,11 +47,17 @@ bool Task::loop()
 
 	case ACTION:
 		ret = _loop();
+		break;
+
+	case BARRIER:
+		TaskQueue *tq = (TaskQueue*)data;
+		ret = tq->activeSize;
+		if (ret) // No active tasks left
+			tq->locked--;
+		break;
 	}
 
 
-	if (!ret && event.registered)
-		event.registered->waitTrigger = false;
-
+	event.completed = !ret;
 	return ret;
 }

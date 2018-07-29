@@ -3,18 +3,18 @@
 #include "Codeuse.h"
 #include "Gyroscope.h"
 
-const int DOUBLE_CODEUSE = 0;
-const int CODEUSE_GYROSCOPE = 1;
+const uint8_t DOUBLE_CODEUSE = 0;
+const uint8_t CODEUSE_GYROSCOPE = 1;
 
-const int GAUCHE = 0;
-const int DROITE = 1;
+const uint8_t GAUCHE = 0;
+const uint8_t DROITE = 1;
 
 class Odometrie
 {
 	public:
 		struct Config
 		{
-			int mode;
+			uint8_t mode;
 			
 			union
 			{
@@ -41,7 +41,7 @@ class Odometrie
 		float getPositionCodeuse(int num);
 	
 	private:
-		int mode;
+		uint8_t mode;
 		union
 		{
 			// DOUBLE_CODEUSE
@@ -62,7 +62,6 @@ class Odometrie
 
 		float Lprecedent;
 
-		// Could propably make an array of functions
 		void updateDoubleCodeuse();
 		void updateCodeuseGyroscope();
 };

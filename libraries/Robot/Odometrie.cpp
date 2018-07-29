@@ -5,17 +5,20 @@
 void Odometrie::setup(Odometrie::Config config)
 {
 	mode = config.mode;
-	if (mode == DOUBLE_CODEUSE)
+
+	switch (mode)
 	{
+	case DOUBLE_CODEUSE:
 		codeuses[GAUCHE].setup(config.gauche);
 		codeuses[DROITE].setup(config.droite);
 
 		ecart_entre_roues = config.ecart_entre_roues;
-	}
-	else
-	{
+		break;
+	
+	case CODEUSE_GYROSCOPE:
 		codeuse.setup(config.codeuse);
 		gyro.setup();
+		break;
 	}
 
 	x = y = 0;
@@ -25,10 +28,16 @@ void Odometrie::setup(Odometrie::Config config)
 
 void Odometrie::update()
 {
-	if (mode == DOUBLE_CODEUSE)
+	switch (mode)
+	{
+	case DOUBLE_CODEUSE:
 		updateDoubleCodeuse();
-	else
+		break;
+	
+	case CODEUSE_GYROSCOPE:
 		updateCodeuseGyroscope();
+		break;
+	}
 }
 
 void Odometrie::updateDoubleCodeuse()
