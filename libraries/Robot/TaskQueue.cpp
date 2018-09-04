@@ -9,6 +9,7 @@ void TaskQueue::restart()
 {
 	index = 0;
 	locked = 0;
+	activeSize = 0;
 
 	for (int i(0); i < queueSize; i++)
 	{
