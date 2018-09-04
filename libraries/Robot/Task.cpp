@@ -4,17 +4,13 @@
 void Task::init(int _type, Event *_trigger)
 {
 	type = _type;
-
-	if (_trigger != nullptr)
-		trigger = _trigger;
-	else
-		_trigger = nullptr;
+	waiting = true;
+	event.completed = false;
+	trigger = _trigger;
 }
 
 bool Task::setup()
 {
-	event.completed = false;
-
 	switch (type)
 	{
 	case GOTO:
@@ -26,7 +22,7 @@ bool Task::setup()
 		break;
 
 	case BARRIER:
-		TaskQueue *tq = (TaskQueue*)data;
+		TaskQueue *tq = (TaskQueue *)data;
 		tq->locked++;
 		break;
 	}
@@ -36,28 +32,32 @@ bool Task::setup()
 
 bool Task::loop()
 {
-	if (!trigger->completed)
-		return true;
-
-	bool ret = false;
+	if (waiting)
+	{
+		if (trigger && !trigger->completed)
+			return true;
+		waiting = false;
+		return setup();
+	}
 	switch (type)
 	{
 	case GOTO:
-		break;
+		return false;
 
 	case ACTION:
-		ret = _loop();
-		break;
+		return _loop(data);
 
-	case BARRIER:
-		TaskQueue *tq = (TaskQueue*)data;
-		ret = tq->activeSize;
-		if (ret) // No active tasks left
+	case BARRIER: {
+		TaskQueue *tq = (TaskQueue *)data;
+		if (tq->activeSize == tq->locked) // No active task left
+		{
 			tq->locked--;
-		break;
+			return false;
+		}
+		return true;
 	}
 
-
-	event.completed = !ret;
-	return ret;
+	default:
+		return false;
+	}
 }

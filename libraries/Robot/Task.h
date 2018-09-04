@@ -29,11 +29,12 @@ struct Task
 
 		// ACTION
 		struct {
-			int (*_setup)(void*), (*_loop)();
+			int (*_setup)(void*), (*_loop)(void*);
 			void* data;
 		};
 	};
 
+	bool waiting;
 	Event event;
 	Event *trigger;
 };

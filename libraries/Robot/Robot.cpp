@@ -115,8 +115,8 @@ void Robot::setup_tourner(int angle)
 // private
 void Robot::asserv()
 {
-	static const float vMax = 50;
-	static const float aMax = 50;
+	static const float vMax = 100;
+	static const float aMax = 100;
 
 	for (int i = 0; i < 2; i++)
 	{

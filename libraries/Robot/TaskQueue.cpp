@@ -9,12 +9,19 @@ void TaskQueue::restart()
 {
 	index = 0;
 	locked = 0;
+
+	for (int i(0); i < queueSize; i++)
+	{
+		queue[i].waiting = true;
+		queue[i].event.completed = false;
+	}
 }
 
 void TaskQueue::clear()
 {
+	index = 0;
+	locked = 0;
 	queueSize = activeSize = 0;
-	restart();
 }
 
 bool TaskQueue::finished()
@@ -22,30 +29,21 @@ bool TaskQueue::finished()
 	return ((activeSize == 0) && (index == queueSize));
 }
 
-
 void TaskQueue::loop()
 {
-	step();
+	if (!locked &&
+		index < queueSize &&
+		activeSize < MAX_ACTIVE_TASKS)
+		active[activeSize++] = queue + index++;
 
 	for (int i(0); i < activeSize; i++)
 	{
 		if (!active[i]->loop())
+		{
+			active[i]->event.completed = true;
 			active[i] = active[--activeSize];
+		}
 	}	
-}
-
-void TaskQueue::step()
-{
-	for (; index < queueSize; index++)
-	{
-		if (locked || (activeSize == MAX_ACTIVE_TASKS))
-			return;
-
-		Task &task = queue[index];
-
-		if (task.setup())
-			active[activeSize++] = &task;
-	}
 }
 
 Event *TaskQueue::enqueueGoto(int x, int y, int angle, Event *trigger)
@@ -70,7 +68,7 @@ Event *TaskQueue::enqueueTimer(int time, Event *trigger)
 	return &task.event;
 }
 
-Event *TaskQueue::enqueueAction(int (*action)(), int (*setup)(void*), void *data, Event *trigger)
+Event *TaskQueue::enqueueAction(int (*action)(void*), int (*setup)(void*), void *data, Event *trigger)
 {
 	if (action == nullptr)
 		return nullptr;
@@ -91,4 +89,9 @@ void TaskQueue::enqueueBarrier()
 	task.init(Task::BARRIER, nullptr);
 
 	task.data = this;
+}
+
+Event *TaskQueue::wait_previous()
+{
+	return &queue[queueSize - 1].event;
 }
