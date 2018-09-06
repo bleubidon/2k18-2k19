@@ -1,4 +1,5 @@
 #include "Task.h"
+#include "Robot.h"
 #include "TaskQueue.h"
 
 void Task::init(int _type, Event *_trigger)
@@ -14,7 +15,7 @@ bool Task::setup()
 	switch (type)
 	{
 	case GOTO:
-		break;
+		return Robot.setup_goto(x, y, angle);
 
 	case ACTION:
 		if (_setup)
@@ -42,7 +43,7 @@ bool Task::loop()
 	switch (type)
 	{
 	case GOTO:
-		return false;
+		return Robot.loop_goto();
 
 	case ACTION:
 		return _loop(data);

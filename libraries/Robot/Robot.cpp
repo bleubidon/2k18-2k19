@@ -2,7 +2,9 @@
 
 #include <PWM.h>
 
-void Robot::setup(Robot::Config config)
+c_Robot Robot;
+
+void c_Robot::setup(c_Robot::Config config)
 {
 	// init PID
 	coef_P = config.P;
@@ -26,17 +28,15 @@ void Robot::setup(Robot::Config config)
 	debutMatch = millis(); // In case waitTirette is not called
 }
 
-void Robot::loop()
+void c_Robot::loop()
 {
 	if (getElapsedTime() > dureeMatch)
 		stop();
 
 	position.update();
-
-	asserv();
 }
 
-void Robot::stop()
+void c_Robot::stop()
 {
 	Serial << "Arret complet du robot" << endl;
 
@@ -47,7 +47,7 @@ void Robot::stop()
 		;
 }
 
-void Robot::waitTirette()
+void c_Robot::waitTirette()
 {
 	pinMode(pinTirette, INPUT_PULLUP);
 
@@ -65,19 +65,19 @@ void Robot::waitTirette()
 	debutMatch = millis();
 }
 
-unsigned long Robot::getElapsedTime()
+unsigned long c_Robot::getElapsedTime()
 {
 	return millis() - debutMatch;
 }
 
 // Deplacement
-void Robot::set_consigne(float _consigne_g, float _consigne_d)
+void c_Robot::set_consigne(float _consigne_g, float _consigne_d)
 {
 	positions[GAUCHE] = _consigne_g;
 	positions[DROITE] = _consigne_d;
 }
 
-void Robot::set_coefs_PID(float P, float I, float D)
+void c_Robot::set_coefs_PID(float P, float I, float D)
 {
 	Serial << "new coefs: " << P << " " << I << " " << D << endl;
 
@@ -86,7 +86,7 @@ void Robot::set_coefs_PID(float P, float I, float D)
 	coef_D = D;
 }
 
-void Robot::setup_avancer(int distance)
+void c_Robot::setup_avancer(int distance)
 {
 	sens = (distance >= 0);
 	h = abs(distance);
@@ -103,7 +103,7 @@ void Robot::setup_avancer(int distance)
 	consigne_avancer = true;
 }
 
-void Robot::setup_tourner(int angle)
+void c_Robot::setup_tourner(int angle)
 {
 	a = angle;
 	if (a > 180.0f)
@@ -112,8 +112,40 @@ void Robot::setup_tourner(int angle)
 	consigne_tourner = true;
 }
 
+// Autre deplacement
+int c_Robot::setup_goto(int x, int y, int angle)
+{
+	// do the pathfing
+	return path.find(position.getX(), position.getY());
+}
+
+int c_Robot::loop_goto()
+{
+	int speed = 150; // m.s^-1
+	Point current_pos(position.getX(), position.getY());
+	Point current_dir(position.dirX, position.dirY);
+	Point perpendicular(current_dir.y, -current_dir.x);
+	Point goal_dir = path.get_direction(current_pos, current_dir);
+
+	if (dot(current_dir, goal_dir) < 0)
+	{
+		//demi tour
+		if (dot(perpendicular, goal_dir) < 0)
+			speed *= -1;
+		moteurs[GAUCHE].consigne(-speed);
+		moteurs[DROITE].consigne(speed);
+		return;
+	}
+
+	float p = (dot(perpendicular, goal_dir) + 1) / 2;
+	//float rpm = 60 * speed / (3.14 * wheel_radius);
+	moteurs[GAUCHE].consigne(p * speed);
+	moteurs[DROITE].consigne((1-p) * speed);
+	return false;
+}
+
 // private
-void Robot::asserv()
+void c_Robot::asserv()
 {
 	static const float vMax = 100;
 	static const float aMax = 100;
@@ -142,7 +174,7 @@ void Robot::asserv()
 
 int distance(int ax, int ay, int bx, int by);
 
-void Robot::loop_avancer()
+void c_Robot::loop_avancer()
 {
 	if (!consigne_avancer)
 		return;
@@ -172,7 +204,7 @@ void Robot::loop_avancer()
 	}
 }
 
-void Robot::loop_tourner()
+void c_Robot::loop_tourner()
 {
 	const float precision = 1.0f; // degré
 
@@ -214,7 +246,7 @@ int distance(int ax, int ay, int bx, int by)
 	return sqrt(x * x + y * y);
 }
 
-void Robot::sendConsigneMoteurs(int vitesse, float erreur) // sens : 0 pour reculer, 1 pour avancer
+void c_Robot::sendConsigneMoteurs(int vitesse, float erreur) // sens : 0 pour reculer, 1 pour avancer
 {
 	int f = 20;
 	int vg = vitesse, vd = vitesse;
@@ -244,7 +276,7 @@ void Robot::sendConsigneMoteurs(int vitesse, float erreur) // sens : 0 pour recu
 		consigneMoteurs(vg, vd);
 }
 
-void Robot::consigneMoteurs(int consigne_gauche, int consigne_droite)
+void c_Robot::consigneMoteurs(int consigne_gauche, int consigne_droite)
 {
 	consigne_gauche = clamp(-255, consigne_gauche, 255);
 	consigne_droite = clamp(-255, consigne_droite, 255);
@@ -258,4 +290,10 @@ void Robot::consigneMoteurs(int consigne_gauche, int consigne_droite)
 		moteurs[DROITE].consigne(CW, consigne_droite);
 	else
 		moteurs[DROITE].consigne(CCW, -consigne_droite);
+
+	/* Sould be equivalent to the following */
+	/*
+	moteurs[GAUCHE].consigne(consigne_gauche);
+	moteurs[DROITE].consigne(consigne_droite);
+	*/
 }

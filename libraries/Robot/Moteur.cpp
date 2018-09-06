@@ -4,12 +4,14 @@
 
 bool Moteur::stop = false;
 
-
 void Moteur::setup(Moteur::Config config)
 {
 	pinA = config.pinA;
 	pinB = config.pinB;
 	pinPWM = config.pinPWM;
+
+	factor = (config.side == DROITE) * 2 - 1;
+	wheel_radius = config.wheel_radius;
 
 	SetPinFrequencySafe(pinPWM, 20000);
 
@@ -30,4 +32,10 @@ void Moteur::consigne(uint8_t sens, uint8_t val)
 	digitalWrite(pinB, sens == CCW);
 
 	analogWrite(pinPWM, val);
+}
+
+void Moteur::consigne(int speed)
+{
+	speed = clamp(-255, speed, 255);
+	consigne((speed * factor) < 0, abs(speed));
 }

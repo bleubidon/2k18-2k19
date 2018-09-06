@@ -1,10 +1,11 @@
 #pragma once
 
-#include <Moteur.h>
-#include <Odometrie.h>
-#include <TaskQueue.h>
+#include "Moteur.h"
+#include "Odometrie.h"
+#include "TaskQueue.h"
+#include "PathFinding.h"
 
-class Robot
+class c_Robot
 {
 	public:
 		struct Config
@@ -19,8 +20,7 @@ class Robot
 			uint8_t pinTirette;
 		};
 
-
-		void setup(Robot::Config config);
+		void setup(c_Robot::Config config);
 		void loop();
 		void stop();
 
@@ -34,6 +34,9 @@ class Robot
 		void setup_avancer(int distance);
 		void setup_tourner(int angle);
 
+		// Autre deplacement
+		int setup_goto(int x, int y, int angle);
+		int loop_goto();
 
 		uint8_t couleur;
 		unsigned long dureeMatch;
@@ -67,13 +70,13 @@ class Robot
 
 		int sens, h, xInitial, yInitial, angleInitial;
 		int a;
+
+		// PathFinding
+		Path path;
 };
 
+extern c_Robot Robot;
 
-inline int clamp(int _min, int _val, int _max)
-{
-	return max(_min, min(_val, _max));
-}
 
 // Serial print helpers
 template<class T> inline Print &operator <<(Print &obj, T arg) { obj.print(arg); return obj; }

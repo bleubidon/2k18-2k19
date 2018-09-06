@@ -1,6 +1,9 @@
 #include <Odometrie.h>
 #include <math.h>
 
+const uint8_t GAUCHE = 0;
+const uint8_t DROITE = 1;
+
 
 void Odometrie::setup(Odometrie::Config config)
 {
@@ -51,8 +54,10 @@ void Odometrie::updateDoubleCodeuse()
 	Lprecedent = L;
 
 	float radians = alpha * (M_PI / 180.0);
-	x += deltaL * cos(radians);
-	y += deltaL * sin(radians);
+	dirX = cos(radians);
+	dirY = sin(radians);
+	x += deltaL * dirX;
+	y += deltaL * dirY;
 }
 
 void Odometrie::updateCodeuseGyroscope()
@@ -64,8 +69,10 @@ void Odometrie::updateCodeuseGyroscope()
 	Lprecedent = L;
 
 	float radians = alpha * (M_PI / 180.0);
-	x += deltaL * cos(radians);
-	y += deltaL * sin(radians);
+	dirX = cos(radians);
+	dirY = sin(radians);
+	x += deltaL * dirX;
+	y += deltaL * dirY;
 }
 
 float Odometrie::getX()

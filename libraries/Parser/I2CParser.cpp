@@ -35,7 +35,7 @@ void I2CParser::loop(uint8_t _address)
 			buffer[cursor] = '\0';
 			cursor = 0;
 
-			parse(_address, buffer);
+			write(_address, buffer);
 		}
 		else if (cursor < BUFFER_LENGTH)
 			buffer[cursor++] = c;
@@ -43,7 +43,7 @@ void I2CParser::loop(uint8_t _address)
 }
 
 
-bool I2CParser::parse(uint8_t _address, char* command)
+bool I2CParser::write(uint8_t _address, char* command)
 {
 	Wire.beginTransmission(_address);
 	Wire.write(command);
@@ -51,14 +51,16 @@ bool I2CParser::parse(uint8_t _address, char* command)
 	return Wire.endTransmission() == 0; // 0 means success
 }
 
-bool I2CParser::parse(uint8_t _address, const char* command)
+bool I2CParser::write(uint8_t _address, const char* command)
 {
-	strcpy(buffer, command);
-	return parse(_address, buffer);
+	Wire.beginTransmission(_address);
+	Wire.write(command);
+
+	return Wire.endTransmission() == 0; // 0 means success
 }
 
 
-char* I2CParser::requestFrom(uint8_t _address, uint8_t quantity)
+char* I2CParser::read(uint8_t _address, uint8_t quantity)
 {
 	int i = 0;
 	Wire.requestFrom(_address, quantity);

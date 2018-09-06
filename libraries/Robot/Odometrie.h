@@ -3,11 +3,11 @@
 #include "Codeuse.h"
 #include "Gyroscope.h"
 
+extern const uint8_t GAUCHE;
+extern const uint8_t DROITE;
+
 const uint8_t DOUBLE_CODEUSE = 0;
 const uint8_t CODEUSE_GYROSCOPE = 1;
-
-const uint8_t GAUCHE = 0;
-const uint8_t DROITE = 1;
 
 class Odometrie
 {
@@ -40,6 +40,8 @@ class Odometrie
 
 		float getPositionCodeuse(int num);
 	
+		float dirX, dirY;
+
 	private:
 		uint8_t mode;
 		union

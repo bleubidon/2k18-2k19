@@ -1,4 +1,5 @@
 #include "Actions.h"
+#include <TaskQueue.h>
 
 // TODO: TaskQueue must be handled by Robot class
 // TODO: Implement game timer in a TaskQueue
@@ -7,7 +8,7 @@
 
 TaskQueue butiner_abeille;
 
-void setup_actions(Robot& bot)
+void setup_actions()
 {
 	butiner_abeille.clear();
 
@@ -16,7 +17,7 @@ void setup_actions(Robot& bot)
 	butiner_abeille.enqueueBarrier();
 	butiner_abeille.enqueueAction(lever_bras, setup_bras, NULL);
 	
-	//bot.register_action(butiner_abeille);
+	//Robot.register_action(butiner_abeille);
 }
 
 void loop_actions()
@@ -24,7 +25,7 @@ void loop_actions()
 	butiner_abeille.loop();
 }
 
-int setup_bras(void *data)
+int setup_bras(int *data)
 {
 	Serial.println("Initialisation du bras");
 	return 1;

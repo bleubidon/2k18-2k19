@@ -3,7 +3,12 @@
 #include <SeeedTouchScreen.h>
 
 // Serial print helpers
-template <class T> inline Print &operator<<(Print &obj, T arg) { obj.print(arg); return obj; }
+template <class T>
+inline Print &operator<<(Print &obj, T arg)
+{
+	obj.print(arg);
+	return obj;
+}
 const char endl = '\n';
 
 #define ADDRESS 42
@@ -115,27 +120,25 @@ void timer()
 // Display position
 void setup_pos(int argc, char **argv)
 {
-  if (argc != 3)
-	return;
+	if (argc != 3)
+		return;
 
 	if (mode != POS)
 	{
 		mode = POS;
 
 		Tft.fillScreen();
-	Tft.drawString("Gyro", 60, 20, 4, WHITE);
-	Tft.drawString("Codeuse", 50, 130, 4, WHITE);
+		Tft.drawString("Position", 60, 20, 4, RED);
 	}
 	else
-  {
-	Tft.fillRectangle(90, 70, MAX_X-90, 28, BLACK);
-	Tft.fillRectangle(90, 180, MAX_X-90, 28, BLACK);
-  }
+	{
+		Tft.fillRectangle(90, 70, MAX_X - 90, 28, BLACK);
+		Tft.fillRectangle(90, 110, MAX_X - 90, 28, BLACK);
+	}
 
-  Tft.drawString(argv[1], 90, 70, 4, RED);
-  Tft.drawString(argv[2], 90, 180, 4, RED);
+	Tft.drawString(argv[1], 90, 70, 4, WHITE);
+	Tft.drawString(argv[2], 90, 110, 4, WHITE);
 }
-
 
 /*** HELPERS ***/
 

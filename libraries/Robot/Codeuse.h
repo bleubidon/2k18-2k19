@@ -8,10 +8,9 @@ class Codeuse
 		struct Config
 		{
 			uint8_t pin;
-			float rayon;
-			int nb_pas_max;
+			float radius; //centimetres
+			int step_per_round;
 		};
-
 
 		void setup(Codeuse::Config config);
 
