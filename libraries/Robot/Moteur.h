@@ -1,12 +1,9 @@
 #pragma once
 
-#include <Arduino.h>
+#include "helpers.h"
 
-#define CW   0
-#define CCW  1
-
-extern const uint8_t GAUCHE;
-extern const uint8_t DROITE;
+extern const uint8_t CW;
+extern const uint8_t CCW;
 
 class Moteur
 {
@@ -31,8 +28,3 @@ class Moteur
 		int factor;
 		float wheel_radius;
 };
-
-inline int clamp(int _min, int _val, int _max)
-{
-	return max(_min, min(_val, _max));
-}

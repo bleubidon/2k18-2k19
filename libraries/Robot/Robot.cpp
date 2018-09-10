@@ -2,6 +2,10 @@
 
 #include <PWM.h>
 
+const uint8_t GAUCHE = 0;
+const uint8_t DROITE = 1;
+const char endl = '\n';
+
 c_Robot Robot;
 
 void c_Robot::setup(c_Robot::Config config)
@@ -17,8 +21,10 @@ void c_Robot::setup(c_Robot::Config config)
 	couleur = config.couleur;
 	dureeMatch = config.dureeMatch;
 
+	Serial << "Setup position..." << endl;
 	position.setup(config.odometrie);
 
+	Serial << "Setup moteurs..." << endl;
 	InitTimersSafe();
 	moteurs[GAUCHE].setup(config.moteurs[GAUCHE]);
 	moteurs[DROITE].setup(config.moteurs[DROITE]);
@@ -127,6 +133,9 @@ int c_Robot::loop_goto()
 	Point perpendicular(current_dir.y, -current_dir.x);
 	Point goal_dir = path.get_direction(current_pos, current_dir);
 
+	if (goal_dir.x == 0 && goal_dir.y == 0)
+		return false;
+
 	if (dot(current_dir, goal_dir) < 0)
 	{
 		//demi tour
@@ -134,14 +143,14 @@ int c_Robot::loop_goto()
 			speed *= -1;
 		moteurs[GAUCHE].consigne(-speed);
 		moteurs[DROITE].consigne(speed);
-		return;
+		return true;
 	}
 
 	float p = (dot(perpendicular, goal_dir) + 1) / 2;
 	//float rpm = 60 * speed / (3.14 * wheel_radius);
 	moteurs[GAUCHE].consigne(p * speed);
 	moteurs[DROITE].consigne((1-p) * speed);
-	return false;
+	return true;
 }
 
 // private

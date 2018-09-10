@@ -3,11 +3,8 @@
 #include "Codeuse.h"
 #include "Gyroscope.h"
 
-extern const uint8_t GAUCHE;
-extern const uint8_t DROITE;
-
-const uint8_t DOUBLE_CODEUSE = 0;
-const uint8_t CODEUSE_GYROSCOPE = 1;
+extern const uint8_t DOUBLE_CODEUSE;
+extern const uint8_t CODEUSE_GYROSCOPE;
 
 class Odometrie
 {

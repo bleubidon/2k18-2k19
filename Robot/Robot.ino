@@ -12,15 +12,22 @@ Parser parser;
 
 Timer timer(500);
 
+int control;
+
 void setup()
 {
+	control = false;
+
 	Serial.begin(9600);
 
+	Serial << "Setup parser..." << endl;
 	parser.add("mv", deplacement);
+	parser.add("stop", deplacement);
 	parser.add("pid", set_pid);
 	parser.add("consigne", set_consigne);
 	//parser.add("ecran", commande_ecran);
 
+	Serial << "Setup Robot..." << endl;
 	Robot.setup({
 		P : 1.0,
 		I : 1.0,
@@ -46,12 +53,18 @@ void setup()
 		pinTirette : 27
 	});
 
+	Serial << "Setup ecran..." << endl;
 	ecran.setup();
 	//requestColor();
 
+	Serial << "Setup task queues..." << endl;
 	setup_actions();
 
+	Serial << "Wait for tirette..." << endl;
 	Robot.waitTirette();
+	
+
+	Serial << "Setup done !" << endl;
 }
 
 void requestColor()
@@ -74,7 +87,7 @@ void loop()
 	parser.loop();
 	Robot.loop();
 
-	loop_actions();
+	loop_actions(control);
 
 	loop_ecran();
 }
@@ -93,6 +106,9 @@ void loop_ecran()
 // Commands
 void deplacement(int argc, char **argv)
 {
+	control = (strcmp(argv[0], "mv") == 0);
+	Serial << "control to: " << control << endl;
+
 	if (argc != 3)
 		return;
 

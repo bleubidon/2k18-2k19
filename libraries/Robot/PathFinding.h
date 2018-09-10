@@ -5,16 +5,17 @@
 struct Point
 {
 	Point();
-    Point(int _x, int _y);
+	Point(int _x, int _y);
 
 	void set(int _x, int _y);
 	Point unit();
 
-    Point operator+( const Point& p );
-    Point operator-( const Point& p );
-    int x, y;
+	Point operator+( const Point& p );
+	Point operator-( const Point& p );
+	int x, y;
 };
 
+int dist2(const Point& a, const Point& b);
 int dot(const Point& a, const Point& b);
 bool operator==(const Point &a, const Point &b);
 Point operator*(int a, const Point& p);

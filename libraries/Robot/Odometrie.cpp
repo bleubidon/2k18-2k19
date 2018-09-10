@@ -1,9 +1,8 @@
 #include <Odometrie.h>
 #include <math.h>
 
-const uint8_t GAUCHE = 0;
-const uint8_t DROITE = 1;
-
+const uint8_t DOUBLE_CODEUSE = 0;
+const uint8_t CODEUSE_GYROSCOPE = 1;
 
 void Odometrie::setup(Odometrie::Config config)
 {
@@ -12,6 +11,7 @@ void Odometrie::setup(Odometrie::Config config)
 	switch (mode)
 	{
 	case DOUBLE_CODEUSE:
+		Serial << "Setup codeuses..." << endl;
 		codeuses[GAUCHE].setup(config.gauche);
 		codeuses[DROITE].setup(config.droite);
 
@@ -19,7 +19,9 @@ void Odometrie::setup(Odometrie::Config config)
 		break;
 	
 	case CODEUSE_GYROSCOPE:
+		Serial << "Setup codeuse..." << endl;
 		codeuse.setup(config.codeuse);
+		Serial << "Setup gyro..." << endl;
 		gyro.setup();
 		break;
 	}
@@ -53,9 +55,9 @@ void Odometrie::updateDoubleCodeuse()
 	float deltaL = L - Lprecedent;
 	Lprecedent = L;
 
-	float radians = alpha * (M_PI / 180.0);
-	dirX = cos(radians);
-	dirY = sin(radians);
+	float rad = radians(alpha);
+	dirX = cos(rad);
+	dirY = sin(rad);
 	x += deltaL * dirX;
 	y += deltaL * dirY;
 }
@@ -68,9 +70,9 @@ void Odometrie::updateCodeuseGyroscope()
 	float deltaL = L - Lprecedent;
 	Lprecedent = L;
 
-	float radians = alpha * (M_PI / 180.0);
-	dirX = cos(radians);
-	dirY = sin(radians);
+	float rad = radians(alpha);
+	dirX = cos(rad);
+	dirY = sin(rad);
 	x += deltaL * dirX;
 	y += deltaL * dirY;
 }

@@ -1,4 +1,6 @@
 #include "Gyroscope.h"
+#include "helpers.h"
+
 #include <Adafruit_BNO055.h>
 
 Adafruit_BNO055 bno(55);
@@ -8,7 +10,7 @@ bool Gyroscope::setup()
 {
 	if (!bno.begin())
 	{
-		Serial.println("No BNO055 detected. Check your wiring or I2C ADDR");
+		Serial << "No BNO055 detected. Check your wiring or I2C ADDR" << endl;
 		return false;
 	}
 

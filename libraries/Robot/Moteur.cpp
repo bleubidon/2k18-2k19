@@ -2,6 +2,9 @@
 
 #include <PWM.h>
 
+const uint8_t CW = 0;
+const uint8_t CCW = 1;
+
 bool Moteur::stop = false;
 
 void Moteur::setup(Moteur::Config config)

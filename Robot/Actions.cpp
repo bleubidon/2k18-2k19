@@ -6,10 +6,14 @@
 // TODO: Implement position update in a TaskQueue
 // TODO: Implement sensor management in interrupts
 
+TaskQueue test;
 TaskQueue butiner_abeille;
 
 void setup_actions()
 {
+	test.enqueueGoto(10, 10, 10);
+
+
 	butiner_abeille.clear();
 
 	butiner_abeille.enqueueTimer(30); // useless for now
@@ -20,18 +24,19 @@ void setup_actions()
 	//Robot.register_action(butiner_abeille);
 }
 
-void loop_actions()
+void loop_actions(int control)
 {
-	butiner_abeille.loop();
+	if (control)
+		test.loop();
 }
 
-int setup_bras(int *data)
+int setup_bras(void *)
 {
 	Serial.println("Initialisation du bras");
 	return 1;
 }
 
-int lever_bras()
+int lever_bras(void *)
 {
 	Serial.println("Et je leve le bras");
 	return 0;
