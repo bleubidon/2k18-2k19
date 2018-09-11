@@ -57,17 +57,12 @@ void c_Robot::waitTirette()
 {
 	pinMode(pinTirette, INPUT_PULLUP);
 
-	if (digitalRead(pinTirette) == HIGH)
-		Serial << "En attente de la tirette sur la pin " << pinTirette << endl;
-	else
+	while (digitalRead(pinTirette) == LOW)
 	{
-		do
-		{
-			delay(500);
-		} while (digitalRead(pinTirette) == HIGH);
+		Serial << "En attente de la tirette sur la pin " << pinTirette << endl;
+		delay(1000);
 	}
 
-	Serial << endl << "Debut du match!" << endl;
 	debutMatch = millis();
 }
 
@@ -125,20 +120,33 @@ int c_Robot::setup_goto(int x, int y, int angle)
 	return path.find(position.getX(), position.getY());
 }
 
+Print &operator<<(Print &obj, vec p)
+{
+	obj.print("(x: ");
+	obj.print(p.x);
+	obj.print(", y: ");
+	obj.print(p.y);
+	obj.print(')');
+	return obj;
+}
+
 int c_Robot::loop_goto()
 {
 	int speed = 150; // m.s^-1
-	Point current_pos(position.getX(), position.getY());
-	Point current_dir(position.dirX, position.dirY);
-	Point perpendicular(current_dir.y, -current_dir.x);
-	Point goal_dir = path.get_direction(current_pos, current_dir);
+	vec current_pos(position.getX(), position.getY());
+	vec current_dir(position.dirX, position.dirY);
+	vec perpendicular(current_dir.y, -current_dir.x);
+	vec goal_dir = path.get_direction(current_pos, current_dir);
 
 	if (goal_dir.x == 0 && goal_dir.y == 0)
 		return false;
 
+	//Serial << "goal: " << goal_dir << " curr: " << current_dir << " pos: " << current_pos;
+
 	if (dot(current_dir, goal_dir) < 0)
 	{
 		//demi tour
+		//Serial << "   demi-tour" << endl;
 		if (dot(perpendicular, goal_dir) < 0)
 			speed *= -1;
 		moteurs[GAUCHE].consigne(-speed);
@@ -147,9 +155,10 @@ int c_Robot::loop_goto()
 	}
 
 	float p = (dot(perpendicular, goal_dir) + 1) / 2;
+	//Serial << "   p: " << p << endl;
 	//float rpm = 60 * speed / (3.14 * wheel_radius);
-	moteurs[GAUCHE].consigne(p * speed);
-	moteurs[DROITE].consigne((1-p) * speed);
+	moteurs[GAUCHE].consigne((1-p) * speed);
+	moteurs[DROITE].consigne(p * speed);
 	return true;
 }
 

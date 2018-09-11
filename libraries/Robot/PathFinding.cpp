@@ -2,57 +2,59 @@
 #include <math.h>
 
 inline int sq(int x)
-{
-	return x * x;
-}
+{ return x * x; }
 
-Point::Point()
+inline float sq(float x)
+{ return x * x; }
+
+
+vec::vec()
 {}
 
-Point::Point(int _x, int _y):
+vec::vec(vec_type _x, vec_type _y):
 	x(_x), y(_y)
 {}
 
-void Point::set(int _x, int _y)
+void vec::set(vec_type _x, vec_type _y)
 {
 	x = _x;
 	y = _y;
 }
 
-Point Point::unit()
+vec vec::unit()
 {
 	float length = sqrt( sq(x) + sq(y) );
-	return Point(x / length, y / length);
+	return vec(x / length, y / length);
 }
 
-Point Point::operator+(const Point &p)
-{
-	return Point(p.x + x, p.y + y);
-}
-
-Point Point::operator-(const Point &p)
-{
-	return Point(p.x - x, p.y - y);
-}
-
-int dist2(const Point& a, const Point& b)
+vec_type dist2(const vec& a, const vec& b)
 {
 	return sq(a.x - b.x) + sq(a.y - b.y);
 }
 
-int dot(const Point& a, const Point& b)
+vec_type dot(const vec& a, const vec& b)
 {
 	return (a.x * b.x) + (a.y * b.y);
 }
 
-bool operator==(const Point &a, const Point &b)
+vec operator+(const vec &a, const vec &b)
+{
+	return vec(a.x + b.x, a.y + b.y);
+}
+
+vec operator-(const vec &a, const vec &b)
+{
+	return vec(a.x - b.x, a.y - b.y);
+}
+
+bool operator==(const vec &a, const vec &b)
 {
 	return a.x == b.x && a.y == b.y;
 }
 
-Point operator*(int a, const Point &p)
+vec operator*(vec_type a, const vec &p)
 {
-	return Point(a * p.x, a * p.y);
+	return vec(a * p.x, a * p.y);
 }
 
 
@@ -61,14 +63,14 @@ bool Path::find(int x, int y)
 	length = 0;
 	current = 1;
 
-	int figure = 0;
+	int figure = 1;
 	if (figure == 0) {
 		waypoints[length++].set(x, y);
 		waypoints[length++].set(x + 10, y);
 	}
 	if (figure == 1) {
 		waypoints[length++].set(x, y);
-		waypoints[length++].set(x, y + 10);
+		waypoints[length++].set(x, y + 100);
 	}
 	else if (figure == 2) {
 		for (float angle = 0; angle < 3.1415; angle += 0.4f) {
@@ -79,20 +81,20 @@ bool Path::find(int x, int y)
 }
 
 
-float tj(Point a, Point b)
+float tj(vec a, vec b)
 {
 	const static float alpha = 1;
 	return pow( sq(b.x-a.x) + sq(b.y-a.y), alpha / 2 );
 }
 
-Point dCatmullRomSpline(Point p[4])
+vec dCatmullRomSpline(vec p[4])
 {
 	float t[] = {0, 0, 0, 0};
 	for (int i = 0; i < 3; i++)
 		t[i+1] = tj(p[i], p[i+1]) + t[i];
 		
 	float s = t[1];
-	Point A[3], dA[3], B[2], dB[2];
+	vec A[3], dA[3], B[2], dB[2];
 	for (int i = 0; i < 3; i++)
 	{
 		float coef = 1 / (t[i+1] - t[i]);
@@ -119,9 +121,9 @@ Point dCatmullRomSpline(Point p[4])
 	return (coef * (B[1] - B[0])) + (coef1 * dB[0]) + (coef2 * dB[1]);
 }
 
-Point Path::get_direction(const Point& pos, const Point& dir)
+vec Path::get_direction(const vec& pos, const vec& dir)
 {
 	if (dist2( pos, waypoints[current]) < 25)
-		return Point(0, 0);
+		return vec(0, 0);
 	return (waypoints[current] - pos).unit();
 }

@@ -25,6 +25,5 @@ class Moteur
 
 	 private:
 		uint8_t pinA, pinB, pinPWM;
-		int factor;
 		float wheel_radius;
 };

@@ -1,32 +1,32 @@
 #pragma once
 
 #define MAX_WAYPOINTS 20
+typedef float vec_type;
 
-struct Point
+struct vec
 {
-	Point();
-	Point(int _x, int _y);
+	vec();
+	vec(vec_type _x, vec_type _y);
 
-	void set(int _x, int _y);
-	Point unit();
+	void set(vec_type _x, vec_type _y);
+	vec unit();
 
-	Point operator+( const Point& p );
-	Point operator-( const Point& p );
-	int x, y;
+	vec_type x, y;
 };
 
-int dist2(const Point& a, const Point& b);
-int dot(const Point& a, const Point& b);
-bool operator==(const Point &a, const Point &b);
-Point operator*(int a, const Point& p);
-
+vec_type dist2(const vec& a, const vec& b);
+vec_type dot(const vec& a, const vec& b);
+vec operator+(const vec& a, const vec& b);
+vec operator-(const vec& a, const vec& b);
+bool operator==(const vec &a, const vec &b);
+vec operator*(vec_type a, const vec& p);
 
 struct Path
 {
 	bool find(int x, int y);
-	Point get_direction(const Point& pos, const Point& dir);
+	vec get_direction(const vec& pos, const vec& dir);
 
 	private:
-		Point waypoints[MAX_WAYPOINTS];
+		vec waypoints[MAX_WAYPOINTS];
 		int current, length;
 };

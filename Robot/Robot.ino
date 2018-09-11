@@ -59,12 +59,10 @@ void setup()
 
 	Serial << "Setup task queues..." << endl;
 	setup_actions();
-
-	Serial << "Wait for tirette..." << endl;
-	Robot.waitTirette();
 	
 
 	Serial << "Setup done !" << endl;
+	Robot.waitTirette();
 }
 
 void requestColor()

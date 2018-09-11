@@ -13,7 +13,6 @@ void Moteur::setup(Moteur::Config config)
 	pinB = config.pinB;
 	pinPWM = config.pinPWM;
 
-	factor = (config.side == DROITE) * 2 - 1;
 	wheel_radius = config.wheel_radius;
 
 	SetPinFrequencySafe(pinPWM, 20000);
@@ -40,5 +39,5 @@ void Moteur::consigne(uint8_t sens, uint8_t val)
 void Moteur::consigne(int speed)
 {
 	speed = clamp(-255, speed, 255);
-	consigne((speed * factor) < 0, abs(speed));
+	consigne(speed > 0, abs(speed));
 }
