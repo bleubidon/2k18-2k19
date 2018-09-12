@@ -58,26 +58,31 @@ vec operator*(vec_type a, const vec &p)
 }
 
 
-bool Path::find(int x, int y)
+int Path::find(const vec& start)
 {
 	length = 0;
 	current = 1;
 
-	int figure = 1;
+	int figure = 3;
 	if (figure == 0) {
-		waypoints[length++].set(x, y);
-		waypoints[length++].set(x + 10, y);
+		waypoints[length++].set(start.x, start.y);
+		waypoints[length++].set(start.x + 50, start.y);
 	}
 	if (figure == 1) {
-		waypoints[length++].set(x, y);
-		waypoints[length++].set(x, y + 100);
+		waypoints[length++].set(start.x, start.y);
+		waypoints[length++].set(start.x, start.y + 100);
 	}
 	else if (figure == 2) {
-		for (float angle = 0; angle < 3.1415; angle += 0.4f) {
-			waypoints[length++].set(x + 5 * sin(angle), y - 5 * cos(angle) + 5);
+		for (float angle = 0; angle < 3.1415; angle += 0.8f) {
+			waypoints[length++].set(start.x + 60 * sin(angle), start.y - 60 * cos(angle) + 60);
 		}
 	}
-	return true;
+	else if (figure == 3) {
+		waypoints[length++].set(start.x, start.y);
+		waypoints[length++].set(start.x + 70, start.y);
+		waypoints[length++].set(start.x + 70, start.y + 70);
+	}
+	return get_distance(start);
 }
 
 
@@ -121,9 +126,15 @@ vec dCatmullRomSpline(vec p[4])
 	return (coef * (B[1] - B[0])) + (coef1 * dB[0]) + (coef2 * dB[1]);
 }
 
+int Path::get_distance(const vec& pos)
+{
+	int dist = sqrt( dist2(pos, waypoints[current]) );
+	for (int i = current + 1; i < length - 1; i++)
+		dist += sqrt( dist2(waypoints[i], waypoints[i + 1]) );
+	return dist;
+}
+
 vec Path::get_direction(const vec& pos, const vec& dir)
 {
-	if (dist2( pos, waypoints[current]) < 25)
-		return vec(0, 0);
 	return (waypoints[current] - pos).unit();
 }

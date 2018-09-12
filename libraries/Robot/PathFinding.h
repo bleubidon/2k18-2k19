@@ -23,7 +23,8 @@ vec operator*(vec_type a, const vec& p);
 
 struct Path
 {
-	bool find(int x, int y);
+	int find(const vec& start);
+	int get_distance(const vec& pos);
 	vec get_direction(const vec& pos, const vec& dir);
 
 	private:

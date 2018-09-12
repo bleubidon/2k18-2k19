@@ -17,6 +17,7 @@ class c_Robot
 
 			Odometrie::Config odometrie;
 			Moteur::Config moteurs[2];
+			int accel_max;
 			uint8_t pinTirette;
 		};
 
@@ -70,6 +71,12 @@ class c_Robot
 
 		int sens, h, xInitial, yInitial, angleInitial;
 		int a;
+
+		// Autre deplacement
+		int speed;
+		int accel_max;
+		int prev_distance;
+		unsigned long prev_millis;
 
 		// PathFinding
 		Path path;

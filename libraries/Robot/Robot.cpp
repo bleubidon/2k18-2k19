@@ -29,6 +29,7 @@ void c_Robot::setup(c_Robot::Config config)
 	moteurs[GAUCHE].setup(config.moteurs[GAUCHE]);
 	moteurs[DROITE].setup(config.moteurs[DROITE]);
 
+	accel_max = config.accel_max;
 	pinTirette = config.pinTirette;
 
 	debutMatch = millis(); // In case waitTirette is not called
@@ -117,14 +118,18 @@ void c_Robot::setup_tourner(int angle)
 int c_Robot::setup_goto(int x, int y, int angle)
 {
 	// do the pathfing
-	return path.find(position.getX(), position.getY());
+	vec pos(position.getX(), position.getY());
+	prev_distance = path.find(pos);
+	prev_millis = millis();
+	speed = 0;
+	return prev_distance;
 }
 
 Print &operator<<(Print &obj, vec p)
 {
-	obj.print("(x: ");
+	obj.print('(');
 	obj.print(p.x);
-	obj.print(", y: ");
+	obj.print(", ");
 	obj.print(p.y);
 	obj.print(')');
 	return obj;
@@ -132,33 +137,67 @@ Print &operator<<(Print &obj, vec p)
 
 int c_Robot::loop_goto()
 {
-	int speed = 150; // m.s^-1
 	vec current_pos(position.getX(), position.getY());
+	const int distance = path.get_distance(current_pos);
+	if (distance < 2)
+	{
+		moteurs[GAUCHE].consigne(0);
+		moteurs[DROITE].consigne(0);
+		return false;
+	}
+	else
+	{
+		const unsigned long curr = millis();
+		int speed_goal = 220;
+		//if (speed*speed / (2 * accel_max) < distance)
+		//	speed_goal = 0;
+
+		int dvMax = accel_max * (curr - prev_millis) / 100;
+		int dv = clamp(-dvMax, (speed_goal - speed), dvMax);
+		speed += dv;
+
+		unsigned long ed = speed;
+		ed = ed * ed / (2 * accel_max);
+		Serial << "ed: " << ed << " ";
+
+		prev_millis = curr;
+		prev_distance = distance;
+	}
+
 	vec current_dir(position.dirX, position.dirY);
 	vec perpendicular(current_dir.y, -current_dir.x);
 	vec goal_dir = path.get_direction(current_pos, current_dir);
 
-	if (goal_dir.x == 0 && goal_dir.y == 0)
-		return false;
+	float proj = dot(perpendicular, goal_dir);
+	Serial << "dist: " << distance << " goal: " << goal_dir << " curr: " << current_dir << " pos: " << current_pos;
 
-	//Serial << "goal: " << goal_dir << " curr: " << current_dir << " pos: " << current_pos;
-
-	if (dot(current_dir, goal_dir) < 0)
+	if (dot(current_dir, goal_dir) > 0)
 	{
-		//demi tour
-		//Serial << "   demi-tour" << endl;
-		if (dot(perpendicular, goal_dir) < 0)
-			speed *= -1;
-		moteurs[GAUCHE].consigne(-speed);
-		moteurs[DROITE].consigne(speed);
-		return true;
+		float p = (proj + 1) / 2;
+		if (proj < 0) // go left
+		{
+			moteurs[GAUCHE].consigne(speed);
+			moteurs[DROITE].consigne(speed * p / (1 - p));
+		}
+		else
+		{
+			moteurs[GAUCHE].consigne(speed * (1 - p) / p);
+			moteurs[DROITE].consigne(speed);
+		}
+		Serial << "   speed: " << speed;
+		//float rpm = 60 * speed / (3.14 * wheel_radius);
+	}
+	else //demi tour
+	{
+		int real_speed = speed;
+		if (proj < 0)
+			real_speed *= -1;
+		moteurs[GAUCHE].consigne(-real_speed);
+		moteurs[DROITE].consigne(real_speed);
+		//Serial << "   demi-tour";
 	}
 
-	float p = (dot(perpendicular, goal_dir) + 1) / 2;
-	//Serial << "   p: " << p << endl;
-	//float rpm = 60 * speed / (3.14 * wheel_radius);
-	moteurs[GAUCHE].consigne((1-p) * speed);
-	moteurs[DROITE].consigne(p * speed);
+	Serial << endl;
 	return true;
 }
 

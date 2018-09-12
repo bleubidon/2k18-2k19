@@ -12,7 +12,6 @@ class Moteur
 		{
 			uint8_t pinA, pinB;
 			uint8_t pinPWM;
-			uint8_t side;
 			float wheel_radius; //centimetres
 		};
 

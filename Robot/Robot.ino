@@ -47,9 +47,10 @@ void setup()
 			}
 		},
 		moteurs : {
-			{4, 9, 6, GAUCHE, wheel_radius: 3.0f},
-			{7, 8, 5, DROITE, wheel_radius: 3.0f}
+			{4, 9, 6, wheel_radius: 3.0f},
+			{7, 8, 5, wheel_radius: 3.0f}
 		},
+		accel_max: 10,
 		pinTirette : 27
 	});
 
