@@ -59,16 +59,6 @@ Event *TaskQueue::enqueueGoto(int x, int y, int angle, Event *trigger)
 	return &task.event;
 }
 
-Event *TaskQueue::enqueueTimer(int time, Event *trigger)
-{
-	Task &task = queue[queueSize++];
-	task.init(Task::TIMER, trigger);
-
-	task.duration = time;
-
-	return &task.event;
-}
-
 Event *TaskQueue::enqueueAction(int (*action)(void*), int (*setup)(void*), void *data, Event *trigger)
 {
 	if (action == nullptr)
@@ -84,12 +74,30 @@ Event *TaskQueue::enqueueAction(int (*action)(void*), int (*setup)(void*), void 
 	return &task.event;
 }
 
-void TaskQueue::enqueueBarrier()
+Event *TaskQueue::enqueueWaitTirette(Event *trigger)
+{
+	Task &task = queue[queueSize++];
+	task.init(Task::WAIT_TIRETTE, trigger);
+
+	return &task.event;
+}
+
+Event *TaskQueue::enqueueMatchTimer(Event *trigger)
+{
+	Task &task = queue[queueSize++];
+	task.init(Task::MATCH_TIMER, trigger);
+
+	return &task.event;
+}
+
+Event *TaskQueue::enqueueBarrier()
 {
 	Task &task = queue[queueSize++];
 	task.init(Task::BARRIER, nullptr);
 
 	task.data = this;
+
+	return &task.event;
 }
 
 Event *TaskQueue::wait_previous()

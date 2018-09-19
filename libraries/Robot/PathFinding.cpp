@@ -1,61 +1,6 @@
 #include "PathFinding.h"
+#include <Arduino.h>
 #include <math.h>
-
-inline int sq(int x)
-{ return x * x; }
-
-inline float sq(float x)
-{ return x * x; }
-
-
-vec::vec()
-{}
-
-vec::vec(vec_type _x, vec_type _y):
-	x(_x), y(_y)
-{}
-
-void vec::set(vec_type _x, vec_type _y)
-{
-	x = _x;
-	y = _y;
-}
-
-vec vec::unit()
-{
-	float length = sqrt( sq(x) + sq(y) );
-	return vec(x / length, y / length);
-}
-
-vec_type dist2(const vec& a, const vec& b)
-{
-	return sq(a.x - b.x) + sq(a.y - b.y);
-}
-
-vec_type dot(const vec& a, const vec& b)
-{
-	return (a.x * b.x) + (a.y * b.y);
-}
-
-vec operator+(const vec &a, const vec &b)
-{
-	return vec(a.x + b.x, a.y + b.y);
-}
-
-vec operator-(const vec &a, const vec &b)
-{
-	return vec(a.x - b.x, a.y - b.y);
-}
-
-bool operator==(const vec &a, const vec &b)
-{
-	return a.x == b.x && a.y == b.y;
-}
-
-vec operator*(vec_type a, const vec &p)
-{
-	return vec(a * p.x, a * p.y);
-}
 
 
 int Path::find(const vec& start)
@@ -63,7 +8,7 @@ int Path::find(const vec& start)
 	length = 0;
 	current = 1;
 
-	int figure = 3;
+	int figure = 0;
 	if (figure == 0) {
 		waypoints[length++].set(start.x, start.y);
 		waypoints[length++].set(start.x + 50, start.y);

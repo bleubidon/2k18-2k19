@@ -18,7 +18,8 @@ void c_Robot::setup(c_Robot::Config config)
 	erreur_position = integrale = 0.0f;
 	positions[0] = positions[1] = 0.0f;
 
-	couleur = config.couleur;
+	equipe = config.equipe;
+	pinTirette = config.pinTirette;
 	dureeMatch = config.dureeMatch;
 
 	Serial << "Setup position..." << endl;
@@ -30,17 +31,6 @@ void c_Robot::setup(c_Robot::Config config)
 	moteurs[DROITE].setup(config.moteurs[DROITE]);
 
 	accel_max = config.accel_max;
-	pinTirette = config.pinTirette;
-
-	debutMatch = millis(); // In case waitTirette is not called
-}
-
-void c_Robot::loop()
-{
-	if (getElapsedTime() > dureeMatch)
-		stop();
-
-	position.update();
 }
 
 void c_Robot::stop()
@@ -52,24 +42,6 @@ void c_Robot::stop()
 
 	while (1)
 		;
-}
-
-void c_Robot::waitTirette()
-{
-	pinMode(pinTirette, INPUT_PULLUP);
-
-	while (digitalRead(pinTirette) == LOW)
-	{
-		Serial << "En attente de la tirette sur la pin " << pinTirette << endl;
-		delay(1000);
-	}
-
-	debutMatch = millis();
-}
-
-unsigned long c_Robot::getElapsedTime()
-{
-	return millis() - debutMatch;
 }
 
 // Deplacement
@@ -93,12 +65,12 @@ void c_Robot::setup_avancer(int distance)
 	sens = (distance >= 0);
 	h = abs(distance);
 
-	xInitial = position.getX();
-	yInitial = position.getY();
+	xInitial = position.pos().x;
+	yInitial = position.pos().y;
 
 	Serial << "xi: " << xInitial << "\tyi: " << yInitial << endl;
 
-	angleInitial = position.getAlpha();
+	angleInitial = position.rot();
 	if (angleInitial > 180.0f)
 		angleInitial -= 360.0f;
 
@@ -117,9 +89,11 @@ void c_Robot::setup_tourner(int angle)
 // Autre deplacement
 int c_Robot::setup_goto(int x, int y, int angle)
 {
+	position.update();
+	
 	// do the pathfing
-	vec pos(position.getX(), position.getY());
-	prev_distance = path.find(pos);
+	prev_distance = path.find(position.pos());
+	a = angle;
 	prev_millis = millis();
 	speed = 0;
 	return prev_distance;
@@ -137,13 +111,26 @@ Print &operator<<(Print &obj, vec p)
 
 int c_Robot::loop_goto()
 {
-	vec current_pos(position.getX(), position.getY());
-	const int distance = path.get_distance(current_pos);
+	position.update();
+
+	const int distance = path.get_distance(position.pos());
 	if (distance < 2)
 	{
-		moteurs[GAUCHE].consigne(0);
-		moteurs[DROITE].consigne(0);
-		return false;
+		int erreur_angle = position.rot() - a;
+		if (position.rot() > 180)
+			erreur_angle -= 360;
+		int sign = (erreur_angle >= 0) ? 1 : -1;
+DEBUG(Serial << "r: " << position.rot() << " a: " << a << " err: " << erreur_angle << " sign: " << sign << endl);
+		if (erreur_angle == 0)
+		{
+			moteurs[GAUCHE].consigne(0);
+			moteurs[DROITE].consigne(0);
+			return false;
+		}
+		speed = 100 + min(sign * erreur_angle, 10) * 5;
+		moteurs[GAUCHE].consigne(-sign * speed);
+		moteurs[DROITE].consigne(sign * speed);
+		return true;
 	}
 	else
 	{
@@ -158,20 +145,19 @@ int c_Robot::loop_goto()
 
 		unsigned long ed = speed;
 		ed = ed * ed / (2 * accel_max);
-		Serial << "ed: " << ed << " ";
+DEBUG(Serial << "ed: " << ed << " ");
 
 		prev_millis = curr;
 		prev_distance = distance;
 	}
 
-	vec current_dir(position.dirX, position.dirY);
-	vec perpendicular(current_dir.y, -current_dir.x);
-	vec goal_dir = path.get_direction(current_pos, current_dir);
+	vec perpendicular(position.dir().y, -position.dir().x);
+	vec goal_dir = path.get_direction(position.pos(), position.dir());
 
 	float proj = dot(perpendicular, goal_dir);
-	Serial << "dist: " << distance << " goal: " << goal_dir << " curr: " << current_dir << " pos: " << current_pos;
+DEBUG(Serial << "dist: " << distance << " goal: " << goal_dir << " curr: " << position.dir() << " pos: " << position.pos());
 
-	if (dot(current_dir, goal_dir) > 0)
+	if (dot(position.dir(), goal_dir) > 0)
 	{
 		float p = (proj + 1) / 2;
 		if (proj < 0) // go left
@@ -184,7 +170,7 @@ int c_Robot::loop_goto()
 			moteurs[GAUCHE].consigne(speed * (1 - p) / p);
 			moteurs[DROITE].consigne(speed);
 		}
-		Serial << "   speed: " << speed;
+DEBUG(Serial << "   speed: " << speed);
 		//float rpm = 60 * speed / (3.14 * wheel_radius);
 	}
 	else //demi tour
@@ -197,7 +183,7 @@ int c_Robot::loop_goto()
 		//Serial << "   demi-tour";
 	}
 
-	Serial << endl;
+DEBUG(Serial << endl);
 	return true;
 }
 
@@ -236,11 +222,11 @@ void c_Robot::loop_avancer()
 	if (!consigne_avancer)
 		return;
 
-	float erreurAngle = position.getAlpha() - angleInitial;
-	if (position.getAlpha() > 180)
+	float erreurAngle = position.rot() - angleInitial;
+	if (position.rot() > 180)
 		erreurAngle -= 360.0f;
 
-	int L = distance((int)position.getX(), (int)position.getY(), xInitial, yInitial); // distance parcourue
+	int L = distance((int)position.pos().x, (int)position.pos().y, xInitial, yInitial); // distance parcourue
 	int restant = h - L;
 
 	int i;
@@ -255,7 +241,7 @@ void c_Robot::loop_avancer()
 
 	if (i == numV) // Consider we are close enough
 	{
-		Serial << "xf: " << position.getX() << "\tyf: " << position.getY() << endl;
+		Serial << "xf: " << position.pos().x << "\tyf: " << position.pos().y << endl;
 		consigne_avancer = false;
 		consigneMoteurs(0, 0);
 	}
@@ -268,8 +254,8 @@ void c_Robot::loop_tourner()
 	if (!consigne_tourner)
 		return;
 
-	float restant = a - position.getAlpha();
-	if (position.getAlpha() > 180)
+	float restant = a - position.rot();
+	if (position.rot() > 180)
 		restant += 360.0f;
 
 	int i;

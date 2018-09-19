@@ -2,7 +2,6 @@
 
 #include <Arduino.h>
 
-
 extern const uint8_t GAUCHE;
 extern const uint8_t DROITE;
 
@@ -19,3 +18,9 @@ inline Print &operator<<(Print &obj, T arg)
 	obj.print(arg);
 	return obj;
 }
+
+#ifdef NDEBUG
+# define DEBUG(x) void;
+#else
+# define DEBUG(x) x
+#endif

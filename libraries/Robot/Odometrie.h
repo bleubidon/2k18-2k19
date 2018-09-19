@@ -1,5 +1,6 @@
 #pragma once
 
+#include "vec.h"
 #include "Codeuse.h"
 #include "Gyroscope.h"
 
@@ -31,13 +32,11 @@ class Odometrie
 
 		void update();
 		
-		float getX();
-		float getY();
-		float getAlpha();
+		const vec& pos();
+		const vec& dir();
+		const float& rot();
 
 		float getPositionCodeuse(int num);
-	
-		float dirX, dirY;
 
 	private:
 		uint8_t mode;
@@ -56,8 +55,8 @@ class Odometrie
 			};
 		};
 
-		float x, y;
-		float alpha;
+		vec position, direction;
+		float angle;
 
 		float Lprecedent;
 

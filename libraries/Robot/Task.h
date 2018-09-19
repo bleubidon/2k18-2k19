@@ -9,7 +9,7 @@ struct Event
 
 struct Task
 {
-	enum {GOTO, TIMER, ACTION, BARRIER};
+	enum {GOTO, ACTION, WAIT_TIRETTE, MATCH_TIMER, BARRIER};
 
 	void init(int _type, Event *_trigger);
 	bool setup();
@@ -24,14 +24,15 @@ struct Task
 			int x, y, angle;
 		};
 
-		// TIMER
-		unsigned long duration;
-
 		// ACTION
 		struct {
 			int (*_setup)(void*), (*_loop)(void*);
 			void* data;
 		};
+
+		// WAIT_TIRETTE
+		// MATCH_TIMER
+		unsigned long prev;
 	};
 
 	bool waiting;

@@ -5,5 +5,5 @@ class Gyroscope
 	public:
 		bool setup();
 
-		float getAlpha() const;
+		float rot() const;
 };

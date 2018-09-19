@@ -12,21 +12,17 @@ class c_Robot
 		{
 			float P, I, D;
 			
-			uint8_t couleur;
+			uint8_t equipe;
+			uint8_t pinTirette;
 			unsigned long dureeMatch;
 
 			Odometrie::Config odometrie;
 			Moteur::Config moteurs[2];
 			int accel_max;
-			uint8_t pinTirette;
 		};
 
 		void setup(c_Robot::Config config);
-		void loop();
 		void stop();
-
-		void waitTirette();
-		unsigned long getElapsedTime();
 
 		// Deplacement
 		void set_consigne(float _consigne_g, float _consigne_d);
@@ -39,12 +35,12 @@ class c_Robot
 		int setup_goto(int x, int y, int angle);
 		int loop_goto();
 
-		uint8_t couleur;
+		uint8_t equipe;
+		uint8_t pinTirette;
 		unsigned long dureeMatch;
 
 		Odometrie position;
 		Moteur moteurs[2];
-		uint8_t pinTirette;
 
 	private:
 		void asserv();
@@ -53,8 +49,6 @@ class c_Robot
 
 		void sendConsigneMoteurs(int vitesse, float erreur);
 		void consigneMoteurs(int consigne_vitesse1, int consigne_vitesse2);
-
-		unsigned long debutMatch;
 
 		// Deplacement PID
 		float coef_P, coef_I, coef_D;

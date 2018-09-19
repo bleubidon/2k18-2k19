@@ -1,5 +1,6 @@
 #include "Task.h"
 #include "Robot.h"
+#include "helpers.h"
 #include "TaskQueue.h"
 
 void Task::init(int _type, Event *_trigger)
@@ -20,6 +21,15 @@ bool Task::setup()
 	case ACTION:
 		if (_setup)
 			return _setup(data);
+		break;
+
+	case WAIT_TIRETTE:
+		pinMode(Robot.pinTirette, INPUT_PULLUP);
+		prev = millis();
+		break;
+
+	case MATCH_TIMER:
+		prev = millis();
 		break;
 
 	case BARRIER:
@@ -47,6 +57,17 @@ bool Task::loop()
 
 	case ACTION:
 		return _loop(data);
+
+	case WAIT_TIRETTE: {
+		unsigned long now = millis();
+		if (now - prev > 1000)
+			return true;
+		Serial << "En attente de la tirette sur la pin " << Robot.pinTirette << endl;
+		return (digitalRead(Robot.pinTirette) == LOW);
+	}
+
+	case MATCH_TIMER:
+		return (millis() - prev) > Robot.dureeMatch;
 
 	case BARRIER: {
 		TaskQueue *tq = (TaskQueue *)data;

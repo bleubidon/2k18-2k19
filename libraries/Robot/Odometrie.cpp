@@ -26,8 +26,9 @@ void Odometrie::setup(Odometrie::Config config)
 		break;
 	}
 
-	x = y = 0;
-	alpha = 0;
+	position.set(0, 0);
+	direction.set(0, 0);
+	angle = 0;
 	Lprecedent = 0;
 }
 
@@ -49,47 +50,43 @@ void Odometrie::updateDoubleCodeuse()
 {
 	float Lg = codeuses[GAUCHE].getDistance(), Ld = codeuses[DROITE].getDistance();
 
-	alpha = -(Lg + Ld) / ecart_entre_roues;
+	angle = -(Lg + Ld) / ecart_entre_roues;
 
 	float L = (-Lg + Ld) * 0.5f;
-	float deltaL = L - Lprecedent;
+	float dL = L - Lprecedent;
 	Lprecedent = L;
 
-	float rad = radians(alpha);
-	dirX = cos(rad);
-	dirY = sin(rad);
-	x += deltaL * dirX;
-	y += deltaL * dirY;
+	float rad = radians(angle);
+	direction.set( cos(rad), sin(rad) );
+	position += dL * direction;
 }
 
 void Odometrie::updateCodeuseGyroscope()
 {
-	alpha = gyro.getAlpha();
+	angle = gyro.rot();
 
 	float L = codeuse.getDistance();
-	float deltaL = L - Lprecedent;
+	float dL = L - Lprecedent;
 	Lprecedent = L;
 
-	float rad = radians(alpha);
-	dirX = cos(rad);
-	dirY = sin(rad);
-	x += deltaL * dirX;
-	y += deltaL * dirY;
+	float rad = radians(angle);
+	direction.set( cos(rad), sin(rad) );
+	position += dL * direction;
 }
 
-float Odometrie::getX()
+const vec& Odometrie::pos()
 {
-	return x;
+	return position;
 }
 
-float Odometrie::getY()
+const vec& Odometrie::dir()
 {
-	return y;
+	return direction;
 }
 
-float Odometrie::getAlpha()
+const float& Odometrie::rot()
 {
-	return alpha;
+	return angle;
 }
 
 float Odometrie::getPositionCodeuse(int num)
@@ -101,7 +98,7 @@ float Odometrie::getPositionCodeuse(int num)
 	else
 	{
 		float c = codeuse.getDistance();
-		float g = gyro.getAlpha();
+		float g = gyro.rot();
 		float e = 20.0f; // Ecart entre les roues
 
 		if (num == 0)

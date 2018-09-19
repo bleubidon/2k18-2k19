@@ -2,7 +2,7 @@
 
 #include "Task.h"
 
-const uint8_t MAX_QUEUED_TASKS = 64;
+const uint8_t MAX_QUEUED_TASKS = 32;
 const uint8_t MAX_ACTIVE_TASKS = 8;
 
 class TaskQueue
@@ -19,10 +19,13 @@ class TaskQueue
 		bool finished();
 
 		Event *enqueueGoto(int x, int y, int angle, Event *trigger = nullptr);
-		Event *enqueueTimer(int time, Event *trigger = nullptr);
 		Event *enqueueAction(int (*action)(void*), int (*setup)(void*), void *data = nullptr, Event *trigger = nullptr);
 
-		void enqueueBarrier();
+		Event *enqueueWaitTirette(Event *trigger = nullptr);
+		Event *enqueueMatchTimer(Event *trigger = nullptr);
+
+		Event *enqueueBarrier();
+
 		Event *wait_previous();
 
 	private:

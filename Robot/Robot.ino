@@ -33,7 +33,8 @@ void setup()
 		I : 1.0,
 		D : 1.0,
 
-		couleur : GAUCHE,
+		equipe : GAUCHE,
+		pinTirette : 27,
 		dureeMatch : 90000L, // = 90 secondes
 
 		odometrie : {
@@ -50,8 +51,7 @@ void setup()
 			{4, 9, 6, wheel_radius: 3.0f},
 			{7, 8, 5, wheel_radius: 3.0f}
 		},
-		accel_max: 10,
-		pinTirette : 27
+		accel_max: 10
 	});
 
 	Serial << "Setup ecran..." << endl;
@@ -63,7 +63,6 @@ void setup()
 	
 
 	Serial << "Setup done !" << endl;
-	Robot.waitTirette();
 }
 
 void requestColor()
@@ -84,7 +83,6 @@ void requestColor()
 void loop()
 {
 	parser.loop();
-	Robot.loop();
 
 	loop_actions(control);
 
@@ -96,7 +94,7 @@ void loop_ecran()
 	if (timer.on())
 	{
 		static char command[15];
-		sprintf(command, "pos %d %d", (int)Robot.position.getX(), (int)Robot.position.getY());
+		sprintf(command, "pos %d %d", (int)Robot.position.pos().x, (int)Robot.position.pos().y);
 
 		ecran.write(ADRESSE_ECRAN, command);
 	}
