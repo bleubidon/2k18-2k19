@@ -67,7 +67,15 @@ bool Task::loop()
 	}
 
 	case MATCH_TIMER:
-		return (millis() - prev) > Robot.dureeMatch;
+		if (millis() - prev > Robot.dureeMatch)
+		{
+			Serial << "Fin du match" << endl;
+			Robot.stop();
+			Moteur::stop = true;
+			return false;
+		}
+		else
+			return true;
 
 	case BARRIER: {
 		TaskQueue *tq = (TaskQueue *)data;

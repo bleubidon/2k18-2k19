@@ -12,27 +12,19 @@ Parser parser;
 
 Timer timer(500);
 
-int control;
-
 void setup()
 {
-	control = false;
-
 	Serial.begin(9600);
 
 	Serial << "Setup parser..." << endl;
 	parser.add("mv", deplacement);
 	parser.add("stop", deplacement);
-	parser.add("pid", set_pid);
-	parser.add("consigne", set_consigne);
+	//parser.add("pid", set_pid);
+	//parser.add("consigne", set_consigne);
 	//parser.add("ecran", commande_ecran);
 
 	Serial << "Setup Robot..." << endl;
 	Robot.setup({
-		P : 1.0,
-		I : 1.0,
-		D : 1.0,
-
 		equipe : GAUCHE,
 		pinTirette : 27,
 		dureeMatch : 90000L, // = 90 secondes
@@ -84,7 +76,7 @@ void loop()
 {
 	parser.loop();
 
-	loop_actions(control);
+	loop_actions();
 
 	loop_ecran();
 }
@@ -101,26 +93,18 @@ void loop_ecran()
 }
 
 // Commands
+extern Event starter;
+extern TaskQueue test;
+
 void deplacement(int argc, char **argv)
 {
-	control = (strcmp(argv[0], "mv") == 0);
-	Serial << "control to: " << control << endl;
-
-	if (argc != 3)
-		return;
-
-	int val = atoi(argv[2]);
-
-	if (!strcmp(argv[1], "t"))
+	if (strcmp(argv[0], "stop") == 0)
 	{
-		Serial << "avance de " << val << endl;
-		Robot.setup_avancer(val);
+		test.clear();
+		Robot.stop();
 	}
-	else if (!strcmp(argv[1], "r"))
-	{
-		Serial << "rotation de " << val << endl;
-		Robot.setup_tourner(val);
-	}
+	else if (strcmp(argv[0], "mv") == 0)
+		starter.completed = true;
 }
 
 void commande_ecran(int argc, char **argv)
@@ -128,7 +112,7 @@ void commande_ecran(int argc, char **argv)
 	// if (argc == 2)
 	// 	ecran.write(ADRESSE_ECRAN, argv[1]);
 }
-
+/*
 void set_pid(int argc, char **argv)
 {
 	if (argc != 4)
@@ -144,3 +128,4 @@ void set_consigne(int argc, char **argv)
 
 	Robot.set_consigne(atof(argv[1]), atof(argv[2]));
 }
+*/

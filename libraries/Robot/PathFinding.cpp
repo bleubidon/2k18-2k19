@@ -2,13 +2,15 @@
 #include <Arduino.h>
 #include <math.h>
 
+float	tj(vec a, vec b);
+vec	dCatmullRomSpline(vec p[4]);
 
 int Path::find(const vec& start)
 {
 	length = 0;
 	current = 1;
 
-	int figure = 0;
+	int figure = 2;
 	if (figure == 0) {
 		waypoints[length++].set(start.x, start.y);
 		waypoints[length++].set(start.x + 50, start.y);
@@ -24,11 +26,32 @@ int Path::find(const vec& start)
 	}
 	else if (figure == 3) {
 		waypoints[length++].set(start.x, start.y);
-		waypoints[length++].set(start.x + 70, start.y);
-		waypoints[length++].set(start.x + 70, start.y + 70);
+		waypoints[length++].set(start.x + 40, start.y);
+		waypoints[length++].set(start.x + 40, start.y + 20);
 	}
 	return get_distance(start);
 }
+
+int Path::get_distance(const vec& pos)
+{
+	float dist = sqrt( dist2(pos, waypoints[current]) );
+	if (current == length - 1)
+		return dist;
+	if (dist < 2)
+	{
+		current++;
+		dist = sqrt( dist2(pos, waypoints[current]) );
+	}
+	for (int i = current + 1; i < length - 1; i++)
+		dist += sqrt( dist2(waypoints[i], waypoints[i + 1]) );
+	return dist;
+}
+
+vec Path::get_direction(const vec& pos, const vec& dir)
+{
+	return (waypoints[current] - pos).unit();
+}
+
 
 
 float tj(vec a, vec b)
@@ -69,17 +92,4 @@ vec dCatmullRomSpline(vec p[4])
 	float coef1 = (t[2] - s) * coef;
 	float coef2 = (s - t[1]) * coef;
 	return (coef * (B[1] - B[0])) + (coef1 * dB[0]) + (coef2 * dB[1]);
-}
-
-int Path::get_distance(const vec& pos)
-{
-	int dist = sqrt( dist2(pos, waypoints[current]) );
-	for (int i = current + 1; i < length - 1; i++)
-		dist += sqrt( dist2(waypoints[i], waypoints[i + 1]) );
-	return dist;
-}
-
-vec Path::get_direction(const vec& pos, const vec& dir)
-{
-	return (waypoints[current] - pos).unit();
 }

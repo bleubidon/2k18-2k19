@@ -4,12 +4,13 @@
 // TODO: Implement position update in a TaskQueue
 // TODO: Implement sensor management in interrupts
 
+Event starter{false};
 TaskQueue test;
 TaskQueue butiner_abeille;
 
 void setup_actions()
 {
-	test.enqueueWaitTirette();
+	test.enqueueWaitTirette(&starter);
 	test.enqueueBarrier();
 
 	test.enqueueMatchTimer();
@@ -24,10 +25,9 @@ void setup_actions()
 */
 }
 
-void loop_actions(int control)
+void loop_actions()
 {
-	if (control)
-		test.loop();
+	test.loop();
 }
 
 int setup_bras(void *)
