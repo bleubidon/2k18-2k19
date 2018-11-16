@@ -16,7 +16,8 @@ bool Task::setup()
 	switch (type)
 	{
 	case GOTO:
-		return Robot.setup_goto(x, y, angle);
+		return false;
+		//return Robot.setup_goto(x, y, angle);
 
 	case ACTION:
 		if (_setup)
@@ -53,7 +54,8 @@ bool Task::loop()
 	switch (type)
 	{
 	case GOTO:
-		return Robot.loop_goto();
+		return false;
+		//return Robot.loop_goto();
 
 	case ACTION:
 		return _loop(data);
@@ -67,15 +69,7 @@ bool Task::loop()
 	}
 
 	case MATCH_TIMER:
-		if (millis() - prev > Robot.dureeMatch)
-		{
-			Serial << "Fin du match" << endl;
-			Robot.stop();
-			Moteur::stop = true;
-			return false;
-		}
-		else
-			return true;
+		return (millis() - prev < Robot.dureeMatch);
 
 	case BARRIER: {
 		TaskQueue *tq = (TaskQueue *)data;

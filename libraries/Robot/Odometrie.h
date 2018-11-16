@@ -19,7 +19,7 @@ class Odometrie
 				// DOUBLE_CODEUSE
 				struct {
 					Codeuse::Config gauche, droite;
-					float ecart_entre_roues;
+					float ecart_entre_roues; // centimetres
 				};
 
 				// CODEUSE_GYROSCOPE
@@ -32,9 +32,9 @@ class Odometrie
 
 		void update();
 		
-		const vec& pos();
+		const vec& pos(); // centimetres
 		const vec& dir();
-		const float& rot();
+		const float& rot(); // degrés
 
 		float getPositionCodeuse(int num);
 
@@ -45,7 +45,7 @@ class Odometrie
 			// DOUBLE_CODEUSE
 			struct {
 				Codeuse codeuses[2];
-				float ecart_entre_roues;
+				float ecart_entre_roues; // centimetres
 			};
 
 			// CODEUSE_GYROSCOPE

@@ -3,11 +3,8 @@
 
 #include "Actions.h"
 
-#define ADRESSE_ECRAN 42
-
 // NOTE Parser: mettre l'option fin de ligne dans la console Arduino pour pouvoir envoyer des commandes
 
-I2CParser ecran;
 Parser parser;
 
 Timer timer(500);
@@ -19,9 +16,6 @@ void setup()
 	Serial << "Setup parser..." << endl;
 	parser.add("mv", deplacement);
 	parser.add("stop", deplacement);
-	//parser.add("pid", set_pid);
-	//parser.add("consigne", set_consigne);
-	//parser.add("ecran", commande_ecran);
 
 	Serial << "Setup Robot..." << endl;
 	Robot.setup({
@@ -46,10 +40,6 @@ void setup()
 		accel_max: 10
 	});
 
-	Serial << "Setup ecran..." << endl;
-	ecran.setup();
-	//requestColor();
-
 	Serial << "Setup task queues..." << endl;
 	setup_actions();
 	
@@ -57,39 +47,11 @@ void setup()
 	Serial << "Setup done !" << endl;
 }
 
-void requestColor()
-{
-	ecran.write(ADRESSE_ECRAN, "couleur 63488 1806"); // Commande de choix de couleur
-	Serial << "Enter a color" << endl;
-
-	char *answer;
-	do {
-		delay(1000);
-		answer = ecran.read(ADRESSE_ECRAN, 1);
-	}
-	while (*answer == '\0');
-
-	Serial << "Color is " << answer << endl;
-}
-
 void loop()
 {
 	parser.loop();
 
 	loop_actions();
-
-	loop_ecran();
-}
-
-void loop_ecran()
-{
-	if (timer.on())
-	{
-		static char command[15];
-		sprintf(command, "pos %d %d", (int)Robot.position.pos().x, (int)Robot.position.pos().y);
-
-		ecran.write(ADRESSE_ECRAN, command);
-	}
 }
 
 // Commands
@@ -107,11 +69,6 @@ void deplacement(int argc, char **argv)
 		starter.completed = true;
 }
 
-void commande_ecran(int argc, char **argv)
-{
-	// if (argc == 2)
-	// 	ecran.write(ADRESSE_ECRAN, argv[1]);
-}
 /*
 void set_pid(int argc, char **argv)
 {

@@ -11,6 +11,10 @@ inline static float sq(float x)
 vec::vec()
 {}
 
+vec::vec(float radians):
+	x(cos(radians)), y(sin(radians))
+{}
+
 vec::vec(vec_type _x, vec_type _y):
 	x(_x), y(_y)
 {}
@@ -32,6 +36,11 @@ vec& vec::operator+=(const vec& v)
 	x += v.x;
 	y += v.y;
 	return *this;
+}
+
+vec_type dist(const vec& a, const vec& b)
+{
+	return sqrt(dist2(a, b));
 }
 
 vec_type dist2(const vec& a, const vec& b)

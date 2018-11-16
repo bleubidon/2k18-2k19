@@ -5,6 +5,7 @@ typedef float vec_type;
 struct vec
 {
 	vec();
+	vec(float radians);
 	vec(vec_type _x, vec_type _y);
 
 	void set(vec_type _x, vec_type _y);
@@ -15,8 +16,10 @@ struct vec
 	vec_type x, y;
 };
 
+vec_type dist(const vec& a, const vec& b);
 vec_type dist2(const vec& a, const vec& b);
 vec_type dot(const vec& a, const vec& b);
+
 vec operator+(const vec& a, const vec& b);
 vec operator-(const vec& a, const vec& b);
 bool operator==(const vec &a, const vec &b);

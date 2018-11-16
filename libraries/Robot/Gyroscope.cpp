@@ -5,7 +5,6 @@
 
 Adafruit_BNO055 bno(55);
 
-
 bool Gyroscope::setup()
 {
 	if (!bno.begin())

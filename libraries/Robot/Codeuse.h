@@ -8,13 +8,13 @@ class Codeuse
 		struct Config
 		{
 			uint8_t pin;
-			float radius; //centimetres
+			float radius; // centimetres
 			int step_per_round;
 		};
 
 		void setup(Codeuse::Config config);
 
-		float getDistance() const;
+		float getDistance() const; // centimetres
 		long getCounter() const;
 		
 		void clearCounter();
