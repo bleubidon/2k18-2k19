@@ -32,7 +32,7 @@ class c_Robot
 		Odometrie position;
 		Moteur moteurs[2];
 
-	private:
+	//private:
 		// Deplacement
 		// TODO: Implementer un vrai asservissement
 		void loop_avancer();
