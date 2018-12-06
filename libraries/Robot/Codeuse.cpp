@@ -28,7 +28,7 @@ void Codeuse::setup(Codeuse::Config config)
 	pin = config.pin;
 	pinMode(pin, OUTPUT);
 
-	ratio = TWO_PI * config.radius / config.step_per_round;
+	ratio = (TWO_PI * config.radius) / (float)config.step_per_round;
 
 	initCounter();
 	delay(500);

@@ -48,15 +48,15 @@ void Odometrie::update()
 
 void Odometrie::updateDoubleCodeuse()
 {
-	float Lg = codeuses[GAUCHE].getDistance(), Ld = codeuses[DROITE].getDistance();
+	float Lg = -codeuses[GAUCHE].getDistance(), Ld = codeuses[DROITE].getDistance();
 
-	angle = -(Lg + Ld) / ecart_entre_roues;
+	float rad = (Lg - Ld) / ecart_entre_roues;
+	angle = rad * (360 / TWO_PI);
 
-	float L = (-Lg + Ld) * 0.5f;
+	float L = (Lg + Ld) * 0.5f;
 	float dL = L - Lprecedent;
 	Lprecedent = L;
 
-	float rad = radians(angle);
 	direction.set( cos(rad), sin(rad) );
 	position += dL * direction;
 }

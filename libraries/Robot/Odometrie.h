@@ -38,7 +38,7 @@ class Odometrie
 
 		float getPositionCodeuse(int num);
 
-	private:
+	//private:
 		uint8_t mode;
 		union
 		{

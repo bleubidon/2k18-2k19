@@ -2,6 +2,7 @@
 #include <I2CParser.h>
 
 #include "Actions.h"
+#include "helpers.h"
 
 // NOTE Parser: mettre l'option fin de ligne dans la console Arduino pour pouvoir envoyer des commandes
 
@@ -15,7 +16,6 @@ void setup()
 
 	Serial << "Setup parser..." << endl;
 	parser.add("mv", deplacement);
-	parser.add("stop", deplacement);
 
 	Serial << "Setup Robot..." << endl;
 	Robot.setup({
@@ -28,20 +28,20 @@ void setup()
 			{{
 				gauche : {
 					pin : 10,
-					radius : 7.0f,
-					step_per_round : 10000
+					radius : 3.5f,
+					step_per_round : 20000
 				},
 				droite : {
 					pin : 11,
-					radius : 7.0f,
-					step_per_round : 10000
+					radius : 3.5f,
+					step_per_round : 20000
 				},
-				ecart_entre_roues : 23.0f
+				ecart_entre_roues : 28.0f
 			}}
 		},
 		moteurs : {
-			{4, 9, 6, wheel_radius: 6.5f},
-			{7, 8, 5, wheel_radius: 6.5f}
+			{4, 9, 6, wheel_radius: 3.25f, GAUCHE},
+			{7, 8, 5, wheel_radius: 3.25f, DROITE}
 		},
 		accel_max: 10
 	});
@@ -52,17 +52,19 @@ void setup()
 
 	Serial << "Setup done !" << endl;
 	
-	Robot.setup_avancer(20);
+	//Robot.setup_avancer(20);
 	
 }
+
+int puiss = 0;
 
 void loop()
 {
 	parser.loop();
 
 	//loop_actions();
-	
-	Robot.loop_avancer();
+
+	Robot.loop_pid();
 }
 
 // Commands
@@ -71,13 +73,7 @@ extern TaskQueue test;
 
 void deplacement(int argc, char **argv)
 {
-	if (strcmp(argv[0], "stop") == 0)
-	{
-		test.clear();
-		Robot.stop();
-	}
-	else if (strcmp(argv[0], "mv") == 0)
-		starter.completed = true;
+		puiss = atoi(argv[1]);
 }
 
 /*

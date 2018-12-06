@@ -13,6 +13,7 @@ class Moteur
 			uint8_t pinA, pinB;
 			uint8_t pinPWM;
 			float wheel_radius; //centimetres
+			int side;
 		};
 
 		void setup(Moteur::Config config);
@@ -25,4 +26,5 @@ class Moteur
 	 private:
 		uint8_t pinA, pinB, pinPWM;
 		float wheel_radius;
+		int side;
 };

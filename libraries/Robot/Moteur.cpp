@@ -12,6 +12,7 @@ void Moteur::setup(Moteur::Config config)
 	pinA = config.pinA;
 	pinB = config.pinB;
 	pinPWM = config.pinPWM;
+	side = config.side;
 
 	wheel_radius = config.wheel_radius;
 
@@ -30,6 +31,8 @@ void Moteur::consigne(uint8_t sens, uint8_t val)
 	if (stop)
 		return;
 
+	if (side)
+		sens = !sens;
 	digitalWrite(pinA, sens == CW);
 	digitalWrite(pinB, sens == CCW);
 

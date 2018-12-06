@@ -23,6 +23,10 @@ void c_Robot::setup(c_Robot::Config config)
 	moteurs[DROITE].setup(config.moteurs[DROITE]);
 
 	accel_max = config.accel_max;
+
+	erreur_position = integrale = 0.0f;
+	positions[0] = positions[1] = 0.0f;
+	vitesses[0] = vitesses[1] = 0.0f;
 }
 
 void c_Robot::stop()
@@ -68,6 +72,37 @@ void c_Robot::setup_tourner(int angle)
 		a -= 360.0f;
 
 	consigne_tourner = true;
+}
+
+void c_Robot::loop_pid()
+{
+	position.update();
+
+	float coef_P = 1.0f, coef_I = 0.0f, coef_D = 0.0f;
+
+	float consignes[2] = {-20.0f, 20.0f};
+
+
+	for (int i = 0; i < 2; i++)
+	{
+		// filtre PID
+		float vitesse_old = vitesses[i];
+		float erreur_position_old = erreur_position;
+
+		erreur_position = consignes[i] - position.getPositionCodeuse(i);
+		integrale += erreur_position;
+		float derivee = erreur_position - erreur_position_old;
+
+		vitesses[i] = coef_P * erreur_position +
+					  coef_I * integrale +
+					  coef_D * derivee;
+
+		// Écrêtages
+		//vitesses[i] = clamp(-vMax, vitesses[i], vMax);
+		//vitesses[i] = clamp(-aMax, vitesses[i] - vitesse_old, aMax)  + vitesse_old;
+
+		moteurs[i].consigne(vitesses[i]);
+	}
 }
 
 void c_Robot::loop_avancer()

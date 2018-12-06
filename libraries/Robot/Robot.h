@@ -37,6 +37,7 @@ class c_Robot
 		// TODO: Implementer un vrai asservissement
 		void loop_avancer();
 		void loop_tourner();
+		void loop_pid();
 
 		void sendConsigneMoteurs(int vitesse, float erreur);
 		void consigneMoteurs(int consigne_vitesse1, int consigne_vitesse2);
@@ -46,7 +47,7 @@ class c_Robot
 		bool consigne_tourner = false;
 
 		static const int numV = 4;
-		int v_steps[numV] = {190, 150, 100, 70};
+		int v_steps[numV] = {130, 110, 90, 30};
 		int d_steps[numV] = {250, 150, 15, 2};
 
 		int accel_max;
@@ -54,6 +55,10 @@ class c_Robot
 		float startAngle;
 		int sens, d;
 		int a;
+
+		// PID
+		float erreur_position, integrale;
+		float positions[2], vitesses[2];
 };
 
 extern c_Robot Robot;
