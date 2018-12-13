@@ -93,7 +93,10 @@ float Odometrie::getPositionCodeuse(int num)
 {
 	if (mode == DOUBLE_CODEUSE)
 	{
-		return codeuses[num].getDistance();
+		if (num == GAUCHE)
+			return -codeuses[GAUCHE].getDistance();
+		else
+			return codeuses[DROITE].getDistance();
 	}
 	else
 	{

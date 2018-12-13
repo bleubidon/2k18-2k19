@@ -24,6 +24,7 @@ class c_Robot
 		// Deplacement
 		void setup_avancer(int distance);
 		void setup_tourner(int angle);
+		void setup_pid();
 
 		uint8_t equipe;
 		uint8_t pinTirette;
@@ -45,6 +46,7 @@ class c_Robot
 
 		bool consigne_avancer = false;
 		bool consigne_tourner = false;
+		bool consigne_pid = false;
 
 		static const int numV = 4;
 		int v_steps[numV] = {130, 110, 90, 30};
@@ -57,7 +59,10 @@ class c_Robot
 		int a;
 
 		// PID
-		float erreur_position, integrale;
+		float coef_P = 1.0f, coef_I = 0.0f, coef_D = 0.0f;
+
+		unsigned long prev_time;
+		float erreur_position[2], integrale[2];
 		float positions[2], vitesses[2];
 };
 

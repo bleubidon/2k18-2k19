@@ -36,7 +36,7 @@ class Odometrie
 		const vec& dir();
 		const float& rot(); // degrés
 
-		float getPositionCodeuse(int num);
+		float getPositionCodeuse(int num);  // centimetre
 
 	//private:
 		uint8_t mode;
