@@ -21,14 +21,14 @@ void c_Robot::setup(c_Robot::Config config)
 	InitTimersSafe();
 	moteurs[GAUCHE].setup(config.moteurs[GAUCHE]);
 	moteurs[DROITE].setup(config.moteurs[DROITE]);
-
-	accel_max = config.accel_max;
 }
 
 void c_Robot::stop()
 {
 	moteurs[GAUCHE].consigne(0);
 	moteurs[DROITE].consigne(0);
+
+	consigne_avancer = consigne_tourner = consigne_pid = false;
 }
 
 Print &operator<<(Print &obj, vec p)
@@ -70,11 +70,12 @@ void c_Robot::setup_tourner(int angle)
 	consigne_tourner = true;
 }
 
-void c_Robot::setup_pid()
+void c_Robot::setup_pid(float consigne_gauche, float consigne_droite)
 {
-	erreur_position[0] = erreur_position[1] = 0.0f;
-	integrale[0] = integrale[1] = 0.0f;
-	positions[0] = positions[1] = 0.0f;
+	consignes[0] = consignes[1] = 0.0f;
+
+	erreurs[0] = erreurs[1] = 0.0f;
+	integrales[0] = integrales[1] = 0.0f;
 	vitesses[0] = vitesses[1] = 0.0f;
 
 	prev_time = millis();
@@ -83,52 +84,55 @@ void c_Robot::setup_pid()
 
 void c_Robot::loop_pid()
 {
+	if (!consigne_pid)
+		return;
 	position.update();
 
 	const unsigned long min_delay = 10;
 	const float precision_seuil = 1;
 	const float vMax = 30;
-	const float aMax = 80;
-
-	float consignes[2] = {60.0f, 60.0f};
+	const float dvMax = 20;
+	const bool to_csv = true;
 
 	unsigned long current_time = millis();
 	unsigned long dt = current_time - prev_time;
-	if (dt < min_delay || !consigne_pid)
+	if (dt < min_delay)
 		return;
+	prev_time = current_time;
+
+	if (to_csv)
+		Serial << current_time;
 	
-	float derivee[2];
 	for (int i = 0; i < 2; i++)
 	{
 		// filtre PID
 		float vitesse_old = vitesses[i];
-		float erreur_position_old = erreur_position[i];
+		float erreur_old = erreurs[i];
 
-		erreur_position[i] = consignes[i] - position.getPositionCodeuse(i);
-		integrale[i] += erreur_position[i] * dt / 1000;
-		derivee[i] = (erreur_position[i] - erreur_position_old) * 1000 / dt;
+		erreurs[i] = consignes[i] - position.getPositionCodeuse(i);
+		integrales[i] += erreurs[i] * dt / 1000;
+		float derivee = (erreurs[i] - erreur_old) * 1000 / dt;
 
-		vitesses[i] =	coef_P * erreur_position[i] +
-				coef_I * integrale[i] +
-				coef_D * derivee[i];
+		vitesses[i] =	coef_P * erreurs[i] +
+				coef_I * integrales[i] +
+				coef_D * derivee;
 
 		// Écrêtages
 		vitesses[i] = clamp(-vMax, vitesses[i], vMax);
-		//vitesses[i] = clamp(-aMax, (vitesses[i] - vitesse_old) / dt, aMax)  + vitesse_old;
-//DEBUG(Serial << "vitesse[" << i << "] = " << vitesses[i] << endl;);
+		vitesses[i] = clamp(-dvMax, (vitesses[i] - vitesse_old), dvMax)  + vitesse_old;
 
 		moteurs[i].consigne(vitesses[i]);
-	}
-DEBUG(Serial << current_time << "," << vitesses[0] << "," << vitesses[1]  << "," << erreur_position[0] << "," << erreur_position[1] << "," << integrale[0] << "," << integrale[1] << "," << derivee[0] << "," << derivee[1] << "\n" ;);
-	
-	if (abs(erreur_position[0]) < precision_seuil && abs(erreur_position[1]) < precision_seuil)
-	{
-		stop();
-		consigne_pid = false;
-DEBUG(Serial << "Destination reached" << endl;);
+
+		// Output CSV
+		if (to_csv)
+			Serial << "," << vitesses[i] << "," << erreurs[i] << "," << integrales[i] << "," << derivee;
 	}
 
-	prev_time = current_time;
+	if (to_csv)
+		Serial << endl;
+	
+	if (abs(erreurs[0]) < precision_seuil && abs(erreurs[1]) < precision_seuil)
+		stop();
 }
 
 void c_Robot::loop_avancer()

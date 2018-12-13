@@ -15,7 +15,6 @@ class c_Robot
 
 			Odometrie::Config odometrie;
 			Moteur::Config moteurs[2];
-			int accel_max;
 		};
 
 		void setup(c_Robot::Config config);
@@ -24,7 +23,7 @@ class c_Robot
 		// Deplacement
 		void setup_avancer(int distance);
 		void setup_tourner(int angle);
-		void setup_pid();
+		void setup_pid(float consigne_gauche, float consigne_droite);
 
 		uint8_t equipe;
 		uint8_t pinTirette;
@@ -52,7 +51,6 @@ class c_Robot
 		int v_steps[numV] = {130, 110, 90, 30};
 		int d_steps[numV] = {250, 150, 15, 2};
 
-		int accel_max;
 		vec startPos;
 		float startAngle;
 		int sens, d;
@@ -60,10 +58,10 @@ class c_Robot
 
 		// PID
 		float coef_P = 1.0f, coef_I = 0.0f, coef_D = 0.0f;
+		float consignes[2];
 
 		unsigned long prev_time;
-		float erreur_position[2], integrale[2];
-		float positions[2], vitesses[2];
+		float erreurs[2], integrales[2], vitesses[2];
 };
 
 extern c_Robot Robot;
