@@ -13,12 +13,12 @@ struct vec
 
 	vec& operator+=(const vec& v);
 
+	static vec_type dist(const vec& a, const vec& b);
+	static vec_type dist2(const vec& a, const vec& b);
+	static vec_type dot(const vec& a, const vec& b);
+
 	vec_type x, y;
 };
-
-vec_type dist(const vec& a, const vec& b);
-vec_type dist2(const vec& a, const vec& b);
-vec_type dot(const vec& a, const vec& b);
 
 vec operator+(const vec& a, const vec& b);
 vec operator-(const vec& a, const vec& b);

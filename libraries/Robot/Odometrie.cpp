@@ -11,7 +11,6 @@ void Odometrie::setup(Odometrie::Config config)
 	switch (mode)
 	{
 	case DOUBLE_CODEUSE:
-		Serial << "Setup codeuses..." << endl;
 		codeuses[GAUCHE].setup(config.gauche);
 		codeuses[DROITE].setup(config.droite);
 
@@ -19,17 +18,15 @@ void Odometrie::setup(Odometrie::Config config)
 		break;
 	
 	case CODEUSE_GYROSCOPE:
-		Serial << "Setup codeuse..." << endl;
 		codeuse.setup(config.codeuse);
-		Serial << "Setup gyro..." << endl;
 		gyro.setup();
 		break;
 	}
 
 	position.set(0, 0);
 	direction.set(0, 0);
-	angle = 0;
-	Lprecedent = 0;
+	distance = angle = 0;
+	dist_prev = 0;
 }
 
 void Odometrie::update()
@@ -53,9 +50,9 @@ void Odometrie::updateDoubleCodeuse()
 	float rad = (Lg - Ld) / ecart_entre_roues;
 	angle = rad * (360 / TWO_PI);
 
-	float L = (Lg + Ld) * 0.5f;
-	float dL = L - Lprecedent;
-	Lprecedent = L;
+	distance = (Lg + Ld) * 0.5f;
+	float dL = distance - dist_prev;
+	dist_prev = distance;
 
 	direction.set( cos(rad), sin(rad) );
 	position += dL * direction;
@@ -65,9 +62,9 @@ void Odometrie::updateCodeuseGyroscope()
 {
 	angle = gyro.rot();
 
-	float L = codeuse.getDistance();
-	float dL = L - Lprecedent;
-	Lprecedent = L;
+	distance = codeuse.getDistance();
+	float dL = distance - dist_prev;
+	dist_prev = distance;
 
 	float rad = radians(angle);
 	direction.set( cos(rad), sin(rad) );
@@ -82,6 +79,11 @@ const vec& Odometrie::pos()
 const vec& Odometrie::dir()
 {
 	return direction;
+}
+
+const float& Odometrie::dist()
+{
+	return distance;
 }
 
 const float& Odometrie::rot()

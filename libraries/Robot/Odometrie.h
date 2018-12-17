@@ -33,12 +33,13 @@ class Odometrie
 		void update();
 		
 		const vec& pos(); // centimetres
-		const vec& dir();
+		const vec& dir(); // norme 1
+		const float& dist(); // centimetres
 		const float& rot(); // degrés
 
 		float getPositionCodeuse(int num);  // centimetre
 
-	//private:
+	private:
 		uint8_t mode;
 		union
 		{
@@ -56,9 +57,8 @@ class Odometrie
 		};
 
 		vec position, direction;
-		float angle;
-
-		float Lprecedent;
+		float distance, angle;
+		float dist_prev;
 
 		void updateDoubleCodeuse();
 		void updateCodeuseGyroscope();

@@ -14,11 +14,10 @@ void setup()
 {
 	Serial.begin(9600);
 
-	Serial << "Setup parser..." << endl;
-	parser.add("mv", deplacement);
+	parser.add("mv", rot);
 	parser.add("pid", set_pid);
+	parser.add("stop", stop);
 
-	Serial << "Setup Robot..." << endl;
 	Robot.setup({
 		equipe : GAUCHE,
 		pinTirette : 27,
@@ -43,18 +42,13 @@ void setup()
 		moteurs : {
 		    {4, 9, 6, wheel_radius : 3.25f, GAUCHE},
 		    {7, 8, 5, wheel_radius : 3.25f, DROITE}
-		}
+		},
+		dist: PID(1.f, 0.0f, 0.0f),
+		rot: PID(1.f, 0.0f, 0.0f)
 	});
 
-	Serial << "Setup task queues..." << endl;
 	setup_actions();
-
-	Serial << "Setup done !" << endl;
-
-	//Robot.setup_avancer(20);
 }
-
-int puiss = 0;
 
 void loop()
 {
@@ -62,44 +56,32 @@ void loop()
 
 	//loop_actions();
 
-	//Robot.loop_avancer();
 	Robot.loop_pid();
-}
-
-// Commands
-extern Event starter;
-extern TaskQueue test;
-
-void deplacement(int argc, char **argv)
-{
-	puiss = atoi(argv[1]);
 }
 
 void set_pid(int argc, char **argv)
 {
-	Serial << "i,v1,e1,i1,d1,v2,e2,i2,d2" << endl;
-
 	if (argc != 4)
-	{
-		Robot.coef_P = 0;
-		Robot.coef_I = 0;
-		Robot.coef_D = 0;
-		Robot.setup_pid(60, 60);
-		return;
-	}
-
-	Robot.coef_P = atof(argv[1]);
-	Robot.coef_I = atof(argv[2]);
-	Robot.coef_D = atof(argv[3]);
-	Robot.setup_pid(60, 60);
+		Robot.rot.set_coefs(0, 0, 0);
+	else
+		Robot.rot.set_coefs(atof(argv[0]), atof(argv[1]), atof(argv[2]));
 }
 
-/*
-void set_consigne(int argc, char **argv)
+void rot(int argc, char **argv)
 {
-	if (argc != 4)
-		return;
-
-	Robot.set_consigne(atof(argv[1]), atof(argv[2]));
+	if (argc == 2)
+		Robot.consigne(0, atof(argv[1]));
 }
-*/
+
+void dist(int argc, char **argv)
+{
+	if (argc == 2)
+		Robot.consigne(atof(argv[1]), 0);
+	if (argc == 3)
+		Robot.consigne(atof(argv[1]), atof(argv[2]));
+}
+
+void stop(int argc, char **argv)
+{
+	Robot.stop();
+}

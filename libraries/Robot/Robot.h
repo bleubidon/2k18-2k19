@@ -1,5 +1,6 @@
 #pragma once
 
+#include "PID.h"
 #include "Moteur.h"
 #include "Odometrie.h"
 #include "TaskQueue.h"
@@ -15,16 +16,24 @@ class c_Robot
 
 			Odometrie::Config odometrie;
 			Moteur::Config moteurs[2];
+
+			PID dist;
+			PID rot;
 		};
 
 		void setup(c_Robot::Config config);
-		void stop();
+		void set_pid(float _Kp, float _Ki, float _Kd);
 
-		// Deplacement
+		void stop();
+		void consigne(float _dist, float _rot);
+
+
+		/// USELESS
+		// Deplacement hugues
 		void setup_avancer(int distance);
 		void setup_tourner(int angle);
-		void setup_pid(float consigne_gauche, float consigne_droite);
 
+	//private:
 		uint8_t equipe;
 		uint8_t pinTirette;
 		unsigned long dureeMatch;
@@ -32,9 +41,14 @@ class c_Robot
 		Odometrie position;
 		Moteur moteurs[2];
 
-	//private:
-		// Deplacement
-		// TODO: Implementer un vrai asservissement
+		// PID
+		PID dist, rot;
+		bool consigne_pid;
+		unsigned long prev_time;
+
+
+		/// USELESS
+		// Deplacement hugues
 		void loop_avancer();
 		void loop_tourner();
 		void loop_pid();
@@ -45,7 +59,6 @@ class c_Robot
 
 		bool consigne_avancer = false;
 		bool consigne_tourner = false;
-		bool consigne_pid = false;
 
 		static const int numV = 4;
 		int v_steps[numV] = {130, 110, 90, 30};
@@ -55,13 +68,6 @@ class c_Robot
 		float startAngle;
 		int sens, d;
 		int a;
-
-		// PID
-		float coef_P = 1.0f, coef_I = 0.0f, coef_D = 0.0f;
-		float consignes[2];
-
-		unsigned long prev_time;
-		float erreurs[2], integrales[2], vitesses[2];
 };
 
 extern c_Robot Robot;

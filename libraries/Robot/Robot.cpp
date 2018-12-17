@@ -14,13 +14,15 @@ void c_Robot::setup(c_Robot::Config config)
 	pinTirette = config.pinTirette;
 	dureeMatch = config.dureeMatch;
 
-	Serial << "Setup position..." << endl;
 	position.setup(config.odometrie);
 
-	Serial << "Setup moteurs..." << endl;
 	InitTimersSafe();
 	moteurs[GAUCHE].setup(config.moteurs[GAUCHE]);
 	moteurs[DROITE].setup(config.moteurs[DROITE]);
+
+	dist = config.dist;
+	rot = config.rot;
+	consigne_pid = false;
 }
 
 void c_Robot::stop()
@@ -31,6 +33,73 @@ void c_Robot::stop()
 	consigne_avancer = consigne_tourner = consigne_pid = false;
 }
 
+void c_Robot::consigne(float _dist, float _rot)
+{
+	dist.set_consigne(_dist);
+	rot.set_consigne(_rot);
+
+	prev_time = millis();
+	consigne_pid = true;
+}
+
+/* TODO:
+** scale down both speeds instead of clamping
+*/
+void c_Robot::loop_pid()
+{
+	if (!consigne_pid)
+		return;
+
+	const unsigned long min_delay = 10;
+	unsigned long current_time = millis();
+	unsigned long dt = current_time - prev_time;
+	if (dt < min_delay)
+		return;
+	prev_time = current_time;
+
+	const float vMax = 30;
+	const float dvMax = 20;
+
+	position.update();
+	float vitesse_dist = dist.compute(position.dist(), dt);
+	float vitesse_rot = rot.compute(position.rot(), dt);
+
+	const float precision_dist = 1;
+	const float precision_rot = 1;
+	if (abs(dist.erreur) < precision_dist && abs(rot.erreur) < precision_rot)
+		stop();
+	else
+	{
+		vitesse_dist = clamp(-vMax, vitesse_dist, vMax);
+		//vitesse_dist = clamp(-dvMax, (vitesse_dist - vitesse_dist_old), dvMax)  + vitesse_dist_old;
+
+		vitesse_rot = clamp(-vMax, vitesse_rot, vMax);
+		//vitesse_rot = clamp(-dvMax, (vitesse_rot - vitesse_rot_old), dvMax)  + vitesse_rot_old;
+
+		moteurs[0].consigne(vitesse_rot);
+		moteurs[1].consigne(-vitesse_rot);
+	}
+
+
+	// Output CSV
+	if (0)
+		Serial << current_time << "," << dist.consigne << "," << dist.erreur << "," << rot.consigne << "," << rot.erreur << endl;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Print &operator<<(Print &obj, vec p)
 {
 	obj.print('[');
@@ -40,7 +109,6 @@ Print &operator<<(Print &obj, vec p)
 	obj.print(']');
 	return obj;
 }
-
 
 // Deplacement
 void c_Robot::setup_avancer(int distance)
@@ -70,71 +138,6 @@ void c_Robot::setup_tourner(int angle)
 	consigne_tourner = true;
 }
 
-void c_Robot::setup_pid(float consigne_gauche, float consigne_droite)
-{
-	consignes[0] = consignes[1] = 0.0f;
-
-	erreurs[0] = erreurs[1] = 0.0f;
-	integrales[0] = integrales[1] = 0.0f;
-	vitesses[0] = vitesses[1] = 0.0f;
-
-	prev_time = millis();
-	consigne_pid = true;
-}
-
-void c_Robot::loop_pid()
-{
-	if (!consigne_pid)
-		return;
-	position.update();
-
-	const unsigned long min_delay = 10;
-	const float precision_seuil = 1;
-	const float vMax = 30;
-	const float dvMax = 20;
-	const bool to_csv = true;
-
-	unsigned long current_time = millis();
-	unsigned long dt = current_time - prev_time;
-	if (dt < min_delay)
-		return;
-	prev_time = current_time;
-
-	if (to_csv)
-		Serial << current_time;
-	
-	for (int i = 0; i < 2; i++)
-	{
-		// filtre PID
-		float vitesse_old = vitesses[i];
-		float erreur_old = erreurs[i];
-
-		erreurs[i] = consignes[i] - position.getPositionCodeuse(i);
-		integrales[i] += erreurs[i] * dt / 1000;
-		float derivee = (erreurs[i] - erreur_old) * 1000 / dt;
-
-		vitesses[i] =	coef_P * erreurs[i] +
-				coef_I * integrales[i] +
-				coef_D * derivee;
-
-		// Écrêtages
-		vitesses[i] = clamp(-vMax, vitesses[i], vMax);
-		vitesses[i] = clamp(-dvMax, (vitesses[i] - vitesse_old), dvMax)  + vitesse_old;
-
-		moteurs[i].consigne(vitesses[i]);
-
-		// Output CSV
-		if (to_csv)
-			Serial << "," << vitesses[i] << "," << erreurs[i] << "," << integrales[i] << "," << derivee;
-	}
-
-	if (to_csv)
-		Serial << endl;
-	
-	if (abs(erreurs[0]) < precision_seuil && abs(erreurs[1]) < precision_seuil)
-		stop();
-}
-
 void c_Robot::loop_avancer()
 {
 	if (!consigne_avancer)
@@ -145,7 +148,7 @@ void c_Robot::loop_avancer()
 	if (position.rot() > 180.0f)
 		erreurAngle -= 360.0f;
 
-	int covered = dist(position.pos(), startPos);
+	int covered = vec::dist(position.pos(), startPos);
 	int remaining = d - covered;
 
 	int i;

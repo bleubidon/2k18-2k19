@@ -38,17 +38,17 @@ vec& vec::operator+=(const vec& v)
 	return *this;
 }
 
-vec_type dist(const vec& a, const vec& b)
+vec_type vec::dist(const vec& a, const vec& b)
 {
 	return sqrt(dist2(a, b));
 }
 
-vec_type dist2(const vec& a, const vec& b)
+vec_type vec::dist2(const vec& a, const vec& b)
 {
 	return sq(a.x - b.x) + sq(a.y - b.y);
 }
 
-vec_type dot(const vec& a, const vec& b)
+vec_type vec::dot(const vec& a, const vec& b)
 {
 	return (a.x * b.x) + (a.y * b.y);
 }
