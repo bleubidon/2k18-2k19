@@ -40,6 +40,8 @@ void c_Robot::consigne(float _dist, float _rot)
 
 	prev_time = millis();
 	consigne_pid = true;
+
+DEBUG(Serial << "consigne: " << _dist << " " << _rot << endl;)
 }
 
 /* TODO:
@@ -57,16 +59,22 @@ void c_Robot::loop_pid()
 		return;
 	prev_time = current_time;
 
-	const float vMax = 30;
+	const float vMax = 20;
 	const float dvMax = 20;
 
 	position.update();
+	float erreur_rot = rot.consigne - position.rot();
+	if (erreur_rot > 180)
+		erreur_rot = -180 + (int)erreur_rot % 180;
+	else if (erreur_rot <= -180)
+		erreur_rot = 180 + (int)erreur_rot % 180;
+
 	float vitesse_dist = dist.compute(position.dist(), dt);
-	float vitesse_rot = rot.compute(position.rot(), dt);
+	float vitesse_rot = rot.compute(erreur_rot, dt);
 
 	const float precision_dist = 1;
 	const float precision_rot = 1;
-	if (abs(dist.erreur) < precision_dist && abs(rot.erreur) < precision_rot)
+	if (/*abs(dist.erreur) < precision_dist &&*/ abs(rot.erreur) < precision_rot)
 		stop();
 	else
 	{
@@ -80,25 +88,12 @@ void c_Robot::loop_pid()
 		moteurs[1].consigne(-vitesse_rot);
 	}
 
-
 	// Output CSV
 	if (0)
-		Serial << current_time << "," << dist.consigne << "," << dist.erreur << "," << rot.consigne << "," << rot.erreur << endl;
+		Serial << current_time << "\t" << position.rot() << "\t" << erreur_rot << "\t" << vitesse_rot << endl;
+	else
+		Serial << current_time << "," << dist.consigne << "," << position.dist() << "," << rot.consigne << "," << position.rot() << endl;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 Print &operator<<(Print &obj, vec p)
 {

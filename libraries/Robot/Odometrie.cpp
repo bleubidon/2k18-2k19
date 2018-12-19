@@ -47,7 +47,7 @@ void Odometrie::updateDoubleCodeuse()
 {
 	float Lg = -codeuses[GAUCHE].getDistance(), Ld = codeuses[DROITE].getDistance();
 
-	float rad = (Lg - Ld) / ecart_entre_roues;
+	float rad = (Ld - Lg) / ecart_entre_roues;
 	angle = rad * (360 / TWO_PI);
 
 	distance = (Lg + Ld) * 0.5f;

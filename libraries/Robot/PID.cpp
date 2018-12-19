@@ -27,7 +27,7 @@ float PID::compute(float mesure, float dt)
 	float vitesse_old = vitesse;
 	float erreur_old = erreur;
 
-	erreur = consigne - mesure;
+	erreur = mesure;
 	integrale += erreur * dt / 1000;
 	float derivee = (erreur - erreur_old) * 1000 / dt;
 
