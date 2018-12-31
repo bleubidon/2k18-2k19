@@ -44,6 +44,16 @@ void c_Robot::consigne(float _dist, float _rot)
 DEBUG(Serial << "consigne: " << _dist << " " << _rot << endl;)
 }
 
+float	angle_error(float a, float b)
+{
+	float err = a - b;
+	if (err > 180)
+		err = -180 + (int)err % 180;
+	else if (err <= -180)
+		err = 180 + (int)err % 180;
+	return err;
+}
+
 /* TODO:
 ** scale down both speeds instead of clamping
 */
@@ -52,6 +62,7 @@ void c_Robot::loop_pid()
 	if (!consigne_pid)
 		return;
 
+	// Mise a jour de la consigne toute les min_delay millisecondes (au moins)
 	const unsigned long min_delay = 10;
 	unsigned long current_time = millis();
 	unsigned long dt = current_time - prev_time;
@@ -59,41 +70,48 @@ void c_Robot::loop_pid()
 		return;
 	prev_time = current_time;
 
-	const float vMax = 20;
-	const float dvMax = 20;
 
+	// Lecture des capteurs de position et calcul de la consigne grace aux PIDs
 	position.update();
-	float erreur_rot = rot.consigne - position.rot();
-	if (erreur_rot > 180)
-		erreur_rot = -180 + (int)erreur_rot % 180;
-	else if (erreur_rot <= -180)
-		erreur_rot = 180 + (int)erreur_rot % 180;
 
-	float vitesse_dist = dist.compute(position.dist(), dt);
-	float vitesse_rot = rot.compute(erreur_rot, dt);
+	float vitesse_dist = dist.compute(dist.consigne - position.dist(), dt);
+	float vitesse_rot = rot.compute(angle_error(rot.consigne, position.rot()), dt);
 
 	const float precision_dist = 1;
 	const float precision_rot = 1;
-	if (/*abs(dist.erreur) < precision_dist &&*/ abs(rot.erreur) < precision_rot)
+	if (abs(dist.erreur) < precision_dist && abs(rot.erreur) < precision_rot)
 		stop();
 	else
 	{
+		// Ecretage des vitesses
+		const float vMax = 20;
 		vitesse_dist = clamp(-vMax, vitesse_dist, vMax);
-		//vitesse_dist = clamp(-dvMax, (vitesse_dist - vitesse_dist_old), dvMax)  + vitesse_dist_old;
-
 		vitesse_rot = clamp(-vMax, vitesse_rot, vMax);
-		//vitesse_rot = clamp(-dvMax, (vitesse_rot - vitesse_rot_old), dvMax)  + vitesse_rot_old;
 
-		moteurs[0].consigne(vitesse_rot);
-		moteurs[1].consigne(-vitesse_rot);
+		// Ecretage des accelerations
+		const float dvMax = 20;
+		//vitesse_dist = clamp(-dvMax, (vitesse_dist - dist.vitesse_old), dvMax)  + dist.vitesse_old;
+		//vitesse_rot = clamp(-dvMax, (vitesse_rot - rot.vitesse_old), dvMax)  + rot.vitesse_old;
+
+		moteurs[0].consigne(vitesse_dist + vitesse_rot);
+		moteurs[1].consigne(vitesse_dist - vitesse_rot);
 	}
 
-	// Output CSV
-	if (0)
-		Serial << current_time << "\t" << position.rot() << "\t" << erreur_rot << "\t" << vitesse_rot << endl;
-	else
-		Serial << current_time << "," << dist.consigne << "," << position.dist() << "," << rot.consigne << "," << position.rot() << endl;
+	// Ecrit les donnes sur le port serie pour le debug
+DEBUG(Serial << current_time << "," << dist.consigne << "," << position.dist() << "," << rot.consigne << "," << position.rot() << endl;)
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 Print &operator<<(Print &obj, vec p)
 {

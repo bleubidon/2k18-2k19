@@ -22,18 +22,17 @@ void PID::set_coefs(float _Kp, float _Ki, float _Kd)
 	Kd = _Kd;
 }
 
-float PID::compute(float mesure, float dt)
+float PID::compute(float err, float dt)
 {
 	float vitesse_old = vitesse;
-	float erreur_old = erreur;
 
-	erreur = mesure;
-	integrale += erreur * dt / 1000;
-	float derivee = (erreur - erreur_old) * 1000 / dt;
+	integrale += err * dt / 1000;
+	float derivee = (err - erreur) * 1000 / dt;
 
 	vitesse	= Kp * erreur
-			+ Ki * integrale
-			+ Kd * derivee;
+		+ Ki * integrale
+		+ Kd * derivee;
 
+	erreur = err;
 	return vitesse;
 }

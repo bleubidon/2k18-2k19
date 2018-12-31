@@ -14,7 +14,8 @@ void setup()
 {
 	Serial.begin(9600);
 
-	parser.add("mv", rot);
+	parser.add("dist", dist);
+	parser.add("rot", rot);
 	parser.add("pid", set_pid);
 	parser.add("stop", stop);
 
@@ -61,24 +62,24 @@ void loop()
 
 void set_pid(int argc, char **argv)
 {
-	if (argc != 4)
-		Robot.rot.set_coefs(0, 0, 0);
+	if (argc != 5)
+		return;
+	if (argv[1][0] == '0')
+		Robot.dist.set_coefs(atof(argv[0]), atof(argv[1]), atof(argv[2]));
 	else
 		Robot.rot.set_coefs(atof(argv[0]), atof(argv[1]), atof(argv[2]));
-}
-
-void rot(int argc, char **argv)
-{
-	if (argc == 2)
-		Robot.consigne(0, atof(argv[1]));
 }
 
 void dist(int argc, char **argv)
 {
 	if (argc == 2)
 		Robot.consigne(atof(argv[1]), 0);
-	if (argc == 3)
-		Robot.consigne(atof(argv[1]), atof(argv[2]));
+}
+
+void rot(int argc, char **argv)
+{
+	if (argc == 2)
+		Robot.consigne(0, atof(argv[1]));
 }
 
 void stop(int argc, char **argv)

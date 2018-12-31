@@ -8,7 +8,7 @@ class PID
 		void set_consigne(float _consigne);
 		void set_coefs(float _Kp, float _Ki, float _Kd);
 
-		float compute(float mesure, float dt);
+		float compute(float erreur, float dt);
 
 		float Kp, Ki, Kd;
 		float consigne, erreur, vitesse, integrale;
