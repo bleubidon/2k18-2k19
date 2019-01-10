@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "vec.h"
 
 struct Event
 {
@@ -21,7 +22,9 @@ struct Task
 	{
 		 // GOTO
 		struct {
-			int x, y, angle;
+			int x, y;
+			float angle;
+			uint8_t step;
 		};
 
 		// ACTION
@@ -30,9 +33,9 @@ struct Task
 			void* data;
 		};
 
-		// WAIT_TIRETTE
-		// MATCH_TIMER
-		unsigned long prev;
+		// WAIT_TIRETTE & MATCH_TIMER
+		uint8_t pin;
+		unsigned long time, prev;
 	};
 
 	bool waiting;

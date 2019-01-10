@@ -9,6 +9,7 @@ struct vec
 	vec(vec_type _x, vec_type _y);
 
 	void set(vec_type _x, vec_type _y);
+	vec_type angle(); // returns angle with X-axis in degrees
 	vec unit();
 
 	vec& operator+=(const vec& v);

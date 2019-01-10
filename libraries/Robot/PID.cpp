@@ -29,7 +29,7 @@ float PID::compute(float err, float dt)
 	integrale += err * dt / 1000;
 	float derivee = (err - erreur) * 1000 / dt;
 
-	vitesse	= Kp * erreur
+	vitesse	= Kp * err
 		+ Ki * integrale
 		+ Kd * derivee;
 

@@ -16,8 +16,8 @@ bool Task::setup()
 	switch (type)
 	{
 	case GOTO:
-		return false;
-		//return Robot.setup_goto(x, y, angle);
+		step = 0;
+		break;
 
 	case ACTION:
 		if (_setup)
@@ -25,7 +25,7 @@ bool Task::setup()
 		break;
 
 	case WAIT_TIRETTE:
-		pinMode(Robot.pinTirette, INPUT_PULLUP);
+		pinMode(pin, INPUT_PULLUP);
 		prev = millis();
 		break;
 
@@ -35,7 +35,7 @@ bool Task::setup()
 
 	case BARRIER:
 		TaskQueue *tq = (TaskQueue *)data;
-		tq->locked++;
+		tq->locked = true;
 		break;
 	}
 
@@ -53,9 +53,31 @@ bool Task::loop()
 	}
 	switch (type)
 	{
-	case GOTO:
-		return false;
-		//return Robot.loop_goto();
+	case GOTO: {
+		/*
+		 * even steps represent new consigne
+		 * odd steps represent waiting for end of consigne
+		 * The three steps of a goto are:
+		 *  - Rotate toward destination
+		 *  - Move forward to destination
+		 *  - Rotate to final orientation
+		*/
+
+		if (step == 0) {
+			vec pos = Robot.pos().pos();
+			vec dir(x - pos.x, y - pos.y);
+			Robot.consigne_rel(0, dir.angle() - Robot.pos().rot()), step++;
+		} else if (step == 2) {
+			vec dest(x, y);
+			Robot.consigne_rel(vec::dist(Robot.pos().pos(), dest), 0), step++;
+		} else if (step == 4)
+			Robot.consigne_rel(0, angle - Robot.pos().rot()), step++;
+
+		// robot reached destination, go to next step
+		if (!Robot.loop_pid() && (step % 2))
+			step++;
+		return (step != 6); // reaching step 6 means we are done
+	}
 
 	case ACTION:
 		return _loop(data);
@@ -64,20 +86,17 @@ bool Task::loop()
 		unsigned long now = millis();
 		if (now - prev > 1000)
 			return true;
-		Serial << "En attente de la tirette sur la pin " << Robot.pinTirette << endl;
-		return (digitalRead(Robot.pinTirette) == LOW);
+		Serial << "En attente de la tirette sur la pin " << pin << endl;
+		return (digitalRead(pin) == LOW);
 	}
 
 	case MATCH_TIMER:
-		return (millis() - prev < Robot.dureeMatch);
+		return (millis() - prev < time);
 
 	case BARRIER: {
 		TaskQueue *tq = (TaskQueue *)data;
-		if (tq->activeSize == tq->locked) // No active task left
-		{
-			tq->locked--;
-			return false;
-		}
+		if (tq->activeSize == 1) // No other active task left
+			return (tq->locked = false);
 		return true;
 	}
 

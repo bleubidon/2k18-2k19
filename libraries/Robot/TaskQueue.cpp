@@ -8,7 +8,7 @@ TaskQueue::TaskQueue()
 void TaskQueue::restart()
 {
 	index = 0;
-	locked = 0;
+	locked = false;
 	activeSize = 0;
 
 	for (int i(0); i < queueSize; i++)
@@ -21,7 +21,7 @@ void TaskQueue::restart()
 void TaskQueue::clear()
 {
 	index = 0;
-	locked = 0;
+	locked = false;
 	queueSize = activeSize = 0;
 }
 
@@ -47,13 +47,18 @@ void TaskQueue::loop()
 	}	
 }
 
-Event *TaskQueue::enqueueGoto(int x, int y, int angle, Event *trigger)
+Event *TaskQueue::enqueueGoto(vec dest, int angle)
+{
+	return enqueueGoto(dest, angle, wait_previous());
+}
+
+Event *TaskQueue::enqueueGoto(vec dest, int angle, Event *trigger)
 {
 	Task &task = queue[queueSize++];
 	task.init(Task::GOTO, trigger);
 
-	task.x = x;
-	task.y = y;
+	task.x = dest.x;
+	task.y = dest.y;
 	task.angle = angle;
 
 	return &task.event;
@@ -74,18 +79,22 @@ Event *TaskQueue::enqueueAction(int (*action)(void*), int (*setup)(void*), void 
 	return &task.event;
 }
 
-Event *TaskQueue::enqueueWaitTirette(Event *trigger)
+Event *TaskQueue::enqueueWaitTirette(uint8_t pin, Event *trigger)
 {
 	Task &task = queue[queueSize++];
 	task.init(Task::WAIT_TIRETTE, trigger);
 
+	task.pin = pin;
+
 	return &task.event;
 }
 
-Event *TaskQueue::enqueueMatchTimer(Event *trigger)
+Event *TaskQueue::enqueueMatchTimer(unsigned long time, Event *trigger)
 {
 	Task &task = queue[queueSize++];
 	task.init(Task::MATCH_TIMER, trigger);
+
+	task.time = time;
 
 	return &task.event;
 }

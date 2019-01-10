@@ -25,6 +25,11 @@ void vec::set(vec_type _x, vec_type _y)
 	y = _y;
 }
 
+vec_type vec::angle()
+{
+	return atan2(y, x) * 180.f / M_PI;
+}
+
 vec vec::unit()
 {
 	float length = sqrt( sq(x) + sq(y) );

@@ -18,11 +18,12 @@ class TaskQueue
 		void clear();
 		bool finished();
 
-		Event *enqueueGoto(int x, int y, int angle, Event *trigger = nullptr);
+		Event *enqueueGoto(vec dest, int angle);
+		Event *enqueueGoto(vec dest, int angle, Event *trigger);
 		Event *enqueueAction(int (*action)(void*), int (*setup)(void*), void *data = nullptr, Event *trigger = nullptr);
 
-		Event *enqueueWaitTirette(Event *trigger = nullptr);
-		Event *enqueueMatchTimer(Event *trigger = nullptr);
+		Event *enqueueWaitTirette(uint8_t pin, Event *trigger = nullptr);
+		Event *enqueueMatchTimer(unsigned long time, Event *trigger = nullptr);
 
 		Event *enqueueBarrier();
 
