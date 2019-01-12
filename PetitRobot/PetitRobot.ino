@@ -2,27 +2,22 @@
 #include <I2CParser.h>
 
 #include "Actions.h"
+#include "helpers.h"
 
 // NOTE Parser: mettre l'option fin de ligne dans la console Arduino pour pouvoir envoyer des commandes
 
 Parser parser;
 
-Timer timer(500);
-
 void setup()
 {
 	Serial.begin(9600);
 
-	Serial << "Setup parser..." << endl;
-	parser.add("mv", deplacement);
-	parser.add("stop", deplacement);
+	parser.add("dist", dist);
+	parser.add("rot", rot);
+	parser.add("stop", stop);
+	parser.add("pid", set_pid);
 
-	Serial << "Setup Robot..." << endl;
 	Robot.setup({
-		equipe : GAUCHE,
-		pinTirette : 27,
-		dureeMatch : 90000L, // = 90 secondes
-
 		odometrie : {
 			mode : CODEUSE_GYROSCOPE,
 			{
@@ -34,55 +29,47 @@ void setup()
 			}
 		},
 		moteurs : {
-			{4, 9, 6, wheel_radius: 3.0f},
-			{7, 8, 5, wheel_radius: 3.0f}
+			{4, 9, 6, wheel_radius: 3.0f, GAUCHE},
+			{7, 8, 5, wheel_radius: 3.0f, DROITE}
 		},
-		accel_max: 10
+		dist : PID(0.f, 0.f, 0.f),
+		rot : PID(10.f, 0.f, 0.f)
 	});
 
-	Serial << "Setup task queues..." << endl;
-	setup_actions();
-	
-
-	Serial << "Setup done !" << endl;
+	//setup_actions();
 }
 
 void loop()
 {
 	parser.loop();
 
-	loop_actions();
+	//loop_actions();
+	Robot.loop_pid();
 }
 
-// Commands
-extern Event starter;
-extern TaskQueue test;
-
-void deplacement(int argc, char **argv)
-{
-	if (strcmp(argv[0], "stop") == 0)
-	{
-		test.clear();
-		Robot.stop();
-	}
-	else if (strcmp(argv[0], "mv") == 0)
-		starter.completed = true;
-}
-
-/*
 void set_pid(int argc, char **argv)
 {
-	if (argc != 4)
+	if (argc != 5)
 		return;
-
-	Robot.set_coefs_PID(atof(argv[1]), atof(argv[2]), atof(argv[3]));
+	if (argv[1][0] == '0')
+		Robot.dist_pid().set_coefs(atof(argv[2]), atof(argv[3]), atof(argv[4]));
+	else
+		Robot.rot_pid().set_coefs(atof(argv[2]), atof(argv[3]), atof(argv[4]));
 }
 
-void set_consigne(int argc, char **argv)
+void dist(int argc, char **argv)
 {
-	if (argc != 4)
-		return;
-
-	Robot.set_consigne(atof(argv[1]), atof(argv[2]));
+	if (argc == 2)
+		Robot.consigne_rel(atof(argv[1]), 0.f);
 }
-*/
+
+void rot(int argc, char **argv)
+{
+	if (argc == 2)
+		Robot.consigne_rel(0.f, atof(argv[1]));
+}
+
+void stop(int argc, char **argv)
+{
+	Robot.stop();
+}

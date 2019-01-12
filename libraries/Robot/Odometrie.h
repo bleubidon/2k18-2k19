@@ -37,8 +37,6 @@ class Odometrie
 		const float& dist(); // centimetres
 		const float& rot(); // degrés
 
-		float getPositionCodeuse(int num);  // centimetre
-
 	private:
 		uint8_t mode;
 		union

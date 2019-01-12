@@ -49,8 +49,6 @@ void loop()
 	parser.loop();
 
 	loop_actions();
-
-	Robot.loop_pid();
 }
 
 void set_pid(int argc, char **argv)

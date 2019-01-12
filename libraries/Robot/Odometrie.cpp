@@ -60,7 +60,7 @@ void Odometrie::updateDoubleCodeuse()
 
 void Odometrie::updateCodeuseGyroscope()
 {
-	angle = gyro.rot();
+	angle = 360 - gyro.rot(); // Inversion car il est a l'envers sur le robot :(
 
 	distance = codeuse.getDistance();
 	float dL = distance - dist_prev;
@@ -89,27 +89,4 @@ const float& Odometrie::dist()
 const float& Odometrie::rot()
 {
 	return angle;
-}
-
-float Odometrie::getPositionCodeuse(int num)
-{
-	if (mode == DOUBLE_CODEUSE)
-	{
-		if (num == GAUCHE)
-			return -codeuses[GAUCHE].getDistance();
-		else
-			return codeuses[DROITE].getDistance();
-	}
-	else
-	{
-		float c = codeuse.getDistance();
-		float g = gyro.rot();
-		float e = 20.0f; // Ecart entre les roues
-
-		if (num == 0)
-			return -c - 0.5f*e*g;
-
-		else
-			return c - 0.5f*e*g;
-	}
 }
