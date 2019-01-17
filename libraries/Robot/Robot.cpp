@@ -78,13 +78,10 @@ bool c_Robot::loop_pid()
 	float vitesse_dist = dist.compute(dist.consigne - position.dist(), dt);
 	float vitesse_rot = rot.compute(angle_diff(rot.consigne, position.rot()), dt);
 
-	Serial << angle_diff(rot.consigne, position.rot()) << "    ";
-
 	const float precision_dist = 1;
 	const float precision_rot = 1;
 	if (abs(dist.erreur) < precision_dist && abs(rot.erreur) < precision_rot)
 	{
-		Serial << "Reached destination" << endl;
 		stop();
 		return false;
 	}
@@ -105,7 +102,6 @@ bool c_Robot::loop_pid()
 	}
 
 	// Ecrit les donnes sur le port serie pour le debug
-//DEBUG(Serial << current_time << "," << dist.consigne << "," << position.dist() << "," << rot.consigne << "," << position.rot() << endl;)
-DEBUG(Serial << rot.consigne << "," << position.rot() << "     " << vitesse_rot << endl;)
+DEBUG(Serial << current_time << "," << dist.consigne << "," << position.dist() << "," << rot.consigne << "," << position.rot() << endl;)
 	return true;
 }

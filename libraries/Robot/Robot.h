@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "PID.h"
 #include "Moteur.h"
 #include "Odometrie.h"
@@ -29,7 +30,7 @@ class c_Robot
 		PID& dist_pid() { return dist; }
 		PID& rot_pid() { return rot; }
 
-	//private:
+	private:
 		Odometrie position;
 		Moteur moteurs[2];
 
