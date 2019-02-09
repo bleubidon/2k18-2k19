@@ -99,6 +99,8 @@ bool c_Robot::loop_pid()
 
 		moteurs[0].consigne(vitesse_dist + vitesse_rot);
 		moteurs[1].consigne(vitesse_dist - vitesse_rot);
+
+		Serial << vitesse_dist << ", " << vitesse_rot << endl;
 	}
 
 	// Ecrit les donnes sur le port serie pour le debug

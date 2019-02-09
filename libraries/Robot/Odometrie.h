@@ -23,7 +23,9 @@ class Odometrie
 				};
 
 				// CODEUSE_GYROSCOPE
-				Codeuse::Config codeuse;
+				struct {
+					Codeuse::Config codeuse;
+				};
 			};
 		};
 

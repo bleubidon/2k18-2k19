@@ -1,0 +1,30 @@
+ * Gros robot
+	- Base roulante
+		- Reparer moteur
+		- Faire une plaque
+	
+	- Faire les schemas electroniques
+
+	- Actionneurs
+		- Ascenseur 
+			- faire un pince à bords ronds
+			- assembler les pieces
+			- capteur de hauteur (pour l'asservissement de l'ascenseur (infrarouge))
+		- Pompe (si pas de petit robot)
+		- Bras articulé (pour l'accélérateur; si pas de petit robot)
+
+	- Raspberry
+		- Reconnaissance de couleur
+		- Integration dans le robot
+			- Le placer
+			- Positionner la camera au bon endroit
+			- Le relier a l'arduino
+
+
+ * Petit robot
+	- Base roulante
+	- Pompe
+	- Bras articulé
+
+
+* Experience

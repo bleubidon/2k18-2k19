@@ -41,14 +41,16 @@ void setup()
 		rot : PID(10.f, 0.f, 0.5f)
 	});
 
-	setup_actions();
+	//setup_actions();
+	//ascenseur_setup();
 }
 
 void loop()
 {
 	parser.loop();
 
-	loop_actions();
+	//loop_actions();
+ 	Robot.loop_pid();
 }
 
 void set_pid(int argc, char **argv)
