@@ -61,14 +61,14 @@ void ascenseur_monter()
 void ascenseur_initilisation()
 {
   Serial << "demarrage initialistation" << endl;
-  DEBUG Pince(
+  /*
   //Ouverture pince
   DEBUG (Serial << "ouverture pince" << endl;)
   Dynamixel.move (PINCE_GAUCHE , POSITION_OUVERTE_GAUCHE ) ; // Position droit : 210 pour ID 11
   delay(20);
   Dynamixel.move (PINCE_DROITE , POSITION_OUVERTE_DROITE ) ; // Position droit : 210 pour ID 11
   DEBUG (Serial << "pince ouverte" << endl;)
-  )
+  */
   //Descente plateau
   digitalWrite(pinsRelais[0], LOW);
   digitalWrite(pinsRelais[1], HIGH);
@@ -81,14 +81,14 @@ void ascenseur_initilisation()
   
   digitalWrite(pinsRelais[0], HIGH);
   digitalWrite(pinsRelais[1], HIGH);
-  DEBUG Pince(
+  /*
   //Fermeture pince
   DEBUG (Serial << "fermeture pince" << endl;)
   Dynamixel.move (PINCE_GAUCHE , POSITION_FERMEE_GAUCHE) ; // Position droit : 210 pour ID 11
   delay(20);
   Dynamixel.move (PINCE_DROITE , POSITION_FERMEE_DROITE) ; // Position droit : 210 pour ID 11
   DEBUG (Serial << "Pince fermée" << endl;)
-  )
+*/
   delay(2000);
    
   //Monter plateau
@@ -112,12 +112,12 @@ void cycle_ascenseur()
   Serial << "demarrage descente" << endl;
   
   delay(1000);
-  DEBUG Pince(
+  /*
   //Lacher des palets
   Dynamixel.move (PINCE_GAUCHE , POSITION_OUVERTE_GAUCHE ) ; // Position droit : 210 pour ID 11
   delay(20);
   Dynamixel.move (PINCE_DROITE , POSITION_OUVERTE_DROITE ) ; // Position droit : 210 pour ID 11
-  )
+  */
   delay(500);
 
   //Descente plateau
@@ -134,13 +134,13 @@ void cycle_ascenseur()
   digitalWrite(pinsRelais[1], HIGH);
   
   delay(500);
-  DEBUG Pince(
+  /*
   //Fermeture pince
   Dynamixel.move (PINCE_GAUCHE , POSITION_FERMEE_GAUCHE) ; // Position droit : 210 pour ID 11
   delay(20);
   Dynamixel.move (PINCE_DROITE , POSITION_FERMEE_DROITE) ; // Position droit : 210 pour ID 11
   delay(500);
-  )
+  */
   //Monter plateau
   digitalWrite(pinsRelais[0], HIGH);
   digitalWrite(pinsRelais[1], LOW);
