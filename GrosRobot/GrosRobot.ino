@@ -16,6 +16,7 @@ void setup()
 	parser.add("rot", rot);
 	parser.add("stop", stop);
 	parser.add("pid", set_pid);
+  parser.add("cycle", do_cycle);
 
 	Robot.setup({
 		odometrie : {
@@ -42,7 +43,7 @@ void setup()
 	});
 
 	//setup_actions();
-	//ascenseur_setup();
+	ascenseur_setup();
 }
 
 void loop()
@@ -78,4 +79,9 @@ void rot(int argc, char **argv)
 void stop(int argc, char **argv)
 {
 	Robot.stop();
+}
+
+void do_cycle(int argc, char **argv)
+{
+ cycle_ascenseur();
 }
