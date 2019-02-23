@@ -16,7 +16,7 @@ void setup()
 	parser.add("rot", rot);
 	parser.add("stop", stop);
 	parser.add("pid", set_pid);
-  parser.add("cycle", do_cycle);
+	parser.add("cycle", do_cycle);
 
 	Robot.setup({
 		odometrie : {
@@ -36,14 +36,15 @@ void setup()
 			}}
 		},
 		moteurs : {
-		    {4, 9, 6, wheel_radius : 3.25f, GAUCHE},
-		    {7, 8, 5, wheel_radius : 3.25f, DROITE}},
+			{4, 9, 6, wheel_radius : 3.25f, GAUCHE},
+			{7, 8, 5, wheel_radius : 3.25f, DROITE}
+		},
 		dist : PID(25.f, 0.f, 2.f),
 		rot : PID(10.f, 0.f, 0.5f)
 	});
 
+	setup_ascenseur();
 	//setup_actions();
-	ascenseur_setup();
 }
 
 void loop()
@@ -83,5 +84,5 @@ void stop(int argc, char **argv)
 
 void do_cycle(int argc, char **argv)
 {
- cycle_ascenseur();
+	cycle_ascenseur();
 }
