@@ -1,5 +1,0 @@
-launch install_library.sh to install library
-make sure that spi in enabled on RPi
-if connection issues, solder a 10uF capacitor between GND and VCC on the nRFs.
-**Run ./send as SUDO !!**
-
