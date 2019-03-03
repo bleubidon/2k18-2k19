@@ -11,7 +11,7 @@ struct Command
 	Command* next;
 };
 		
-Command* list = NULL;
+static Command* list = NULL;
 
 
 
@@ -34,6 +34,12 @@ void Parser::loop()
 
 		if (c == '\n')
 		{
+			if (cursor == BUFFER_LENGTH)
+			{
+				cursor = 0;
+				stream->print("parser: command is too long");
+				continue ;
+			}
 			buffer[cursor] = '\0';
 			cursor = 0;
 
