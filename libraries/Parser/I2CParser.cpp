@@ -3,12 +3,12 @@
 #include <Wire.h>
 
 
-char* I2CBuffer;
-char* I2CAnswer;
-int* I2CCursor;
+static char* I2CBuffer;
+static char* I2CAnswer;
+static int* I2CCursor;
 
-void _receiveEvent(int);
-void _requestEvent();
+static void _receiveEvent(int);
+static void _requestEvent();
 
 
 /*** Master ***/
@@ -106,7 +106,7 @@ void I2CParser::setAnswer(char* _answer)
 }
 
 // Callbacks
-void _receiveEvent(int length)
+static void _receiveEvent(int length)
 {
 	*I2CCursor = 0;
 	while (Wire.available() && *I2CCursor < BUFFER_LENGTH)
@@ -115,7 +115,7 @@ void _receiveEvent(int length)
 	I2CBuffer[*I2CCursor] = '\0';
 }
 
-void _requestEvent()
+static void _requestEvent()
 {
 	Wire.write(I2CAnswer);
 }
