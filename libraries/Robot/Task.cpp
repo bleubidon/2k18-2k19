@@ -58,9 +58,9 @@ bool Task::loop()
 		 * even steps represent new consigne
 		 * odd steps represent waiting for end of consigne
 		 * The three steps of a goto are:
-		 *  - Rotate toward destination
-		 *  - Move forward to destination
-		 *  - Rotate to final orientation
+		 *  0- Rotate toward destination
+		 *  2- Move forward to destination
+		 *  4- Rotate to final orientation
 		*/
 
 		if (step == 0) {
@@ -86,7 +86,7 @@ bool Task::loop()
 		unsigned long now = millis();
 		if (now - prev > 1000)
 			return true;
-		Serial << "En attente de la tirette sur la pin " << pin << endl;
+		DEBUG(Serial << "En attente de la tirette sur la pin " << pin << endl);
 		return (digitalRead(pin) == LOW);
 	}
 

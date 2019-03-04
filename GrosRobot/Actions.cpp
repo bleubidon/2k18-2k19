@@ -9,11 +9,15 @@ TaskQueue do_square;
 
 void setup_actions()
 {
+	/*
 	do_square.enqueueWaitTirette(27);
 	do_square.enqueueBarrier();
+	*/
 
+	/*
 	do_square.enqueueMatchTimer(90000L); // = 90 secondes
 	do_square.enqueueAction(robot_stop, nullptr, nullptr, do_square.wait_previous());
+	*/
 
 	// Les angles sont en degrés
 	do_square.enqueueGoto(vec(80, 0), 90, nullptr);
@@ -24,7 +28,7 @@ void setup_actions()
 
 void loop_actions()
 {
-	//do_square.loop();
+	do_square.loop();
 }
 
 int robot_stop(void *)

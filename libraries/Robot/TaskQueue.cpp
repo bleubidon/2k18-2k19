@@ -1,14 +1,22 @@
 #include "TaskQueue.h"
+#include "helpers.h"
 
 TaskQueue::TaskQueue()
 {
 	clear();
 }
 
-void TaskQueue::restart()
+void TaskQueue::clear()
 {
 	index = 0;
-	locked = false;
+	locked = true;
+	queueSize = activeSize = 0;
+}
+
+void TaskQueue::reset()
+{
+	index = 0;
+	locked = true;
 	activeSize = 0;
 
 	for (int i(0); i < queueSize; i++)
@@ -16,13 +24,19 @@ void TaskQueue::restart()
 		queue[i].waiting = true;
 		queue[i].event.completed = false;
 	}
+
 }
 
-void TaskQueue::clear()
+void TaskQueue::start()
 {
-	index = 0;
+	if (activeSize == 0)
+		locked = false;
+}
+
+void TaskQueue::restart()
+{
+	reset();
 	locked = false;
-	queueSize = activeSize = 0;
 }
 
 bool TaskQueue::finished()
@@ -35,12 +49,20 @@ void TaskQueue::loop()
 	if (!locked &&
 		index < queueSize &&
 		activeSize < MAX_ACTIVE_TASKS)
+	{
+		LOG(Serial << "TQ: (" << (int)this << ") " <<
+			"Adding task " << index << " to active list" << endl);
+
 		active[activeSize++] = queue + index++;
+	}
 
 	for (int i(0); i < activeSize; i++)
 	{
 		if (!active[i]->loop())
 		{
+			LOG(Serial << "TQ: (" << (int)this << ") " << 
+				"End of task " << index << endl);
+
 			active[i]->event.completed = true;
 			active[i] = active[--activeSize];
 		}

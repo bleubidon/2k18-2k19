@@ -37,7 +37,7 @@ void c_Robot::consigne(float _dist, float _rot)
 	prev_time = millis();
 	consigne_pid = true;
 
-DEBUG(Serial << "consigne: " << _dist << " " << _rot << endl;)
+	LOG(Serial << "CMD: " << _dist << "," << _rot << endl);
 }
 
 void c_Robot::consigne_rel(float _dist, float _rot)
@@ -99,11 +99,11 @@ bool c_Robot::loop_pid()
 
 		moteurs[0].consigne(vitesse_dist + vitesse_rot);
 		moteurs[1].consigne(vitesse_dist - vitesse_rot);
-
-		Serial << vitesse_dist << ", " << vitesse_rot << endl;
 	}
 
-	// Ecrit les donnes sur le port serie pour le debug
-DEBUG(Serial << current_time << "," << dist.consigne << "," << position.dist() << "," << rot.consigne << "," << position.rot() << endl;)
+	// Ecrit les donnees de log sur le port serie
+	LOG(Serial << "PID:" << current_time << "," <<
+		dist.consigne << "," << position.dist() << "," <<
+		rot.consigne << "," << position.rot() << endl;)
 	return true;
 }

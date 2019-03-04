@@ -9,7 +9,7 @@ bool Gyroscope::setup()
 {
 	if (!bno.begin())
 	{
-		Serial << "No BNO055 detected. Check your wiring or I2C ADDR" << endl;
+		LOG(Serial << "GYRO: No BNO055 detected. Check your wiring or I2C ADDR" << endl);
 		return false;
 	}
 

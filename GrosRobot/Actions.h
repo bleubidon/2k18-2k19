@@ -2,6 +2,8 @@
 
 #include <Robot.h>
 
+extern TaskQueue do_square;
+
 void setup_actions();
 void setup_ascenseur();
 

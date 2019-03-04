@@ -20,6 +20,7 @@ class c_Robot
 
 		void setup(c_Robot::Config config);
 
+		// dist: centimetres, rot: degres
 		void stop();
 		void consigne(float _dist, float _rot);
 		void consigne_rel(float _dist, float _rot);

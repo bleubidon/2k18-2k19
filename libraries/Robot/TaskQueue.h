@@ -14,8 +14,12 @@ class TaskQueue
 
 		void loop();
 
-		void restart();
 		void clear();
+		void reset();
+
+		void start();
+		void restart();
+
 		bool finished();
 
 		Event *enqueueGoto(vec dest, int angle);

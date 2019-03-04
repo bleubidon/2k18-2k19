@@ -1,5 +1,8 @@
 #pragma once
 
+//#define NDEBUG	// Define to disable debug messages
+//#define NLOG		// Define to disable log messages
+
 #include <Arduino.h>
 
 extern const uint8_t GAUCHE;
@@ -23,4 +26,10 @@ inline Print &operator<<(Print &obj, T arg)
 # define DEBUG(x) void;
 #else
 # define DEBUG(x) x
+#endif
+
+#ifdef NLOG
+# define LOG(x) void;
+#else
+# define LOG(x) x
 #endif

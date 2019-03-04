@@ -2,6 +2,7 @@
 #include <I2CParser.h>
 
 #include "Actions.h"
+#include "test.h"
 #include "helpers.h"
 
 // NOTE Parser: mettre l'option fin de ligne dans la console Arduino pour pouvoir envoyer des commandes
@@ -12,11 +13,19 @@ void setup()
 {
 	Serial.begin(9600);
 
+	DEBUG(Serial << "Setup.." << endl);
+
 	parser.add("dist", dist);
 	parser.add("rot", rot);
 	parser.add("stop", stop);
 	parser.add("pid", set_pid);
 	parser.add("cycle", do_cycle);
+
+	parser.add("square", exec_square);
+
+	#ifdef TEST
+	parser.add("test", unit_test);
+	#endif
 
 	Robot.setup({
 		odometrie : {
@@ -43,16 +52,22 @@ void setup()
 		rot : PID(10.f, 0.f, 0.5f)
 	});
 
-	setup_ascenseur();
-	//setup_actions();
+	//setup_ascenseur();
+	setup_actions();
+
+	DEBUG(Serial << "Done" << endl);
 }
 
 void loop()
 {
 	parser.loop();
 
-	//loop_actions();
- 	Robot.loop_pid();
+	loop_actions();
+}
+
+void exec_square(int argc, char **argv)
+{
+	do_square.restart();
 }
 
 void set_pid(int argc, char **argv)
