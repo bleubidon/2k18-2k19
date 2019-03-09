@@ -15,17 +15,9 @@ void setup()
 
 	DEBUG(Serial << "Setup.." << endl);
 
-	parser.add("dist", dist);
-	parser.add("rot", rot);
-	parser.add("stop", stop);
-	parser.add("pid", set_pid);
-	parser.add("cycle", do_cycle);
-
-	parser.add("square", exec_square);
-
-	#ifdef TEST
-	parser.add("test", unit_test);
-	#endif
+	setup_ascenseur();
+	setup_ecran();
+	setup_actions();
 
 	Robot.setup({
 		odometrie : {
@@ -52,10 +44,21 @@ void setup()
 		rot : PID(10.f, 0.f, 0.5f)
 	});
 
-	//setup_ascenseur();
-	setup_actions();
-
 	DEBUG(Serial << "Done" << endl);
+
+	parser.add("dist", dist);
+	parser.add("rot", rot);
+	parser.add("stop", stop);
+	parser.add("pid", set_pid);
+	parser.add("cycle", do_cycle);
+
+	parser.add("square", exec_square);
+
+	#ifdef TEST
+	parser.add("test", unit_test);
+	#else
+	montee_plateau();
+	#endif
 }
 
 void loop()

@@ -5,7 +5,7 @@
 
 #include <Robot.h>
 
-// Executes all test when no arguments given
+// Executes all the tests when no argument given
 void unit_test(int argc, char **argv);
 
 #endif

@@ -2,7 +2,7 @@
 
 // Setup the LiquidCrystal library with the pin numbers we have
 // physically connected the module to.
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+LiquidCrystal lcd(49, 47, 45, 43, 42, 40);
 
 int lastUpdate = 0;
 int currentIndex = 0;
