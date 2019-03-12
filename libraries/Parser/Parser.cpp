@@ -38,6 +38,7 @@ void Parser::loop()
 			{
 				cursor = 0;
 				stream->print("parser: command is too long");
+				stream->write(0x4); // End of transmission
 				continue ;
 			}
 			buffer[cursor] = '\0';
@@ -81,6 +82,7 @@ bool Parser::parse(char* command)
 		if (!strcmp(argv[0], cmd->name))
 		{
 			cmd->func(argc, argv);
+			stream->write(0x4); // End of transmission
 			return true;
 		}
 	}
@@ -88,6 +90,7 @@ bool Parser::parse(char* command)
 	stream->print("parser: ");
 	stream->print(argv[0]);
 	stream->println(": command not found");
+	stream->write(0x4); // End of transmission
 	
 	return false;
 }
