@@ -34,8 +34,8 @@ void descente_plateau()
 	if (digitalRead(pinBas) == LOW)
 		return;
 
-	digitalWrite(pinsRelais[0], LOW);
-	digitalWrite(pinsRelais[1], HIGH);
+	digitalWrite(pinsRelais[0], HIGH);
+	digitalWrite(pinsRelais[1], LOW);
 
 	while (digitalRead(pinBas) == HIGH)
 		;
@@ -49,8 +49,8 @@ void montee_plateau()
 	if (digitalRead(pinHaut) == LOW)
 		return;
 
-	digitalWrite(pinsRelais[0], HIGH);
-	digitalWrite(pinsRelais[1], LOW);
+	digitalWrite(pinsRelais[0], LOW);
+	digitalWrite(pinsRelais[1], HIGH);
 
 	while (digitalRead(pinHaut) == HIGH)
 		;

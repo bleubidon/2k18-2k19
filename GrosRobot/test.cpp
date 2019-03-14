@@ -47,22 +47,38 @@ static void test_capteur_butee(int pin)
 DEFINE_TEST(butee)
 {
 	DEBUG(Serial << "Test de butees" << endl);
-
+  affichage(" Test de butees ");
+  delay(1000);
+  affichage(" Test butee bas ");
 	DEBUG(Serial << "1- Bas" << endl);
 	test_capteur_butee(28);
-
+  affichage("  Butee Bas OK  ");
+  delay(1000);
+  affichage("Test butee haut ");
 	DEBUG(Serial << "2- Haut" << endl);
 	test_capteur_butee(22);
-
+  affichage("  Butee Haut OK ");
+  delay(1000);
+  affichage("Test butee palet");
 	DEBUG(Serial << "3- Palet" << endl);
 	test_capteur_butee(30);
+  affichage(" Butees Palet OK ");
 }
 
 DEFINE_TEST(plateau)
 {
+  DEBUG(Serial << "Test plateau" << endl);
+  affichage("  Test plateau  ");
+  delay(1000);
+  affichage("Descente plateau");
+  DEBUG(Serial << "Descente plateau" << endl);
 	descente_plateau();
+  affichage("  Descente OK!  ");
 	delay(500);
+ affichage(" Montee plateau ");
+ DEBUG(Serial << "Montée plateau" << endl);
 	montee_plateau();
+ affichage("   Montee OK!   ");
 }
 
 /// INTERFACE
