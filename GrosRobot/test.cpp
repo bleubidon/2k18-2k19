@@ -19,6 +19,9 @@
 
 DEFINE_TEST(dist)
 {
+	DEBUG(Serial << "Test de butees" << endl);
+	affichage(" Test de butees ");
+	delay(1000);
 	WAIT_CONSIGNE(Robot.consigne_rel(10.f, 0.f));
 	WAIT_CONSIGNE(Robot.consigne_rel(-10.f, 0.f));
 }
@@ -47,38 +50,53 @@ static void test_capteur_butee(int pin)
 DEFINE_TEST(butee)
 {
 	DEBUG(Serial << "Test de butees" << endl);
-  affichage(" Test de butees ");
-  delay(1000);
-  affichage(" Test butee bas ");
+	affichage(" Test de butees ");
+	delay(1000);
+
 	DEBUG(Serial << "1- Bas" << endl);
+	affichage(" Test butee bas ");
 	test_capteur_butee(28);
-  affichage("  Butee Bas OK  ");
-  delay(1000);
-  affichage("Test butee haut ");
+	affichage("  Butee Bas OK  ");
+	delay(1000);
+
 	DEBUG(Serial << "2- Haut" << endl);
+	affichage("Test butee haut ");
 	test_capteur_butee(22);
-  affichage("  Butee Haut OK ");
-  delay(1000);
-  affichage("Test butee palet");
+	affichage("  Butee Haut OK ");
+	delay(1000);
+
 	DEBUG(Serial << "3- Palet" << endl);
+	affichage("Test butee palet");
 	test_capteur_butee(30);
-  affichage(" Butees Palet OK ");
+	affichage(" Butees Palet OK ");
+	delay(1000);
+
+	clear_ecran();
 }
 
 DEFINE_TEST(plateau)
 {
-  DEBUG(Serial << "Test plateau" << endl);
-  affichage("  Test plateau  ");
-  delay(1000);
-  affichage("Descente plateau");
-  DEBUG(Serial << "Descente plateau" << endl);
+	DEBUG(Serial << "Test plateau" << endl);
+	affichage("  Test plateau  ");
+	delay(1000);
+
+	DEBUG(Serial << "Descente plateau" << endl);
+	affichage("Descente plateau");
 	descente_plateau();
-  affichage("  Descente OK!  ");
+	affichage("  Descente OK!  ");
 	delay(500);
- affichage(" Montee plateau ");
- DEBUG(Serial << "Montée plateau" << endl);
+
+	DEBUG(Serial << "Montée plateau" << endl);
+	affichage(" Montee plateau ");
 	montee_plateau();
- affichage("   Montee OK!   ");
+	affichage("   Montee OK!   ");
+	delay(1000);
+
+	clear_ecran();
+}
+
+void test_ecran (int argc, char **argv)
+{
 }
 
 /// INTERFACE
@@ -90,6 +108,7 @@ void unit_test(int argc, char **argv)
 	UNIT_TEST(rot);
 	UNIT_TEST(butee);
 	UNIT_TEST(plateau);
+	UNIT_TEST(ecran);
 
 	if (!tested)
 		Serial << "This test doesn't exist" << endl;
