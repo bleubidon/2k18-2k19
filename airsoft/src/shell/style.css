@@ -1,0 +1,35 @@
+html, body {
+	width: 100%;
+	height: 100%;
+}
+body {
+	padding: 5px;
+}
+
+#shell {
+	width: 100%;
+	height: calc( 100% - 42px );
+	top: 0px;
+	left: 0px;
+	background: #202020;
+	font-size: 11px;
+	font-family: Courier;
+	color: #DFDFDF;
+	overflow: scroll;
+}
+
+
+.input {
+	background: #202020;
+	border: 0px;
+	font-size: 11px;
+	font-family: Courier;
+	color: #DFDFDF;
+	outline: none;
+	left: auto;
+	right: 10px;
+}
+
+#prompt {
+	color: #00FF00;
+}

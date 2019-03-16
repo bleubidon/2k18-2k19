@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<link href="../../libs/bootstrap.min.css" rel="stylesheet">
+	<link href="../../libs/roundslider.min.css" rel="stylesheet" />
+	<link href="asserv.css" rel="stylesheet">
+
+	<!--
+		unset module var and restore it later
+		Work around to get jquery to work
+		-->
+	<script>
+		if (typeof module === 'object') { window.module = module; module = undefined; }
+	</script>
+
+	<script src="../../libs/jquery-1.11.3.js"></script>
+	<script src="../../libs/plotly.min.js"></script>
+	<script src="../../libs/roundslider.min.js"></script>
+
+	<script>
+		if (window.module)
+			module = window.module;
+	</script>
+</head>
+
+<body>
+	<ul class="nav nav-tabs nav-fill">
+		<li class="nav-item">
+			<a class="nav-link active" href="../asserv/index.html">Asserv</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="../shell/index.html">Shell</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="../deplacement/index.html">Deplacements</a>
+		</li>
+	</ul>
+	<main>
+		<div id="upper">
+			<div class="pid">
+				<div id="coef">P <input value="1" type="number" id="Kp" value="Kp"></div>
+				<div id="coef">I <input value="0" type="number" id="Ki" value="Ki"></div>
+				<div id="coef">D <input value="0" type="number" id="Kd" value="Kd"></div>
+
+				<button id="send_pid" class="btn btn-success" onclick="send_pid()">
+					Set PID
+				</button>
+			</div>
+
+			<div class="consigne">
+				<ul class="nav nav-pills nav-fill">
+					<li class="nav-item">
+						<a class="nav-link active tab_dist" href="#">Dist</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link tab_rot" href="#">Rot</a>
+					</li>
+				</ul>
+
+				<input value="0" type="number" id="dist" value="dist">
+				<div id="rot"></div>
+			</div>
+
+			<div class="ctrl">
+
+				<button id="stop" class="btn btn-primary" onclick="play_pause()">
+					<a>&#10073&#10073 / &#9658;</a>
+				</button>
+
+				<button id="stop" class="btn btn-primary" onclick="clear_graph()">
+					Clear
+				</button>
+
+				<button id="stop" class="btn btn-primary" onclick="stop_arduino()">
+					Stop Arduino
+				</button>
+			</div>
+		</div>
+
+		<div id="graph">
+		</div>
+	</main>
+</body>
+
+<script src="logger.js" type="text/javascript"></script>
+<script src="asserv.js" type="text/javascript"></script>
+<script src="graph.js" type="text/javascript"></script>
+
+</html>
