@@ -4,3 +4,5 @@
 airsoft/serial/build
 airsoft/node_modules
 airsoft/builds
+
+.vscode
