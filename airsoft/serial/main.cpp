@@ -76,6 +76,7 @@ void flush(int mode)
 			out[mode].push_back(std::string(outbuf, 0, n));
 			outbuf.erase(0, n + 1);
 			n = 0;
+			mode = MOUT;
 		}
 		else
 			n++;

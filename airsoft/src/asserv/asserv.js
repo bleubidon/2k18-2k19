@@ -26,11 +26,6 @@ $("#rot").roundSlider({
 	change: send_consigne
 });
 
-function stop_arduino()
-{
-	arduino.exec("stop");
-}
-
 function send_pid()
 {
 	for (let coef of ["Kp", "Ki", "Kd"])
@@ -58,38 +53,33 @@ function send_consigne(e) {
 }
 
 let controllers = {
-	tab_dist: document.querySelector(".tab_dist"),
-	tab_rot: document.querySelector(".tab_rot"),
+	tabs: {
+		dist: document.querySelector(".tab_dist"),
+		rot: document.querySelector(".tab_rot")
+	},
 	dist: document.querySelector("#dist"),
 	rot: document.querySelector("#rot")
 }
 
 controllers.dist.addEventListener("change", send_consigne);
 
-controllers.tab_dist.addEventListener("click", (e) => {
-	if (mode == "dist")
+function set_mode(m)
+{
+	if (mode == m)
 		return ;
 
-	mode = "dist";
-	controllers.tab_dist.className = "nav-link tab_dist active";
-	controllers.tab_rot.className = "nav-link tab_rot";
-	controllers.dist.style.display = "flex";
-	controllers.rot.style.display = "none";
+	// Update display
+	controllers.tabs[m].className = "nav-link tab_dist active";
+	controllers.tabs[mode].className = "nav-link tab_rot";
+	controllers[m].style.display = "flex";
+	controllers[mode].style.display = "none";
+	mode = m;
+	graph.draw();
 
+	// Load PID coefficients
 	for (let coef of ["Kp", "Ki", "Kd"])
 		PID.html[coef].value = PID[mode][coef];
-});
+}
 
-controllers.tab_rot.addEventListener("click", (e) => {
-	if (mode == "rot")
-		return ;
-
-	mode = "rot";
-	controllers.tab_dist.className = "nav-link tab_dist";
-	controllers.tab_rot.className = "nav-link tab_rot active";
-	controllers.dist.style.display = "none";
-	controllers.rot.style.display = "flex";
-
-	for (let coef of ["Kp", "Ki", "Kd"])
-		PID.html[coef].value = PID[mode][coef];
-});
+controllers.tabs["dist"].addEventListener("click", () => set_mode("dist"));
+controllers.tabs["rot"].addEventListener("click", () => set_mode("rot"));

@@ -15,26 +15,39 @@ function read_cmd()
 	return out;
 }
 
+let time = 0;
+let r, d;
+
 function write(txt)
 {
-	console.log(txt);
-	let nl = txt.find("\n");
-	if (nl == -1)
-		return ;
-	let cmd = txt.substring(0, nl);
-
 	let map = {
 		"dist" : (args) => {
-			cmd.push('consigne distance');
-			output.push('LOG:1,2,3,4');
-			output.push('LOG:12,9,3,6');
-			output.push('DEBUG:la fin');
+			r = 0;
+			d = args[1];
+			do_log();
+		},
+		"rot" : (args) => {
+			d = 0;
+			r = args[1];
+			do_log();
 		}
 	};
 
-	if (map[cmd])
-		map[cmd]();
+	let tokens = txt.slice(0, -1).split(' ');
+	if (tokens.length == 0)
+		return ;
 
+	if (map[tokens[0]])
+		map[tokens[0]](tokens);
+	if (cmd.length == 0)
+		cmd.push("");
+}
+
+function do_log()
+{
+	output.push(`PID:${time++*500},${d},${Math.random()*d},${r},${Math.random()*r}`);
+	if (time % 10 != 0)
+		setTimeout(do_log, 500);
 }
 
 module.exports = {
