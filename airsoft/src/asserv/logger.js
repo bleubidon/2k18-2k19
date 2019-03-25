@@ -6,15 +6,15 @@ let logger = {
 		while ((out = arduino.get_output())) {
 			let colon = out.indexOf(":");
 			if (colon == -1)
-				console.log(out);
+				console.log("cannot parse:", out);
 			else
 			{
 				let prefix = out.substr(0, colon);
-				console.log(prefix);
+				let content = out.substr(colon + 1);
 				if (logger.map[prefix])
-					logger.map[prefix](out.substr(colon + 1));
+					logger.map[prefix](content);
 				else
-					console.log(out);
+					console.log(`[${prefix}]`, content);
 			}
 		}
 	},

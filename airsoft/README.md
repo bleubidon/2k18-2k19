@@ -1,34 +1,33 @@
-# Preparation
-* Install python 2.7 and add it to path
+## Setup
+
+### Required
+* Install python 2.7 and add it to path (you may have to uninstall python3 :/)
 * Install Node.js with at least v10
 
+### Installation
+Download and install node packages:
 ```
-npm install -g electron
+npm install
+
+npm install -g node-gyp
+npm install -g --production windows-build-tools
 ```
 
-# Serial Module
-### Setup
+Configure node to compile c++ module
 ```
-cd serial
-npm install -g node-gyp
-npm install --global --production windows-build-tools
 npm config set python python2.7
 npm config set msvs_version 2017 --target_platform=win32
 ```
 
-### Build
+## Build
 ```
+cd serial
 node-gyp configure
+node-gyp build #this is maybe useless
 node-gyp rebuild --target=3.0.12 --arch=x64
 ```
 
-# Application
-### Install
-```
-npm i
-```
-
-### Run
+## Run
 ```
 npm start
 ```

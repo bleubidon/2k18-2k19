@@ -1,0 +1,28 @@
+##Relai - arduino:
+GND - GND (rail)
+IN1 - 24
+IN2 - 26
+VCC - 5V (rail)
+
+##Capteurs butée - arduino:
+Masses - GND (rail)
+Haut - 22
+Bas - 28
+Palet - 30
+
+##LCD - arduino:
+VSS - GND (rail)
+VDD - 5V (rail)
+V0 - GND (rail)
+RS - 33
+RW - GND (rail)
+E - 31
+D4 - 29
+D5 - 27
+D6 - 25
+D7 - 23
+A - 5V (rail)
+K - GND (rail)
+les autres: non connectés
+
+

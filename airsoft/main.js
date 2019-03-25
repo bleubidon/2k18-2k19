@@ -7,18 +7,11 @@ global.arduino = {
 	port: "COM7",
 	exec: function(cmd) {
 		serial.write(cmd + "\n");
+		return wait_output();
 	},
 	get_output: () => strip(serial.read_output()),
 	get_cmd: () => strip(serial.read_cmd())
 };
-
-function strip(str)
-{
-	if (typeof str == "string")
-		return str.replace(/\r/g, "")
-			.replace(/\n$/g, "")
-			.replace(/\n/g, "<br>");
-}
 
 let mainWindow = null;
 
@@ -43,6 +36,30 @@ function createWindow() {
 	});
 
 	setMenu();
+}
+
+function strip(str)
+{
+	if (typeof str == "string")
+		return str.replace(/\r/g, "")
+			.replace(/\n$/g, "")
+			.replace(/\n/g, "<br>");
+}
+
+function wait_output()
+{
+	try {
+		let out;
+		do {
+			out = arduino.get_cmd();
+		}
+		while (out == null);
+		return out;
+	}
+	catch (e) {
+		console.error(e);
+		return e;
+	}
 }
 
 

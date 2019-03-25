@@ -91,24 +91,7 @@ function exec_cmd(cmd)
 	if (builtins[tokens[0]])
 		addOutput(builtins[tokens[0]](tokens));
 	else
-	{
-		arduino.exec(cmd);
-		wait_output();
-	}
-}
-
-function wait_output()
-{
-	try {
-		let out = arduino.get_cmd();
-		if (out == null)
-			setTimeout(wait_output, 200);
-		else
-			addOutput(out);
-	}
-	catch (e) {
-		console.error(e);
-	}
+		addOutput(arduino.exec(cmd));
 }
 
 
