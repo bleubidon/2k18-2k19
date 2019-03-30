@@ -8,7 +8,7 @@
 #define POSITION_OUVERTE_GAUCHE 320
 #define POSITION_FERMEE_GAUCHE 70
 
- // PULLUP donc brancher l'autre cote du capteur a la masse
+ // PULLUP donc brancher un cote a la masse (pas au 5V) et l'autre a l'arduino
 const int pinBas = 28;
 const int pinHaut = 22;
 const int pinPalet = 30;

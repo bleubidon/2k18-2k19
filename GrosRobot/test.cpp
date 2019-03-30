@@ -12,25 +12,30 @@
 	{	EXEC_TEST(str); tested = true;	}
 
 #define WAIT_CONSIGNE(cmd) do {\
-		#cmd ;\
-		while (!Robot.loop_pid()) \
+		cmd ;\
+		while (Robot.loop_pid()) \
 			; \
 	} while (0)
 
 DEFINE_TEST(dist)
 {
-	DEBUG(Serial << "Test de butees" << endl);
-	affichage(" Test de butees ");
+	affichage("  Deplacement   ");
 	delay(1000);
+
 	WAIT_CONSIGNE(Robot.consigne_rel(10.f, 0.f));
 	WAIT_CONSIGNE(Robot.consigne_rel(-10.f, 0.f));
+	clear_ecran();
 }
 
 DEFINE_TEST(rot)
 {
+	affichage("    Rotation    ");
+	delay(1000);
+
 	WAIT_CONSIGNE(Robot.consigne(0.f, 45.f));
 	WAIT_CONSIGNE(Robot.consigne(0.f, -45.f));
 	WAIT_CONSIGNE(Robot.consigne(0.f, 0.f));
+	clear_ecran();
 }
 
 static void test_capteur_butee(int pin)
@@ -95,10 +100,6 @@ DEFINE_TEST(plateau)
 	clear_ecran();
 }
 
-void test_ecran (int argc, char **argv)
-{
-}
-
 /// INTERFACE
 void unit_test(int argc, char **argv)
 {
@@ -108,7 +109,6 @@ void unit_test(int argc, char **argv)
 	UNIT_TEST(rot);
 	UNIT_TEST(butee);
 	UNIT_TEST(plateau);
-	UNIT_TEST(ecran);
 
 	if (!tested)
 		Serial << "This test doesn't exist" << endl;
