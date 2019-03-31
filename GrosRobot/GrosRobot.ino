@@ -1,4 +1,5 @@
 #include <I2CParser.h>
+#include <DynamixelSerial2.h>
 
 #include "Actions.h"
 #include "test.h"
@@ -11,11 +12,11 @@ Parser parser;
 void setup()
 {
 	Serial.begin(9600);
+	setup_ecran();
 
-	DEBUG(Serial << "Setup.." << endl);
+	affichage("    Setup...    ");
 
 	setup_ascenseur();
-	setup_ecran();
 	setup_actions();
 
 	Robot.setup({
@@ -44,20 +45,19 @@ void setup()
 	});
 
 	DEBUG(Serial << "Done" << endl);
+	clear_ecran();
+
 
 	parser.add("dist", dist);
 	parser.add("rot", rot);
 	parser.add("stop", stop);
 	parser.add("pid", set_pid);
 	parser.add("cycle", do_cycle);
-
 	parser.add("square", exec_square);
-
-	#ifdef TEST
 	parser.add("test", unit_test);
-	#else
-	montee_plateau();
-	#endif
+
+	parser.add("g", set_axg);
+	parser.add("d", set_axd);
 }
 
 void loop()
@@ -98,6 +98,18 @@ void rot(int argc, char **argv)
 void stop(int argc, char **argv)
 {
 	Robot.stop();
+}
+
+void set_axg(int argc, char **argv)
+{
+	const int pinces[2] = {11, 6}; // gauche, droite
+	Dynamixel.move(pinces[GAUCHE], atof(argv[1]));
+}
+
+void set_axd(int argc, char **argv)
+{
+	const int pinces[2] = {11, 6}; // gauche, droite
+	Dynamixel.move(pinces[DROITE], atof(argv[1]));
 }
 
 void do_cycle(int argc, char **argv)

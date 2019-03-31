@@ -62,7 +62,6 @@ function getCmd(e) {
 	{
 	case 13: // Enter
 		cmd = htmlEntities(input.value); // XSS
-		input.value = "";
 		exec_cmd(cmd);
 		history.unshift(cmd);
 		histPos = -1;
