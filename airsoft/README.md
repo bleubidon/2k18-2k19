@@ -23,8 +23,7 @@ npm config set msvs_version 2017 --target_platform=win32
 ```
 cd serial
 node-gyp configure
-node-gyp build #this is maybe useless
-node-gyp rebuild --target=3.0.12 --arch=x64
+node-gyp rebuild --target=3.0.12 --arch=x64 --target_platform=win32 --dist-url=https://atom.io/download/atom-shell
 ```
 
 ## Run
