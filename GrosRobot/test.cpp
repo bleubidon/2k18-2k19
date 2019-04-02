@@ -19,7 +19,7 @@
 
 DEFINE_TEST(dist)
 {
-	affichage("  Deplacement   ", 0);
+	affichage("Deplacement");
 	delay(1000);
 
 	WAIT_CONSIGNE(Robot.consigne_rel(10.f, 0.f));
@@ -29,7 +29,7 @@ DEFINE_TEST(dist)
 
 DEFINE_TEST(rot)
 {
-	affichage("    Rotation    ", 0);
+	affichage("Rotation");
 	delay(1000);
 
 	WAIT_CONSIGNE(Robot.consigne(0.f, 45.f));
@@ -51,22 +51,22 @@ static void test_capteur_butee(int pin)
 
 DEFINE_TEST(butee)
 {
-	affichage(" Test de butees ", 0);
+	affichage("Test de butees", 1, true);
 	delay(1000);
 
-	affichage("Test butee basse");
+	affichage("Test butee basse", 1, true);
 	test_capteur_butee(28);
-	affichage(" Butee basse OK ");
+	affichage("Butee basse OK", 1, true);
 	delay(1000);
 
-	affichage("Test butee haute");
+	affichage("Test butee haute", 1, true);
 	test_capteur_butee(22);
-	affichage(" Butee haute OK ");
+	affichage("Butee haute OK", 1, true);
 	delay(1000);
 
-	affichage("Test butee palet");
+	affichage("Test butee palet", 1, true);
 	test_capteur_butee(30);
-	affichage(" Butee palet OK ");
+	affichage("Butee palet OK", 1, true);
 	delay(1000);
 
 	clear_ecran();
@@ -74,16 +74,16 @@ DEFINE_TEST(butee)
 
 DEFINE_TEST(plateau)
 {
-	affichage("  Test plateau  ", 0);
+	affichage("Test plateau", 1, true);
 
-	affichage("Descente plateau");
+	affichage("Descente plateau", 1, true);
 	descente_plateau();
-	affichage("  Descente OK!  ");
+	affichage("Descente OK!", 1, true);
 	delay(500);
 
-	affichage(" Montee plateau ");
+	affichage("Montee plateau", 1, true);
 	montee_plateau();
-	affichage("   Montee OK!   ");
+	affichage("Montee OK!", 1, true);
 	delay(500);
 
 	clear_ecran();
@@ -91,15 +91,15 @@ DEFINE_TEST(plateau)
 
 DEFINE_TEST(pinces)
 {
-	affichage("  Test pinces  ", 0);
+	affichage("Test pinces", 1, true);
 	delay(1000);
 
-	affichage("   Ouverture    ");
-	set_pinces(260, 120);
+	affichage("Ouverture", 1, true);
+	set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
 	delay(500);
 
-	affichage("   Fermeture    ");
-	set_pinces(210, 190);
+	affichage("Fermeture", 1, true);
+	set_pinces(closed_pliers_values[GAUCHE], closed_pliers_values[DROITE]);
 	delay(500);
 
 	clear_ecran();

@@ -14,7 +14,7 @@ void setup()
 	Serial.begin(9600);
 	setup_ecran();
 
-	affichage("    Setup...    ");
+	affichage("Setup...");
 
 	setup_ascenseur();
 	setup_actions();
@@ -55,8 +55,9 @@ void setup()
 	parser.add("cycle", do_cycle);
 	parser.add("square", exec_square);
 	parser.add("test", unit_test);
-
-	parser.add("g", set_axg);
+    parser.add("lcd_print", affichage);
+    parser.add("lcd_clear", clear_ecran);
+    parser.add("g", set_axg);
 	parser.add("d", set_axd);
 }
 
@@ -64,8 +65,13 @@ void loop()
 {
 	parser.loop();
 
-	//loop_actions();
+	loop_actions();
 	Robot.loop_pid();
+}
+
+void affichage(int argc, char **argv)
+{
+    affichage(argv[1]);
 }
 
 void exec_square(int argc, char **argv)
@@ -102,14 +108,12 @@ void stop(int argc, char **argv)
 
 void set_axg(int argc, char **argv)
 {
-	const int pinces[2] = {11, 6}; // gauche, droite
-	Dynamixel.move(pinces[GAUCHE], atof(argv[1]));
+	set_pinces(atoi(argv[1]), -1);
 }
 
 void set_axd(int argc, char **argv)
 {
-	const int pinces[2] = {11, 6}; // gauche, droite
-	Dynamixel.move(pinces[DROITE], atof(argv[1]));
+	set_pinces(-1, atoi(argv[1]));
 }
 
 void do_cycle(int argc, char **argv)

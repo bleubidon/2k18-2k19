@@ -20,8 +20,8 @@ void setup_actions()
 	*/
 
 	// Les angles sont en degrés
-	do_square.enqueueGoto(vec(80, 0), 90, nullptr);
-	do_square.enqueueGoto(vec(80, 30), 180);
+	do_square.enqueueGoto(vec(40, 0), 90, nullptr);
+	do_square.enqueueGoto(vec(40, 30), 180);
 	do_square.enqueueGoto(vec(0, 30), 270);
 	do_square.enqueueGoto(vec(0, 0), 0);
 }
