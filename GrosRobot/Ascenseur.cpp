@@ -12,13 +12,11 @@ const int pinsRelais[2] = {24, 26}; // 24: IN1, 26: IN2
 const int pinAX12 = 48;
 const int pinces[2] = {11, 6}; // gauche, droite
 
-const int pince_gauche_min_value = 140;
-const int pince_gauche_max_value = 260;
-const int pince_droite_min_value = 90;
-const int pince_droite_max_value = 210;
+const int min_pliers_values[2] = {140,  90};
+const int max_pliers_values[2] = {260, 210};
 
 const int opened_pliers_values[2] = {260, 120};  // gauche, droite
-const int closed_pliers_values[2] = {190, 210};  // gauche, droite; old: 210, 190
+const int closed_pliers_values[2] = {230, 150};  // gauche, droite
 
 
 void setup_ascenseur()
@@ -70,21 +68,23 @@ void montee_plateau()
 
 void set_pinces(int gauche, int droite)
 {
-    if (gauche >=0) { //On souhaite deplacer la pince gauche
-        if (gauche >= pince_gauche_min_value && gauche <= pince_gauche_max_value) { //Intervalle de valeurs autorisees
-            Dynamixel.move(pinces[GAUCHE], gauche);
-            delay(20);
-        }
-        else DEBUG(Serial << "Cannot move left plier, value not in authorized range" << endl);
-    }
+	const int cmds[2] = {gauche, droite};
+	const char *names[2] = {"left", "right"};
 
-    if (droite >=0) { //On souhaite deplacer la pince droite
-        if (droite >= pince_droite_min_value && droite <= pince_droite_max_value) { //Intervalle de valeurs autorisees
-            Dynamixel.move(pinces[DROITE], droite);
-            delay(500);
-        }
-        else DEBUG(Serial << "Cannot move right plier, value not in authorized range" << endl);
-    }
+	for (int i = 0; i < 2; i++)
+	{
+		if (cmds[i] < 0) //On ne souhaite pas bouger cette pince
+			continue;
+
+		if (min_pliers_values[i] <= cmds[i] && cmds[i] <= max_pliers_values[i])
+		{
+		    Dynamixel.move(pinces[i], cmds[i]);
+		    delay(20);
+		}
+		else
+			DEBUG(Serial << "Cannot move " << names[i] << " plier: " <<
+				"value not in authorized range" << endl);
+	}
 }
 
 void cycle_ascenseur()

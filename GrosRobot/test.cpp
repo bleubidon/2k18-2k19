@@ -19,7 +19,7 @@
 
 DEFINE_TEST(dist)
 {
-	affichage("Deplacement");
+	affichage("Deplacement", 0);
 	delay(1000);
 
 	WAIT_CONSIGNE(Robot.consigne_rel(10.f, 0.f));
@@ -29,7 +29,7 @@ DEFINE_TEST(dist)
 
 DEFINE_TEST(rot)
 {
-	affichage("Rotation");
+	affichage("Rotation", 0);
 	delay(1000);
 
 	WAIT_CONSIGNE(Robot.consigne(0.f, 45.f));
@@ -51,22 +51,22 @@ static void test_capteur_butee(int pin)
 
 DEFINE_TEST(butee)
 {
-	affichage("Test de butees", 1, true);
+	affichage("Test de butees", 0);
 	delay(1000);
 
-	affichage("Test butee basse", 1, true);
+	affichage("Test butee basse");
 	test_capteur_butee(28);
-	affichage("Butee basse OK", 1, true);
+	affichage("Butee basse OK");
 	delay(1000);
 
-	affichage("Test butee haute", 1, true);
+	affichage("Test butee haute");
 	test_capteur_butee(22);
-	affichage("Butee haute OK", 1, true);
+	affichage("Butee haute OK");
 	delay(1000);
 
-	affichage("Test butee palet", 1, true);
+	affichage("Test butee palet");
 	test_capteur_butee(30);
-	affichage("Butee palet OK", 1, true);
+	affichage("Butee palet OK");
 	delay(1000);
 
 	clear_ecran();
@@ -74,16 +74,16 @@ DEFINE_TEST(butee)
 
 DEFINE_TEST(plateau)
 {
-	affichage("Test plateau", 1, true);
+	affichage("Test plateau", 0);
 
-	affichage("Descente plateau", 1, true);
+	affichage("Descente plateau");
 	descente_plateau();
-	affichage("Descente OK!", 1, true);
+	affichage("Descente OK!");
 	delay(500);
 
-	affichage("Montee plateau", 1, true);
+	affichage("Montee plateau");
 	montee_plateau();
-	affichage("Montee OK!", 1, true);
+	affichage("Montee OK!");
 	delay(500);
 
 	clear_ecran();
@@ -91,14 +91,14 @@ DEFINE_TEST(plateau)
 
 DEFINE_TEST(pinces)
 {
-	affichage("Test pinces", 1, true);
+	affichage("Test pinces", 0);
 	delay(1000);
 
-	affichage("Ouverture", 1, true);
+	affichage("Ouverture");
 	set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
 	delay(500);
 
-	affichage("Fermeture", 1, true);
+	affichage("Fermeture");
 	set_pinces(closed_pliers_values[GAUCHE], closed_pliers_values[DROITE]);
 	delay(500);
 
