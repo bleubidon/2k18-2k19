@@ -1,8 +1,9 @@
 **/.*.swp
 **/.vimsession
+**/.idea
+**/.vscode
+**/__pycache__
 
 airsoft/serial/build
 airsoft/node_modules
 airsoft/builds
-
-.vscode

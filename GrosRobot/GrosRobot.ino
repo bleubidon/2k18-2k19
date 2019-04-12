@@ -10,10 +10,13 @@
 // NOTE Parser: mettre l'option fin de ligne dans la console Arduino pour pouvoir envoyer des commandes
 
 Parser parser;
+int buttonState = 1, buttonState_prev = buttonState;
+int buttonTriggerTimein = 300;  // in ms
+unsigned long buttonTimer;
 
 void setup()
 {
-	Serial.begin(9600);
+    Serial.begin(9600); //Raspberry Serial communication
 	setup_ecran();
 
 	affichage("Setup...");
@@ -64,14 +67,23 @@ void setup()
 	parser.add("ax", [] (int, char **argv) { set_pinces(atoi(argv[1]), atoi(argv[2])); } );
 	parser.add("axg", set_axg);
 	parser.add("axd", set_axd);
+    parser.add("rpi_response", handle_rpi_response);
+
+    buttonTimer = millis();
 }
 
 void loop()
 {
 	parser.loop();
-
-	loop_actions();
+    loop_actions();
 	Robot.loop_pid();
+
+    buttonState = digitalRead(pinBouton);
+    if (buttonState == 0 && buttonState != buttonState_prev && millis() - buttonTimer > buttonTriggerTimein) {  // if button is pressed and timein is up
+        buttonTimer = millis();
+        Serial.println("request");  // Send request to rpi        
+        }
+    buttonState_prev = buttonState;
 }
 
 void set_pid(int argc, char **argv)
@@ -104,4 +116,11 @@ void set_axg(int argc, char **argv)
 void set_axd(int argc, char **argv)
 {
 	set_pinces(-1, atoi(argv[1]));
+}
+
+void handle_rpi_response(int argc, char **argv)
+{
+    affichage(argv[1]);
+    Robot.consigne_rel(0.f, atof(argv[1]));  // Orientation du robot en direction du palet detecte
+    if (abs(atof(argv[1])) >=2) Serial.println("request");  // Renvoyer une requete jusqu'a ce qu'il n'y ait presque plus de correction a faire
 }
