@@ -38,7 +38,7 @@ void Parser::loop()
 			if (cursor == BUFFER_LENGTH)
 			{
 				cursor = 0;
-				stream->print("parser: command is too long");
+				LOG(stream->print("parser: command is too long"));
                 LOG(stream->write(0x4));  // End of transmission
 				continue ;
 			}
@@ -88,9 +88,9 @@ bool Parser::parse(char* command)
 		}
 	}
 
-	stream->print("parser: ");
-	stream->print(argv[0]);
-	stream->println(": command not found");
+	LOG(stream->print("parser: "));
+	LOG(stream->print(argv[0]));
+	LOG(stream->println(": command not found"));
 	LOG(stream->write(0x4)); // End of transmission
 	
 	return false;

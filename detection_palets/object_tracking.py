@@ -95,7 +95,7 @@ def track(video_path, tracker_type, bbox=(287, 23, 86, 320), gui=False):
 
 
 video_name = 'video - Copy' + '.mp4'
-video_path = 'videos/palets/' + video_name
+video_path = 'footage/videos/palets/' + video_name
 video = cv2.VideoCapture(video_path)
 ok, frame = video.read()
 if ok:
@@ -124,8 +124,16 @@ print(centers)
 radius = 60
 bbox = (cX-radius, cY-radius, 2*radius, 2*radius)
 
-video_path = 'videos/palets/' + video_name
+video_path = 'footage/videos/palets/' + video_name
 tracker_types = ['BOOSTING', 'MIL', 'KCF', 'TLD', 'MEDIANFLOW', 'GOTURN', 'MOSSE', 'CSRT']
 tracker_type = tracker_types[7]  # KCF and CSRT seem good
 
 track(video_path, tracker_type, bbox, gui=True)
+
+
+
+'''def get_first_frame_from_video(video_path):
+    video = cv2.VideoCapture(video_path)
+    ok, frame = video.read()
+    if ok:
+        cv2.imwrite(r'frame.jpg', frame)'''

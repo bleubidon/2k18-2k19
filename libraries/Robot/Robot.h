@@ -31,8 +31,9 @@ class c_Robot
 		PID& dist_pid() { return dist; }
 		PID& rot_pid() { return rot; }
 
+        Odometrie position;
+
 	private:
-		Odometrie position;
 		Moteur moteurs[2];
 
 		// PID

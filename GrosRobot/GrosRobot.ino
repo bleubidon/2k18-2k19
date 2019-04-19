@@ -45,8 +45,8 @@ void setup()
 			{4, 9, 6, wheel_radius : 3.25f, GAUCHE},
 			{7, 8, 5, wheel_radius : 3.25f, DROITE}
 		},
-		dist : PID(25.f, 0.f, 2.f),
-		rot : PID(10.f, 0.f, 0.5f)
+		dist : PID(25.f, 0.f, 2.f),  // 25.f, 0.f, 2.f
+		rot : PID(20.f, 0.f, 0.5f)  // 10.f, 0.f, 0.5f
 	});
 
 	DEBUG(Serial << "Done" << endl);
@@ -60,7 +60,6 @@ void setup()
 	parser.add("test", unit_test);
 	parser.add("lcd_print", [] (int, char **argv) { affichage(argv[1]); } );
 	parser.add("lcd_clear", LAMBDA(clear_ecran) );
-
 	parser.add("cycle", LAMBDA(cycle_ascenseur) );
 	parser.add("up", LAMBDA(montee_plateau) );
 	parser.add("down", LAMBDA(descente_plateau) );
@@ -120,7 +119,36 @@ void set_axd(int argc, char **argv)
 
 void handle_rpi_response(int argc, char **argv)
 {
-    affichage(argv[1]);
-    Robot.consigne_rel(0.f, atof(argv[1]));  // Orientation du robot en direction du palet detecte
-    if (abs(atof(argv[1])) >=2) Serial.println("request");  // Renvoyer une requete jusqu'a ce qu'il n'y ait presque plus de correction a faire
+    if (argc < 2) return;  // S'arreter si aucun palet n'a ete detecte
+    else {
+        char to_display[16];
+        snprintf(to_display, sizeof(to_display), "R:%s; D:%s", argv[1], argv[2]);
+        affichage(to_display);
+
+        float dist_init = Robot.position.dist();
+        float rot_init = Robot.position.rot();
+
+        Robot.consigne_rel(0.f, atof(argv[1]));  // Le robot s'oriente en direction du palet detecte
+        while(Robot.loop_pid());  // Attendre que la commande de deplacement soit executee
+        if (abs(atof(argv[1])) >=2) Serial.println("request_2");  // Renvoyer une requete jusqu'a ce qu'il n'y ait presque plus de correction d'angle a faire
+        
+        else {
+            Robot.consigne_rel(atof(argv[2]), 0.f);  // Le robot avance jusqu'a au plus la distance au palet calculee
+            while(Robot.loop_pid()) {
+                if (digitalRead(pinPalet) == LOW) {
+                    Robot.stop();  // Le robot s'arrete s'il detecte que le palet est en butee
+                    break;
+                }
+            }
+
+            // Le robot revient a sa position initiale
+            Robot.consigne(0.f, rot_init);
+            while(Robot.loop_pid());
+            Robot.consigne(dist_init, 0.f);
+            while(Robot.loop_pid());
+
+            Serial.println("request");  // Renvoyer une requete jusqu'a ce qu'il n'y ait plus de palet detecte par la camera
+        
+        }
+    }     
 }
