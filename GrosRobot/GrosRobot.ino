@@ -1,3 +1,4 @@
+#include "GrosRobot.h"
 #include <I2CParser.h>
 #include <DynamixelSerial2.h>
 
@@ -11,7 +12,7 @@
 
 Parser parser;
 int buttonState = 1, buttonState_prev = buttonState;
-int buttonTriggerTimein = 300;  // in ms
+unsigned int buttonTriggerTimein = 300;  // in ms
 unsigned long buttonTimer;
 
 void setup()
