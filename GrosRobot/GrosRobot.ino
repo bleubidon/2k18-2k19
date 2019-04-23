@@ -40,7 +40,7 @@ void setup()
 			{4, 9, 6, wheel_radius : 3.25f, GAUCHE},
 			{7, 8, 5, wheel_radius : 3.25f, DROITE}
 		},
-		dist : PID(25.f, 0.f, 2.f),
+		dist : PID(50.f, 0.f, 2.5f),
 		rot : PID(10.f, 0.f, 0.5f)
 	});
 

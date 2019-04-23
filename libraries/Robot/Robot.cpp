@@ -78,8 +78,8 @@ bool c_Robot::loop_pid()
 	float vitesse_dist = dist.compute(dist.consigne - position.dist(), dt);
 	float vitesse_rot = rot.compute(angle_diff(rot.consigne, position.rot()), dt);
 
-	const float precision_dist = 1;
-	const float precision_rot = 1;
+	const float precision_dist = 0.1;
+	const float precision_rot = 0.1;
 	if (abs(dist.erreur) < precision_dist && abs(rot.erreur) < precision_rot)
 	{
 		stop();
@@ -88,7 +88,7 @@ bool c_Robot::loop_pid()
 	else
 	{
 		// Ecretage des vitesses
-		const float vMax = 64;
+		const float vMax = 128; //64;
 		vitesse_dist = clamp(-vMax, vitesse_dist, vMax);
 		vitesse_rot = clamp(-vMax, vitesse_rot, vMax);
 
