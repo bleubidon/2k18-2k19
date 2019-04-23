@@ -9,8 +9,8 @@ char default_text[] = "AIR 2K19";
 void setup_ecran()
 {
 	lcd.begin(16, 2);
-    pinMode(pinBouton, INPUT_PULLUP);
-    clear_ecran();
+	pinMode(pinBouton, INPUT_PULLUP);
+	clear_ecran();
 }
 
 void clear_ecran()
@@ -19,13 +19,24 @@ void clear_ecran()
 	affichage(default_text, 0);
 }
 
-void affichage(const char *message, unsigned ligne, bool clear_display=false) // ligne = 1 par defaut, cf Actions.h
+void affichage(const char *message, unsigned ligne, bool clear_display)
 {
-    if (clear_display) clear_ecran();
-    DEBUG(Serial << "Write on LCD: " << message << endl);
-    int message_length = strlen(message);
-    int cursor = message_length > LCD_length ? 0: (message_length % 2 == 0 ? LCD_length / 2 - message_length / 2: LCD_length / 2 - (message_length + 1) / 2);
-    lcd.setCursor(cursor, ligne > 1 ? 1: ligne);
+	DEBUG(Serial << "Write on LCD: " << message << endl);
+
+	if (ligne > 1)
+		ligne = 1;
+	if (clear_display)
+		clear_ecran();
+
+	int message_length = strlen(message);
+	int cursor = 0;
+	if (message_length < LCD_length)
+		cursor = (message_length % 2 == 0) ?
+			LCD_length / 2 - message_length / 2:
+			LCD_length / 2 - (message_length + 1) / 2;
+
+	lcd.setCursor(0, ligne);
+	lcd.print("                ");
+	lcd.setCursor(cursor, ligne);
 	lcd.print(message);
-	delay(250);
 }

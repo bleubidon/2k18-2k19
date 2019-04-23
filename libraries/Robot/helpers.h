@@ -1,7 +1,7 @@
 #pragma once
 
-//#define NDEBUG	// Define to disable debug messages
-//#define NLOG		// Define to disable log messages
+#define NDEBUG	// Define to disable debug messages
+#define NLOG		// Define to disable log messages
 
 #include <Arduino.h>
 

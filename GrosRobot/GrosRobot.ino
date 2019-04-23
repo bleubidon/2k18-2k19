@@ -1,3 +1,4 @@
+#include "GrosRobot.h"
 #include <I2CParser.h>
 #include <DynamixelSerial2.h>
 
@@ -5,13 +6,18 @@
 #include "test.h"
 #include "helpers.h"
 
+#define LAMBDA(cmd) [] (int, char**) { cmd(); }
+
 // NOTE Parser: mettre l'option fin de ligne dans la console Arduino pour pouvoir envoyer des commandes
 
 Parser parser;
+int buttonState = 1, buttonState_prev = buttonState;
+unsigned int buttonTriggerTimein = 300;  // in ms
+unsigned long buttonTimer;
 
 void setup()
 {
-	Serial.begin(9600);
+    Serial.begin(9600); //Raspberry Serial communication
 	setup_ecran();
 
 	affichage("Setup...");
@@ -40,43 +46,44 @@ void setup()
 			{4, 9, 6, wheel_radius : 3.25f, GAUCHE},
 			{7, 8, 5, wheel_radius : 3.25f, DROITE}
 		},
-		dist : PID(50.f, 0.f, 2.5f),
-		rot : PID(10.f, 0.f, 0.5f)
+		dist : PID(25.f, 0.f, 2.f),  // 25.f, 0.f, 2.f
+		rot : PID(20.f, 0.f, 0.5f)  // 10.f, 0.f, 0.5f
 	});
 
 	DEBUG(Serial << "Done" << endl);
 	clear_ecran();
 
-
 	parser.add("dist", dist);
 	parser.add("rot", rot);
-	parser.add("stop", stop);
+	parser.add("stop", LAMBDA(Robot.stop) );
 	parser.add("pid", set_pid);
-	parser.add("cycle", do_cycle);
-	parser.add("square", exec_square);
+	parser.add("square", LAMBDA(do_square.restart) );
 	parser.add("test", unit_test);
-    parser.add("lcd_print", affichage);
-    parser.add("lcd_clear", clear_ecran);
-    parser.add("g", set_axg);
-	parser.add("d", set_axd);
+	parser.add("lcd_print", [] (int, char **argv) { affichage(argv[1]); } );
+	parser.add("lcd_clear", LAMBDA(clear_ecran) );
+	parser.add("cycle", LAMBDA(cycle_ascenseur) );
+	parser.add("up", LAMBDA(montee_plateau) );
+	parser.add("down", LAMBDA(descente_plateau) );
+	parser.add("ax", [] (int, char **argv) { set_pinces(atoi(argv[1]), atoi(argv[2])); } );
+	parser.add("axg", set_axg);
+	parser.add("axd", set_axd);
+    parser.add("rpi_response", handle_rpi_response);
+
+    buttonTimer = millis();
 }
 
 void loop()
 {
 	parser.loop();
-
-	loop_actions();
+    loop_actions();
 	Robot.loop_pid();
-}
 
-void affichage(int argc, char **argv)
-{
-    affichage(argv[1]);
-}
-
-void exec_square(int argc, char **argv)
-{
-	do_square.restart();
+    buttonState = digitalRead(pinBouton);
+    if (buttonState == 0 && buttonState != buttonState_prev && millis() - buttonTimer > buttonTriggerTimein) {  // if button is pressed and timein is up
+        buttonTimer = millis();
+        Serial.println("request");  // Send request to rpi        
+        }
+    buttonState_prev = buttonState;
 }
 
 void set_pid(int argc, char **argv)
@@ -101,11 +108,6 @@ void rot(int argc, char **argv)
 		Robot.consigne_rel(0.f, atof(argv[1]));
 }
 
-void stop(int argc, char **argv)
-{
-	Robot.stop();
-}
-
 void set_axg(int argc, char **argv)
 {
 	set_pinces(atoi(argv[1]), -1);
@@ -116,7 +118,38 @@ void set_axd(int argc, char **argv)
 	set_pinces(-1, atoi(argv[1]));
 }
 
-void do_cycle(int argc, char **argv)
+void handle_rpi_response(int argc, char **argv)
 {
-	cycle_ascenseur();
+    if (argc < 2) return;  // S'arreter si aucun palet n'a ete detecte
+    else {
+        char to_display[16];
+        snprintf(to_display, sizeof(to_display), "R:%s; D:%s", argv[1], argv[2]);
+        affichage(to_display);
+
+        float dist_init = Robot.position.dist();
+        float rot_init = Robot.position.rot();
+
+        Robot.consigne_rel(0.f, atof(argv[1]));  // Le robot s'oriente en direction du palet detecte
+        while(Robot.loop_pid());  // Attendre que la commande de deplacement soit executee
+        if (abs(atof(argv[1])) >=2) Serial.println("request_2");  // Renvoyer une requete jusqu'a ce qu'il n'y ait presque plus de correction d'angle a faire
+        
+        else {
+            Robot.consigne_rel(atof(argv[2]), 0.f);  // Le robot avance jusqu'a au plus la distance au palet calculee
+            while(Robot.loop_pid()) {
+                if (digitalRead(pinPalet) == LOW) {
+                    Robot.stop();  // Le robot s'arrete s'il detecte que le palet est en butee
+                    break;
+                }
+            }
+
+            // Le robot revient a sa position initiale
+            Robot.consigne(0.f, rot_init);
+            while(Robot.loop_pid());
+            Robot.consigne(dist_init, 0.f);
+            while(Robot.loop_pid());
+
+            Serial.println("request");  // Renvoyer une requete jusqu'a ce qu'il n'y ait plus de palet detecte par la camera
+        
+        }
+    }     
 }

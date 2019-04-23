@@ -45,7 +45,7 @@ void c_Robot::consigne_rel(float _dist, float _rot)
 	consigne(position.dist() + _dist, position.rot() + _rot);
 }
 
-float	angle_diff(float a, float b)
+float angle_diff(float a, float b)
 {
 	if (b < a)
 		return -angle_diff(b, a);
