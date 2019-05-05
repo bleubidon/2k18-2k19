@@ -14,6 +14,8 @@ class c_Robot
 			Odometrie::Config odometrie;
 			Moteur::Config moteurs[2];
 
+			int min_speed, max_speed;
+
 			PID dist;
 			PID rot;
 		};
@@ -25,6 +27,7 @@ class c_Robot
 		void consigne(float _dist, float _rot);
 		void consigne_rel(float _dist, float _rot);
 
+		int scale(float speed);
 		bool loop_pid();
 
 		Odometrie& pos() { return position; }
@@ -34,6 +37,8 @@ class c_Robot
 	private:
 		Odometrie position;
 		Moteur moteurs[2];
+
+		int min_speed, max_speed;
 
 		// PID
 		PID dist, rot;

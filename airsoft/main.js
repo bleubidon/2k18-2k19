@@ -4,7 +4,7 @@ let serial = require("./serial/build/Release/serial.node");
 
 global.arduino = {
 	connected: false,
-	port: "COM7",
+	port: "COM10",
 	exec: function(cmd) {
 		serial.write(cmd + "\n");
 		return wait_output();

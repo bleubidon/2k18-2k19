@@ -33,7 +33,7 @@ void setup_ascenseur()
 
 	Dynamixel.begin(1000000, pinAX12);
 
-	montee_plateau();
+	//montee_plateau();
 }
 
 void descente_plateau()

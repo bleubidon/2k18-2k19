@@ -62,6 +62,7 @@ let controllers = {
 }
 
 controllers.dist.addEventListener("change", send_consigne);
+controllers.dist.addEventListener("keydown", (e) => { if (e.keyCode == 13) send_consigne(e); });
 
 function set_mode(m)
 {
