@@ -22,4 +22,4 @@ void affichage(const char* message, unsigned ligne = 1, bool clear_display = fal
 extern const int opened_pliers_values[2];
 extern const int closed_pliers_values[2];
 
-extern const int pinBouton;
+extern const int pinBouton, pinPalet;

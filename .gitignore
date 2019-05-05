@@ -3,6 +3,7 @@
 **/.idea
 **/.vscode
 **/__pycache__
+**/build-mega
 
 airsoft/serial/build
 airsoft/node_modules

@@ -1,3 +1,4 @@
+#include "GrosRobot.h"
 #include <I2CParser.h>
 #include <DynamixelSerial2.h>
 
@@ -11,7 +12,7 @@
 
 Parser parser;
 int buttonState = 1, buttonState_prev = buttonState;
-int buttonTriggerTimein = 300;  // in ms
+unsigned int buttonTriggerTimein = 300; // in ms
 unsigned long buttonTimer;
 
 void setup()
@@ -62,7 +63,6 @@ void setup()
 	parser.add("test", unit_test);
 	parser.add("lcd_print", [] (int, char **argv) { affichage(argv[1]); } );
 	parser.add("lcd_clear", LAMBDA(clear_ecran) );
-
 	parser.add("cycle", LAMBDA(cycle_ascenseur) );
 	parser.add("up", LAMBDA(montee_plateau) );
 	parser.add("down", LAMBDA(descente_plateau) );
@@ -122,17 +122,44 @@ void set_axd(int argc, char **argv)
 
 void handle_rpi_response(int argc, char **argv)
 {
+	if (argc < 2) // S'arreter si aucun palet n'a ete detecte
+		return;
+
+	char to_display[16];
+	snprintf(to_display, sizeof(to_display), "R:%s; D:%s", argv[1], argv[2]);
+	affichage(to_display);
+
+	float dist_init = Robot.pos().dist();
+	float rot_init = Robot.pos().rot();
 	float angle_error = atof(argv[1]);
-	affichage(argv[1]);
+	float dist_error = atof(argv[2]);
 
-	// Orientation du robot en direction du palet detecte
+	// Le robot s'oriente en direction du palet detecte
 	Robot.consigne_rel(0.f, angle_error);
-	while (Robot.loop_pid())
-		;
+	while(Robot.loop_pid());
 
-	// Renvoyer une requete jusqu'a ce qu'il n'y ait presque plus de correction a faire
-	if (abs(angle_error) >= 2.0f)
-		Serial.println("request");
-	else
-		Serial.println("done");
+	// Renvoi d'une requete tant que l'erreur angulaire est trop elevee
+	if (abs(angle_error) >= 2)
+		Serial.println("request_2");
+
+	else {
+		// Le robot avance jusqu'a au plus la distance au palet calculee
+		Robot.consigne_rel(dist_error, 0.f);
+		while(Robot.loop_pid()) {
+			// Le robot s'arrete s'il detecte que le palet est en butee
+			if (digitalRead(pinPalet) == LOW) {
+				Robot.stop();
+				break;
+			}
+		}
+
+		// Le robot revient a sa position initiale
+		Robot.consigne(0.f, rot_init);
+		while(Robot.loop_pid());
+		Robot.consigne(dist_init, 0.f);
+		while(Robot.loop_pid());
+
+		// Renvoi d'une requete pour recuperer le prochain palet
+		Serial.println("request"); 
+	}
 }
