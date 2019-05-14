@@ -55,20 +55,25 @@ void setup()
 	DEBUG(Serial << "Done" << endl);
 	clear_ecran();
 
-	parser.add("dist", dist);
-	parser.add("rot", rot);
-	parser.add("stop", LAMBDA(Robot.stop) );
 	parser.add("pid", set_pid);
 	parser.add("square", LAMBDA(do_square.restart) );
 	parser.add("test", unit_test);
+
+	parser.add("dist", dist);
+	parser.add("rot", rot);
+	parser.add("stop", LAMBDA(Robot.stop) );
+
 	parser.add("lcd_print", [] (int, char **argv) { affichage(argv[1]); } );
 	parser.add("lcd_clear", LAMBDA(clear_ecran) );
-	parser.add("cycle", LAMBDA(cycle_ascenseur) );
+
 	parser.add("up", LAMBDA(montee_plateau) );
 	parser.add("down", LAMBDA(descente_plateau) );
+	parser.add("cycle", LAMBDA(cycle_ascenseur) );
+
 	parser.add("ax", [] (int, char **argv) { set_pinces(atoi(argv[1]), atoi(argv[2])); } );
 	parser.add("axg", set_axg);
 	parser.add("axd", set_axd);
+
 	parser.add("rpi_response", handle_rpi_response);
 
 	buttonTimer = millis();
