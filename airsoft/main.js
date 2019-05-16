@@ -17,6 +17,9 @@ let mainWindow = null;
 
 app.setName('AIR Soft');
 app.on('ready', createWindow)
+app.on('window-all-closed', () => {
+  app.quit()
+})
 
 function createWindow() {
 	const windowOptions = {
