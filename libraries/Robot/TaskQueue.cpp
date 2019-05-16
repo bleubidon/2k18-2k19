@@ -121,7 +121,7 @@ Event *TaskQueue::enqueueMatchTimer(unsigned long time, Event *trigger)
 	return &task.event;
 }
 
-Event *TaskQueue::enqueueBarrier()
+/*Event *TaskQueue::enqueueBarrier()
 {
 	Task &task = queue[queueSize++];
 	task.init(Task::BARRIER, nullptr);
@@ -134,4 +134,4 @@ Event *TaskQueue::enqueueBarrier()
 Event *TaskQueue::wait_previous()
 {
 	return &queue[queueSize - 1].event;
-}
+}*/
