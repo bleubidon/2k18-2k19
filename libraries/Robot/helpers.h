@@ -23,13 +23,13 @@ inline Print &operator<<(Print &obj, T arg)
 }
 
 #ifdef NDEBUG
-# define DEBUG(x) void;
+# define DEBUG(x)
 #else
 # define DEBUG(x) x
 #endif
 
 #ifdef NLOG
-# define LOG(x) void;
+# define LOG(x)
 #else
 # define LOG(x) x
 #endif

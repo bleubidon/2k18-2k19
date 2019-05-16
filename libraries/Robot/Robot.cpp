@@ -16,6 +16,9 @@ void c_Robot::setup(c_Robot::Config config)
 	moteurs[GAUCHE].setup(config.moteurs[GAUCHE]);
 	moteurs[DROITE].setup(config.moteurs[DROITE]);
 
+	min_speed = config.min_speed;
+	max_speed = config.max_speed;
+
 	dist = config.dist;
 	rot = config.rot;
 	consigne_pid = false;
@@ -45,7 +48,7 @@ void c_Robot::consigne_rel(float _dist, float _rot)
 	consigne(position.dist() + _dist, position.rot() + _rot);
 }
 
-float	angle_diff(float a, float b)
+float angle_diff(float a, float b)
 {
 	if (b < a)
 		return -angle_diff(b, a);
@@ -55,9 +58,14 @@ float	angle_diff(float a, float b)
 		return (b - 360) - a;
 }
 
-/* TODO:
-** scale down both speeds instead of clamping
-*/
+int c_Robot::scale(float speed)
+{
+	if (speed > 0)
+		return min(speed + min_speed, max_speed);
+	else
+		return max(speed - min_speed, -max_speed);
+}
+
 bool c_Robot::loop_pid()
 {
 	if (!consigne_pid)
@@ -78,8 +86,8 @@ bool c_Robot::loop_pid()
 	float vitesse_dist = dist.compute(dist.consigne - position.dist(), dt);
 	float vitesse_rot = rot.compute(angle_diff(rot.consigne, position.rot()), dt);
 
-	const float precision_dist = 1;
-	const float precision_rot = 1;
+	const float precision_dist = 0.5f;
+	const float precision_rot = 0.5f;
 	if (abs(dist.erreur) < precision_dist && abs(rot.erreur) < precision_rot)
 	{
 		stop();
@@ -87,18 +95,8 @@ bool c_Robot::loop_pid()
 	}
 	else
 	{
-		// Ecretage des vitesses
-		const float vMax = 64;
-		vitesse_dist = clamp(-vMax, vitesse_dist, vMax);
-		vitesse_rot = clamp(-vMax, vitesse_rot, vMax);
-
-		// Ecretage des accelerations
-		const float dvMax = 20;
-		//vitesse_dist = clamp(-dvMax, (vitesse_dist - dist.vitesse_old), dvMax)  + dist.vitesse_old;
-		//vitesse_rot = clamp(-dvMax, (vitesse_rot - rot.vitesse_old), dvMax)  + rot.vitesse_old;
-
-		moteurs[0].consigne(vitesse_dist + vitesse_rot);
-		moteurs[1].consigne(vitesse_dist - vitesse_rot);
+		moteurs[0].consigne(scale(vitesse_dist + vitesse_rot));
+		moteurs[1].consigne(scale(vitesse_dist - vitesse_rot));
 	}
 
 	// Ecrit les donnees de log sur le port serie

@@ -1,18 +1,23 @@
 #include "Actions.h"
 #include <DynamixelSerial2.h>
 
-#define PINCE_GAUCHE 11
-#define PINCE_DROITE 6
-#define POSITION_OUVERTE_DROITE 50
-#define POSITION_FERMEE_DROITE 300
-#define POSITION_OUVERTE_GAUCHE 320
-#define POSITION_FERMEE_GAUCHE 70
-
- // PULLUP donc brancher l'autre cote du capteur a la masse
+// Capteurs butee: PULLUP donc brancher un cote a la masse (pas au 5V) et l'autre a l'arduino
 const int pinBas = 28;
 const int pinHaut = 22;
 const int pinPalet = 30;
+// Relais
 const int pinsRelais[2] = {24, 26}; // 24: IN1, 26: IN2
+
+// AX12
+const int pinAX12 = 48;
+const int pinces[2] = {11, 6}; // gauche, droite
+
+const int min_pliers_values[2] = {140,  90};
+const int max_pliers_values[2] = {260, 210};
+
+const int opened_pliers_values[2] = {260, 120}; // gauche, droite
+const int closed_pliers_values[2] = {230, 150}; // gauche, droite
+
 
 void setup_ascenseur()
 {
@@ -26,7 +31,9 @@ void setup_ascenseur()
 	pinMode(pinHaut, INPUT_PULLUP);
 	pinMode(pinPalet, INPUT_PULLUP);
 
-	Dynamixel.begin(1000000, 2);
+	Dynamixel.begin(1000000, pinAX12);
+
+	//montee_plateau();
 }
 
 void descente_plateau()
@@ -59,26 +66,25 @@ void montee_plateau()
 	digitalWrite(pinsRelais[1], HIGH);
 }
 
-void ouverture_pinces()
+void set_pinces(int gauche, int droite)
 {
-	// Position droit : 210 pour ID 11
-	Dynamixel.move (PINCE_GAUCHE , POSITION_OUVERTE_GAUCHE );
-	delay(20);
+	const int cmds[2] = {gauche, droite};
+	const char *names[2] = {"left", "right"};
 
-	// Position droit : 210 pour ID 11
-	Dynamixel.move (PINCE_DROITE , POSITION_OUVERTE_DROITE );
-	delay(500);
-}
+	for (int i = 0; i < 2; i++)
+	{
+		if (cmds[i] < 0) //On ne souhaite pas bouger cette pince
+			continue;
 
-void fermeture_pinces()
-{
-	// Position droit : 210 pour ID 11
-	Dynamixel.move (PINCE_GAUCHE , POSITION_FERMEE_GAUCHE);
-	delay(20);
-
-	// Position droit : 210 pour ID 11
-	Dynamixel.move (PINCE_DROITE , POSITION_FERMEE_DROITE);
-	delay(500);
+		if (min_pliers_values[i] <= cmds[i] && cmds[i] <= max_pliers_values[i])
+		{
+			Dynamixel.move(pinces[i], cmds[i]);
+			delay(20);
+		}
+		else
+			DEBUG(Serial << "Cannot move " << names[i] << " plier: " <<
+				"value not in authorized range" << endl);
+	}
 }
 
 void cycle_ascenseur()
@@ -87,15 +93,15 @@ void cycle_ascenseur()
 
 	delay(1000);
 
-	// 1- Lacher des palets
-	ouverture_pinces();
+	// 1- Relachement des palets
+	set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
 
 	// 2- Descente plateau
 	descente_plateau();
 	
-	// 3- Fermeture pince
-	fermeture_pinces();
+	// 3- Attrapage des palets
+	set_pinces(closed_pliers_values[GAUCHE], closed_pliers_values[DROITE]);
 
-	// 4- Monter plateau
+	// 4- Remontée du plateau
 	montee_plateau();
 }

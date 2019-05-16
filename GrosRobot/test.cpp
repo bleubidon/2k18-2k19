@@ -12,25 +12,30 @@
 	{	EXEC_TEST(str); tested = true;	}
 
 #define WAIT_CONSIGNE(cmd) do {\
-		#cmd ;\
-		while (!Robot.loop_pid()) \
+		cmd ;\
+		while (Robot.loop_pid()) \
 			; \
 	} while (0)
 
 DEFINE_TEST(dist)
 {
-	DEBUG(Serial << "Test de butees" << endl);
-	affichage(" Test de butees ");
+	affichage("Deplacement", 0);
 	delay(1000);
+
 	WAIT_CONSIGNE(Robot.consigne_rel(10.f, 0.f));
 	WAIT_CONSIGNE(Robot.consigne_rel(-10.f, 0.f));
+	clear_ecran();
 }
 
 DEFINE_TEST(rot)
 {
+	affichage("Rotation", 0);
+	delay(1000);
+
 	WAIT_CONSIGNE(Robot.consigne(0.f, 45.f));
 	WAIT_CONSIGNE(Robot.consigne(0.f, -45.f));
 	WAIT_CONSIGNE(Robot.consigne(0.f, 0.f));
+	clear_ecran();
 }
 
 static void test_capteur_butee(int pin)
@@ -38,37 +43,30 @@ static void test_capteur_butee(int pin)
 	while (digitalRead(pin) == HIGH)
 		;
 
-	DEBUG(Serial << "Butee ON" << endl);
 	delay(100);
 
 	while (digitalRead(pin) == LOW)
 		;
-
-	DEBUG(Serial << "Butee OFF" << endl);
 }
 
 DEFINE_TEST(butee)
 {
-	DEBUG(Serial << "Test de butees" << endl);
-	affichage(" Test de butees ");
+	affichage("Test de butees", 0);
 	delay(1000);
 
-	DEBUG(Serial << "1- Bas" << endl);
-	affichage(" Test butee bas ");
+	affichage("Test butee basse");
 	test_capteur_butee(28);
-	affichage("  Butee Bas OK  ");
+	affichage("Butee basse OK");
 	delay(1000);
 
-	DEBUG(Serial << "2- Haut" << endl);
-	affichage("Test butee haut ");
+	affichage("Test butee haute");
 	test_capteur_butee(22);
-	affichage("  Butee Haut OK ");
+	affichage("Butee haute OK");
 	delay(1000);
 
-	DEBUG(Serial << "3- Palet" << endl);
 	affichage("Test butee palet");
 	test_capteur_butee(30);
-	affichage(" Butees Palet OK ");
+	affichage("Butee palet OK");
 	delay(1000);
 
 	clear_ecran();
@@ -76,27 +74,35 @@ DEFINE_TEST(butee)
 
 DEFINE_TEST(plateau)
 {
-	DEBUG(Serial << "Test plateau" << endl);
-	affichage("  Test plateau  ");
-	delay(1000);
+	affichage("Test plateau", 0);
 
-	DEBUG(Serial << "Descente plateau" << endl);
 	affichage("Descente plateau");
 	descente_plateau();
-	affichage("  Descente OK!  ");
+	affichage("Descente OK!");
 	delay(500);
 
-	DEBUG(Serial << "Montée plateau" << endl);
-	affichage(" Montee plateau ");
+	affichage("Montee plateau");
 	montee_plateau();
-	affichage("   Montee OK!   ");
-	delay(1000);
+	affichage("Montee OK!");
+	delay(500);
 
 	clear_ecran();
 }
 
-void test_ecran (int argc, char **argv)
+DEFINE_TEST(pinces)
 {
+	affichage("Test pinces", 0);
+	delay(1000);
+
+	affichage("Ouverture");
+	set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
+	delay(500);
+
+	affichage("Fermeture");
+	set_pinces(closed_pliers_values[GAUCHE], closed_pliers_values[DROITE]);
+	delay(500);
+
+	clear_ecran();
 }
 
 /// INTERFACE
@@ -108,7 +114,7 @@ void unit_test(int argc, char **argv)
 	UNIT_TEST(rot);
 	UNIT_TEST(butee);
 	UNIT_TEST(plateau);
-	UNIT_TEST(ecran);
+	UNIT_TEST(pinces);
 
 	if (!tested)
 		Serial << "This test doesn't exist" << endl;

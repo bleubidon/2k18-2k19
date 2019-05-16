@@ -2,8 +2,9 @@ let logger = {
 	map: {},
 
 	update: function() {
-		let out;
-		while ((out = arduino.get_output())) {
+		let out, timeout = 100;
+		while (timeout-- > 0 && (out = arduino.get_output()))
+		{
 			let colon = out.indexOf(":");
 			if (colon == -1)
 				console.log("cannot parse:", out);

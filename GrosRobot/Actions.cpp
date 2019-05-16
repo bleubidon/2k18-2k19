@@ -4,8 +4,11 @@
 int robot_stop(void *);
 
 // TODO: Implement sensor management in interrupts
+// TODO: pathfinder
+// TODO: handle still opponent
 
-TaskQueue do_square;
+TaskQueue chaos;
+TaskQueue monter_rampe;
 
 void setup_actions()
 {
@@ -20,15 +23,28 @@ void setup_actions()
 	*/
 
 	// Les angles sont en degrés
-	do_square.enqueueGoto(vec(80, 0), 90, nullptr);
-	do_square.enqueueGoto(vec(80, 30), 180);
-	do_square.enqueueGoto(vec(0, 30), 270);
-	do_square.enqueueGoto(vec(0, 0), 0);
-}
+	monter_rampe.enqueueGoto({
+        goto_rampe rampe();
+        monter_rampe.enqueueTask(&rampe);
 
-void loop_actions()
-{
-	do_square.loop();
+        dest: vec(40, 0),
+        angle: 90,
+        trigger: nullptr,
+        on_obstacle: avoid,
+        on_start: nullptr,
+        setup: nullptr,
+        loop: test_done,
+        on_finish: nullptr,
+    });
+
+    monter_rampe.enqueueAction({
+        setup: ouvrir,
+        trigger: ready_to_open
+        loop: 
+    });
+
+
+    Robot.set_task_queue(chaos);
 }
 
 int robot_stop(void *)
