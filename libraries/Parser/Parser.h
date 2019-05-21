@@ -1,11 +1,11 @@
 #pragma once
 
+#include <HardwareSerial.h>
+
 // inspired by https://github.com/joshmarinacci/CmdArduino
 
-#define MAX_ARGS 6
-#define BUFFER_LENGTH 32
-
-#include <HardwareSerial.h>
+const int MAX_ARGS = 6;
+const int BUFFER_LENGTH = 32;
 
 
 class Parser

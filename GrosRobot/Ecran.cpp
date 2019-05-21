@@ -2,14 +2,12 @@
 #include <LiquidCrystal.h>
 
 const int LCD_length = 16;
-const int pinBouton = 49;
 LiquidCrystal lcd(33,31,29,27,25,23);
 char default_text[] = "AIR 2K19";
 
 void setup_ecran()
 {
 	lcd.begin(16, 2);
-	pinMode(pinBouton, INPUT_PULLUP);
 	clear_ecran();
 }
 

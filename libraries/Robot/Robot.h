@@ -2,9 +2,11 @@
 
 
 #include "PID.h"
+#include "Sick.h"
 #include "Moteur.h"
 #include "Odometrie.h"
-#include "TaskQueue.h"
+
+const int NUM_SICKS = 4;
 
 class c_Robot
 {
@@ -13,6 +15,7 @@ class c_Robot
 		{
 			Odometrie::Config odometrie;
 			Moteur::Config moteurs[2];
+			int sicks[NUM_SICKS];
 
 			int min_speed, max_speed;
 
@@ -33,6 +36,8 @@ class c_Robot
 		Odometrie& pos() { return position; }
 		PID& dist_pid() { return dist; }
 		PID& rot_pid() { return rot; }
+
+		Sick capteurs[NUM_SICKS];
 
 	private:
 		Odometrie position;

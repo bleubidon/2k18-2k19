@@ -1,19 +1,23 @@
-#include "GrosRobot.h"
-#include <I2CParser.h>
 #include <DynamixelSerial2.h>
+#include <I2CParser.h>
+#include <Radio.h>
+#include <Button.h>
+#include <helpers.h>
 
+#include "GrosRobot.h"
 #include "Actions.h"
 #include "test.h"
-#include "helpers.h"
 
 #define LAMBDA(cmd) [] (int, char**) { cmd(); }
 
-// NOTE Parser: mettre l'option fin de ligne dans la console Arduino pour pouvoir envoyer des commandes
+// NOTE Parser: mettre l'option fin de ligne dans la console Arduino pour
+// pouvoir envoyer des commandes
+
+const int pinBouton = 49;
 
 Parser parser;
-int buttonState = 1, buttonState_prev = buttonState;
-unsigned int buttonTriggerTimein = 300; // in ms
-unsigned long buttonTimer;
+Radio radio;
+Button button;
 
 void setup()
 {
@@ -46,6 +50,7 @@ void setup()
 			{4, 9, 6, wheel_radius : 3.25f, GAUCHE},
 			{7, 8, 5, wheel_radius : 3.25f, DROITE}
 		},
+		sicks: {12, 13, 14, 15},
 		min_speed: 15,
 		max_speed: 255,
 		dist : PID(25.f, 0.f, 2.f),
@@ -56,7 +61,7 @@ void setup()
 	clear_ecran();
 
 	parser.add("pid", set_pid);
-	parser.add("square", LAMBDA(do_square.restart) );
+	//parser.add("square", LAMBDA(do_square.restart) );
 	parser.add("test", unit_test);
 
 	parser.add("dist", dist);
@@ -70,27 +75,25 @@ void setup()
 	parser.add("down", LAMBDA(descente_plateau) );
 	parser.add("cycle", LAMBDA(cycle_ascenseur) );
 
-	parser.add("ax", [] (int, char **argv) { set_pinces(atoi(argv[1]), atoi(argv[2])); } );
+	parser.add("ax", [] (int, char **argv) {
+		set_pinces(atoi(argv[1]), atoi(argv[2]));
+	} );
 	parser.add("axg", set_axg);
 	parser.add("axd", set_axd);
 
 	parser.add("rpi_response", handle_rpi_response);
 
-	buttonTimer = millis();
+	radio.setup(0x01, 42, 38);
+	button.setup(pinBouton);
 }
 
 void loop()
 {
 	parser.loop();
-	loop_actions();
 	Robot.loop_pid();
 
-	buttonState = digitalRead(pinBouton);
-	if (buttonState == 0 && buttonState != buttonState_prev && millis() - buttonTimer > buttonTriggerTimein) {  // if button is pressed and timein is up
-		buttonTimer = millis();
+	if (button.loop() == State::Released)
 		Serial.println("request");  // Send request to rpi
-	}
-	buttonState_prev = buttonState;
 }
 
 void set_pid(int argc, char **argv)

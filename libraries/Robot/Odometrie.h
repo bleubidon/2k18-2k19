@@ -13,7 +13,7 @@ class Odometrie
 		struct Config
 		{
 			uint8_t mode;
-			
+
 			union
 			{
 				// DOUBLE_CODEUSE
@@ -33,7 +33,7 @@ class Odometrie
 		void setup(Odometrie::Config config);
 
 		void update();
-		
+
 		const vec& pos(); // centimetres
 		const vec& dir(); // norme 1
 		const float& dist(); // centimetres

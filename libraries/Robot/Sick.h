@@ -7,7 +7,7 @@ class Sick
 	public:
 		void setup(uint8_t _pin);
 
-		bool active();
+		bool is_active();
 
 	private:
 		uint8_t pin;
