@@ -27,7 +27,6 @@ void c_Robot::setup(c_Robot::Config config)
 	consigne_pid = false;
 
 	// Setup timer interrupt
-	/*
 		cli(); // Disable interrupts
 
 		// Set timer1 interrupt at 1Hz
@@ -45,7 +44,6 @@ void c_Robot::setup(c_Robot::Config config)
 		TIMSK1 |= (1 << OCIE1A);
 
 		sei(); // Enable interrupts
-	*/
 }
 
 void c_Robot::stop()
@@ -90,17 +88,15 @@ int c_Robot::scale(float speed)
 		return max(speed - min_speed, -max_speed);
 }
 
-/*
 // timer1 interrupt 1Hz
 ISR(TIMER1_COMPA_vect)
 {
 	for (int i(0); i < NUM_SICKS; i++)
 	{
 		if (Robot.capteurs[i].is_active())
-			Serial.print("Nope");
+			Serial << "Nope " << i << endl;
 	}
 }
-*/
 
 bool c_Robot::loop_pid()
 {

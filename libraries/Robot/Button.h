@@ -21,7 +21,7 @@ class Button
 			if (state == State::Pressed)
 				state = State::Down;
 			else if (state == State::Released)
-				state == State::Up;
+				state = State::Up;
 
 			unsigned long now = millis();
 			uint8_t val = digitalRead(pin);
@@ -31,8 +31,10 @@ class Button
 
 			if (now - last_time > trigger)
 			{
-				if (val != last_state)
-					state = val ? State::Pressed : State::Released;
+				if (val == HIGH && state == State::Down)
+					state = State::Released;
+				else if (val == LOW && state == State::Up)
+					state = State::Pressed;
 			}
 
 			last_state = val;
@@ -41,7 +43,7 @@ class Button
 
 		State state;
 
-	private:
+	//private:
 		uint8_t pin;
 		uint8_t last_state;
 		unsigned long last_time, trigger;

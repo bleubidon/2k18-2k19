@@ -13,11 +13,19 @@
 // NOTE Parser: mettre l'option fin de ligne dans la console Arduino pour
 // pouvoir envoyer des commandes
 
+// TODO: Setup initial position and orientation
+
 const int pinBouton = 49;
 
 Parser parser;
 Radio radio;
 Button button;
+
+// Synchronisation vars for chaos zone
+#define NO_MORE_ATOM 0
+#define MORE_ATOM 1
+#define WAIT_RASP 2
+byte chaos_zone_state;
 
 void setup()
 {
@@ -50,7 +58,7 @@ void setup()
 			{4, 9, 6, wheel_radius : 3.25f, GAUCHE},
 			{7, 8, 5, wheel_radius : 3.25f, DROITE}
 		},
-		sicks: {12, 13, 14, 15},
+		sicks: {66, 67, 68, 69},
 		min_speed: 15,
 		max_speed: 255,
 		dist : PID(25.f, 0.f, 2.f),
@@ -81,7 +89,7 @@ void setup()
 	parser.add("axg", set_axg);
 	parser.add("axd", set_axd);
 
-	parser.add("rpi_response", handle_rpi_response);
+	parser.add("rpi_response", fetch_atom);
 
 	radio.setup(0x01, 42, 38);
 	button.setup(pinBouton);
@@ -89,7 +97,44 @@ void setup()
 
 void loop()
 {
+	/*
+	// Recuperer premier palet devant le spawn
+	Robot.consigne(10, 0);
+	cycle_ascenseur();
+
+	// Avancer jusqua la zone de chaos
+	Robot.go_at(vec(x, x)); // pos de la zone de chaos
+	Robot.look_at(vec(x, x)); // pos du centre de la zone de chaos
+
+	// Recuperer les palets
+	do
+	{
+		chaos_zone_state = WAIT_RASP;
+		Serial.println("request");
+		while (chaos_zone_state == WAIT_RASP)
+			parset.loop();
+	}
+	while (chaos_zone_state != NO_MORE_ATOM);
+		
+	// Revenir a la zone de depart
+	Robot.go_at(vec(x, x)); // pos de la zone de depart
+	open_pinces();
+	Robot.forward(10); // pousse les palets
+	Robot.backward(10);
+
+	// Monter la rampe
+	Robot.go_at(vec(x, x)); // pos de devant la rampe
+	Robot.go_at(vec(x, x)); // pos du haut de la rampe
+	open_pinces();
+	Robot.backward(10);
+	close_pinces();
+	Robot.forward(10); // pousse les palets
+
+	Robot.stop();
+	*/
+
 	parser.loop();
+	//radio.loop();
 	Robot.loop_pid();
 
 	if (button.loop() == State::Released)
@@ -128,10 +173,15 @@ void set_axd(int argc, char **argv)
 	set_pinces(-1, atoi(argv[1]));
 }
 
-void handle_rpi_response(int argc, char **argv)
+void fetch_atom(int argc, char **argv)
 {
 	if (argc < 2) // S'arreter si aucun palet n'a ete detecte
+	{
+		chaos_zone_state = NO_MORE_ATOM;
 		return;
+	}
+	else
+		chaos_zone_state = MORE_ATOM;
 
 	char to_display[16];
 	snprintf(to_display, sizeof(to_display), "R:%s; D:%s", argv[1], argv[2]);
