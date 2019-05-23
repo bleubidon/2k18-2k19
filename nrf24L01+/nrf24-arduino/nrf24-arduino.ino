@@ -3,8 +3,8 @@
 #include "RF24.h"
 #include "printf.h"
 
-#define RF_CE 8 //pin CE sur l'arduino
-#define RF_CSN 9 //pin CSN sur l'arduino
+#define RF_CE 7 //pin CE sur l'arduino
+#define RF_CSN 8 //pin CSN sur l'arduino
 
 RF24 radio(RF_CE,RF_CSN);
 

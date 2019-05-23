@@ -1,13 +1,20 @@
 #pragma once
 
-#include <stdint.h>
+#include <Arduino.h>
 
 class Sick
 {
 	public:
-		void setup(uint8_t _pin);
+		void setup(uint8_t _pin)
+		{
+			pin = _pin;
+			pinMode(pin, INPUT);
+		}
 
-		bool is_active();
+		bool is_active()
+		{
+			return digitalRead(pin);
+		}
 
 	private:
 		uint8_t pin;

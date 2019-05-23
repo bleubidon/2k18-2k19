@@ -2,13 +2,10 @@
 
 #include <RF24.h>
 
-const uint16_t RF_CE  = 7; // pin CE sur l'arduino
-const uint16_t RF_CSN = 8; // pin CSN sur l'arduino
-
 class Radio
 {
 	public:
-		Radio();
+		Radio(uint16_t pin_ce, uint16_t pin_csn);
 
 		void setup(uint8_t _id, uint64_t _pipe_wr, uint64_t _pipe_rd);
 		void loop();

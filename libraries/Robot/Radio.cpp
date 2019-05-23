@@ -8,8 +8,8 @@
 #include "helpers.h"
 
 
-Radio::Radio():
-	radio(RF_CE,RF_CSN)
+Radio::Radio(uint16_t pin_ce, uint16_t pin_csn):
+	radio(pin_ce, pin_csn)
 {}
 
 void Radio::setup(uint8_t _id, uint64_t _pipe_wr, uint64_t _pipe_rd)
@@ -55,8 +55,8 @@ void Radio::send(uint8_t dst, const char *msg)
 	Serial.println("\"");
 
 	radio.stopListening();
-	//delay(10);
+	delay(10);
 	radio.write(&out, sizeof(out));
-	//delay(10);
+	delay(10);
 	radio.startListening();
 }

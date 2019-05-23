@@ -1,7 +1,7 @@
-#include <DynamixelSerial2.h>
-#include <I2CParser.h>
-#include <Radio.h>
 #include <Button.h>
+#include <DynamixelSerial2.h>
+#include <Parser.h>
+#include <Radio.h>
 #include <helpers.h>
 
 #include "GrosRobot.h"
@@ -15,10 +15,11 @@
 
 // TODO: Setup initial position and orientation
 
+const int pinTirette = 65;
 const int pinBouton = 49;
 
 Parser parser;
-Radio radio;
+Radio radio(7, 8);
 Button button;
 
 // Synchronisation vars for chaos zone
@@ -65,7 +66,7 @@ void setup()
 		rot : PID(10.f, 0.f, 0.5f)
 	});
 
-	DEBUG(Serial << "Done" << endl);
+	DEBUG(Serial << "Done !" << endl);
 	clear_ecran();
 
 	parser.add("pid", set_pid);
@@ -93,6 +94,8 @@ void setup()
 
 	radio.setup(0x01, 42, 38);
 	button.setup(pinBouton);
+
+	waitTirette(pinTirette);
 }
 
 void loop()

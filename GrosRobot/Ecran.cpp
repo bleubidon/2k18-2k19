@@ -19,7 +19,7 @@ void clear_ecran()
 
 void affichage(const char *message, unsigned ligne, bool clear_display)
 {
-	DEBUG(Serial << "Write on LCD: " << message << endl);
+	DEBUG(Serial << "LCD: " << message << endl);
 
 	if (ligne > 1)
 		ligne = 1;

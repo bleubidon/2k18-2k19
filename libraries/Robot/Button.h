@@ -1,11 +1,13 @@
 #pragma once
 
+#include <Arduino.h>
+
 enum class State {Up, Pressed, Down, Released};
 
 class Button
 {
 	public:
-		void setup(uint8_t _pin, unsigned long debounce_delay = 300)
+		void setup(uint8_t _pin, unsigned long debounce_delay = 100)
 		{
 			pin = _pin;
 			state = State::Up;
@@ -43,7 +45,7 @@ class Button
 
 		State state;
 
-	//private:
+	private:
 		uint8_t pin;
 		uint8_t last_state;
 		unsigned long last_time, trigger;

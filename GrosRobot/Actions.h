@@ -2,6 +2,8 @@
 
 #include <Robot.h>
 
+void waitTirette(uint8_t pin);
+
 void setup_ecran();
 void setup_actions();
 void setup_ascenseur();
