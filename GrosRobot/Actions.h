@@ -1,8 +1,9 @@
 #pragma once
 
 #include <Robot.h>
+#include <Button.h>
 
-void waitTirette(uint8_t pin);
+int waitTirette(uint8_t pin, Button& selecteur);
 
 void setup_ecran();
 void setup_actions();

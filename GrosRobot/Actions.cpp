@@ -6,19 +6,37 @@ int robot_stop(void *);
 // TODO: pathfinder
 // TODO: evitement obstacles mobiles (ex: robot adverse)
 
-void waitTirette(uint8_t pin)
+int waitTirette(uint8_t pin, Button& selecteur)
 {
+	static const char *equipes[] = {"VIOLETTE", "JAUNE"};
+	static const char *format = "EQUIPE %s";
+
+	int equipe = GAUCHE;
+	char buf[16];
+
+	sprintf(buf, format, equipe[equipes]);
+	affichage(buf, 0);
 	affichage("Tirette");
+
+	pinMode(pin, INPUT_PULLUP);
 
 	while (true)
 	{
+		if (selecteur.loop() == State::Pressed)
+		{
+			equipe = 1 - equipe;
+			sprintf(buf, format, equipe[equipes]);
+			affichage(buf, 0);
+		}
 		if (digitalRead(pin) == HIGH)
 			break;
-
-		delay(500);
 	}
 
-	affichage("Debut du match !");
+	// Send team via raspberry to id 3 (experience)
+	Serial << "send 3 " << equipe << endl;
+
+	affichage("Debut du match !", 1, true);
+	return equipe;
 }
 
 void setup_actions()

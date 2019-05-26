@@ -30,33 +30,30 @@ void Radio::setup(uint8_t _id, uint64_t _pipe_wr, uint64_t _pipe_rd)
 	DEBUG(radio.printDetails());
 }
 
-void Radio::loop()
+Message *Radio::loop()
 {
 	if (radio.available())
 	{
-		radio.read(&in, sizeof(in));
-
-		Serial.print("Message reçu : \"");
-		Serial.print(in.message);
-		Serial.println("\"");
-
-		if (in.destination == id)
-			send(in.source, "OK");
+		radio.read(&msg, sizeof(Message));
+		if (msg.destination == id)
+			return &msg;
 	}
+	return nullptr;
 }
 
 void Radio::send(uint8_t dst, const char *msg)
 {
-	out.destination = dst;
-	strcpy(out.message, msg);
+	Message out;
 
-	Serial.print("Envoi de la réponse : \"");
-	Serial.print(out.message);
-	Serial.println("\"");
+	out.source = dst;
+	out.destination = 'a';
+	strcpy(out.text, "OK");
+	//strncpy(out.text, msg, sizeof(out.text));
 
 	radio.stopListening();
+	radio.openWritingPipe(pipes[1]);
 	delay(10);
-	radio.write(&out, sizeof(out));
+	radio.write(&out, sizeof(Message));
 	delay(10);
 	radio.startListening();
 }

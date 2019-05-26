@@ -7,7 +7,7 @@ enum class State {Up, Pressed, Down, Released};
 class Button
 {
 	public:
-		void setup(uint8_t _pin, unsigned long debounce_delay = 100)
+		void setup(uint8_t _pin, unsigned long debounce_delay = 50)
 		{
 			pin = _pin;
 			state = State::Up;

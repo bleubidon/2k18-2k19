@@ -96,6 +96,8 @@ ISR(TIMER1_COMPA_vect)
 		if (Robot.capteurs[i].is_active())
 			Serial << "Nope " << i << endl;
 	}
+
+	// TODO: check timer
 }
 
 bool c_Robot::loop_pid()

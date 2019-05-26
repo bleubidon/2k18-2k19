@@ -1,7 +1,6 @@
 #include <Button.h>
 #include <DynamixelSerial2.h>
 #include <Parser.h>
-#include <Radio.h>
 #include <helpers.h>
 
 #include "GrosRobot.h"
@@ -19,7 +18,6 @@ const int pinTirette = 65;
 const int pinBouton = 49;
 
 Parser parser;
-Radio radio(7, 8);
 Button button;
 
 // Synchronisation vars for chaos zone
@@ -92,10 +90,9 @@ void setup()
 
 	parser.add("rpi_response", fetch_atom);
 
-	radio.setup(0x01, 42, 38);
 	button.setup(pinBouton);
 
-	waitTirette(pinTirette);
+	waitTirette(pinTirette, button);
 }
 
 void loop()
@@ -113,9 +110,9 @@ void loop()
 	do
 	{
 		chaos_zone_state = WAIT_RASP;
-		Serial.println("request");
+		Serial << "request" << endl;
 		while (chaos_zone_state == WAIT_RASP)
-			parset.loop();
+			parser.loop();
 	}
 	while (chaos_zone_state != NO_MORE_ATOM);
 		
@@ -137,11 +134,10 @@ void loop()
 	*/
 
 	parser.loop();
-	//radio.loop();
 	Robot.loop_pid();
 
 	if (button.loop() == State::Released)
-		Serial.println("request");  // Send request to rpi
+		Serial << "request" << endl; // Send request to rpi
 }
 
 void set_pid(int argc, char **argv)
@@ -201,7 +197,7 @@ void fetch_atom(int argc, char **argv)
 
 	// Renvoi d'une requete tant que l'erreur angulaire est trop elevee
 	if (abs(angle_error) >= 2)
-		Serial.println("request_2");
+		Serial << "request_2" << endl;
 
 	else {
 		// Le robot avance jusqu'a au plus la distance au palet calculee
@@ -219,8 +215,5 @@ void fetch_atom(int argc, char **argv)
 		while(Robot.loop_pid());
 		Robot.consigne(dist_init, 0.f);
 		while(Robot.loop_pid());
-
-		// Renvoi d'une requete pour recuperer le prochain palet
-		Serial.println("request"); 
 	}
 }
