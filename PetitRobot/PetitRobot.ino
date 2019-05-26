@@ -1,7 +1,7 @@
-#include <Timer.h>
-#include <I2CParser.h>
+// #include <Timer.h>
+#include <Robot.h>
+#include <Parser.h>
 
-#include "Actions.h"
 #include "helpers.h"
 
 // NOTE Parser: mettre l'option fin de ligne dans la console Arduino pour pouvoir envoyer des commandes
@@ -17,7 +17,7 @@ void setup()
 	parser.add("stop", stop);
 	parser.add("pid", set_pid);
 
-	Robot.setup({
+	c_Robot::Config conf = {
 		odometrie : {
 			mode : CODEUSE_GYROSCOPE,
 			{
@@ -32,9 +32,13 @@ void setup()
 			{4, 9, 6, wheel_radius: 3.0f, GAUCHE},
 			{7, 8, 5, wheel_radius: 3.0f, DROITE}
 		},
+		sicks: {36, 38},
+		min_speed: 10,
+		max_speed: 255,
 		dist : PID(0.f, 0.f, 0.f),
 		rot : PID(10.f, 0.f, 0.f)
-	});
+	};
+	Robot.setup(conf);
 
 	//setup_actions();
 }
