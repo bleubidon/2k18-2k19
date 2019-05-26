@@ -7,5 +7,6 @@
 ### 3. If you have connection issues
 Solder a 10uF capacitor between GND and VCC on the nRFs.
 
-### 4. Run as sudo
-```./send```
+### 4. Build and run
+```make```
+```sudo ./send 1 bonjour```
