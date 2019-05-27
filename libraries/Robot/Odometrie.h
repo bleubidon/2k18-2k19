@@ -12,6 +12,8 @@ class Odometrie
 	public:
 		struct Config
 		{
+			vec position;
+			int angle;
 			uint8_t mode;
 
 			union

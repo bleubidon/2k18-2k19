@@ -115,11 +115,15 @@ if __name__ == "__main__":
                     print('sending: "{}"\n'.format(response))
                 ser.write(response.encode('utf-8'))
 
-            else if args[0] == "send"
+            elif args[0] == "send"
                 from subprocess import call
                 args[0] = "../nrf24L01+/nrf24-raspberry/send"
                 print(args)
                 call(args)
+
+            elif args[0] == "ping"
+                print("Pinged")
+                ser.write("pong\n".encode('utf-8'))
 
 
     while 1:

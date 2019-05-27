@@ -5,18 +5,19 @@
 const int pinBas = 28;
 const int pinHaut = 22;
 const int pinPalet = 30;
+
 // Relais
-const int pinsRelais[2] = {24, 26}; // 24: IN1, 26: IN2
+const int pinsRelais[2] = {/* IN1 */ 24, /* IN2 */ 26};
 
 // AX12
 const int pinAX12 = 48;
-const int pinces[2] = {11, 6}; // gauche, droite
+const int pinces[2] = {/* gauche */ 11, /* droite */ 6};
 
 const int min_pliers_values[2] = {170,  90};
 const int max_pliers_values[2] = {300, 210};
 
-const int opened_pliers_values[2] = {290, 180}; // gauche, droite
-const int closed_pliers_values[2] = {260, 200}; // gauche, droite
+const int opened_pliers_values[2] = {290, 180};
+const int closed_pliers_values[2] = {260, 200};
 
 
 void setup_ascenseur()
@@ -41,6 +42,8 @@ void descente_plateau()
 	if (digitalRead(pinBas) == LOW)
 		return;
 
+	noInterrupts();
+
 	digitalWrite(pinsRelais[0], HIGH);
 	digitalWrite(pinsRelais[1], LOW);
 
@@ -49,12 +52,16 @@ void descente_plateau()
 
 	digitalWrite(pinsRelais[0], HIGH);
 	digitalWrite(pinsRelais[1], HIGH);
+
+	interrupts();
 }
 
 void montee_plateau()
 {
 	if (digitalRead(pinHaut) == LOW)
 		return;
+
+	noInterrupts();
 
 	digitalWrite(pinsRelais[0], LOW);
 	digitalWrite(pinsRelais[1], HIGH);
@@ -64,6 +71,8 @@ void montee_plateau()
 
 	digitalWrite(pinsRelais[0], HIGH);
 	digitalWrite(pinsRelais[1], HIGH);
+
+	interrupts();
 }
 
 void set_pinces(int gauche, int droite)

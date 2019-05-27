@@ -1,7 +1,5 @@
 #include "Radio.h"
 
-#define SERIAL_DEBUG
-
 #include <nRF24L01.h>
 #include <printf.h>
 
@@ -18,7 +16,8 @@ void Radio::setup(uint8_t _id, uint64_t _pipe_wr, uint64_t _pipe_rd)
 	pipes[0] = _pipe_rd;
 	pipes[1] = _pipe_wr;
 
-	printf_begin();
+	DEBUG(printf_begin());
+
 	radio.begin();
 	radio.setAutoAck(1);
 	radio.setRetries(1, 3);
@@ -45,15 +44,13 @@ void Radio::send(uint8_t dst, const char *msg)
 {
 	Message out;
 
-	out.source = dst;
-	out.destination = 'a';
-	strcpy(out.text, "OK");
-	//strncpy(out.text, msg, sizeof(out.text));
+	out.source = id;
+	out.destination = dst;
+	strncpy(out.text, msg, sizeof(out.text));
 
 	radio.stopListening();
-	radio.openWritingPipe(pipes[1]);
-	delay(10);
+	delay(100);
 	radio.write(&out, sizeof(Message));
-	delay(10);
+	delay(100);
 	radio.startListening();
 }

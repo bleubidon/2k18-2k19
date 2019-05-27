@@ -23,9 +23,11 @@ void Odometrie::setup(Odometrie::Config config)
 		break;
 	}
 
-	position.set(0, 0);
-	direction.set(0, 0);
-	distance = angle = 0;
+	position.set(config.position.x, config.position.y);
+	angle = config.angle;
+
+	direction = vec(angle);
+	distance = 0;
 	dist_prev = 0;
 }
 

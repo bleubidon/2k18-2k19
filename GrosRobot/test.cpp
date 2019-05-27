@@ -55,17 +55,17 @@ DEFINE_TEST(butee)
 	delay(1000);
 
 	affichage("Test butee basse");
-	test_capteur_butee(28);
+	test_capteur_butee(pinBas);
 	affichage("Butee basse OK");
 	delay(1000);
 
 	affichage("Test butee haute");
-	test_capteur_butee(22);
+	test_capteur_butee(pinHaut);
 	affichage("Butee haute OK");
 	delay(1000);
 
 	affichage("Test butee palet");
-	test_capteur_butee(30);
+	test_capteur_butee(pinPalet);
 	affichage("Butee palet OK");
 	delay(1000);
 
@@ -80,6 +80,8 @@ DEFINE_TEST(plateau)
 	descente_plateau();
 	affichage("Descente OK!");
 	delay(500);
+
+	delay(1000);
 
 	affichage("Montee plateau");
 	montee_plateau();
@@ -97,6 +99,8 @@ DEFINE_TEST(pinces)
 	affichage("Ouverture");
 	set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
 	delay(500);
+
+	delay(1000);
 
 	affichage("Fermeture");
 	set_pinces(closed_pliers_values[GAUCHE], closed_pliers_values[DROITE]);

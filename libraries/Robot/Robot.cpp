@@ -22,6 +22,8 @@ void c_Robot::setup(c_Robot::Config config)
 	min_speed = config.min_speed;
 	max_speed = config.max_speed;
 
+	//duration = config.dureeMatch;
+
 	dist = config.dist;
 	rot = config.rot;
 	consigne_pid = false;
@@ -70,6 +72,45 @@ void c_Robot::consigne_rel(float _dist, float _rot)
 	consigne(position.dist() + _dist, position.rot() + _rot);
 }
 
+// Helpers
+void c_Robot::translate(float _dist, bool blocking)
+{
+	consigne_rel(_dist, 0);
+
+	if (blocking)
+		while (Robot.loop_pid())
+			;
+}
+
+void c_Robot::rotate(float _angle, bool blocking)
+{
+	consigne_rel(0, _angle);
+
+	if (blocking)
+		while (Robot.loop_pid())
+			;
+}
+
+void c_Robot::go_to(vec _dest, bool blocking)
+{
+	// Rotate toward destination (blocking)
+	look_at(_dest, true);
+
+	// Move forward
+	translate(vec::dist(position.pos(), _dest), blocking);
+}
+
+void c_Robot::look_at(vec _point, bool blocking)
+{
+	vec dir = _point - position.pos();
+	consigne(position.dist(), dir.angle());
+
+	if (blocking)
+		while (Robot.loop_pid())
+			;
+}
+
+// PID
 float angle_diff(float a, float b)
 {
 	if (b < a)
@@ -91,13 +132,24 @@ int c_Robot::scale(float speed)
 // timer1 interrupt 1Hz
 ISR(TIMER1_COMPA_vect)
 {
-	for (int i(0); i < NUM_SICKS; i++)
+	int i = 0;
+
+	// Mauvaise idée de faire ca ici en fin de compte
+	// Ca devrait etre dans loop_pid puisqu'il ne faut
+	// s'arreter que si le robot se deplace (obviously)
+	while (i < NUM_SICKS)
 	{
-		if (Robot.capteurs[i].is_active())
-			Serial << "Nope " << i << endl;
+		if (Robot.capteurs[i++].is_active())
+		{
+			Robot.stop();
+			i = 0;
+		}
 	}
 
 	// TODO: check timer
+	// ?? use micros() maybe ?
+	// a mon avis c'est pas possible depuis un
+	// interrupt, faut trouver autre chose
 }
 
 bool c_Robot::loop_pid()

@@ -16,6 +16,7 @@ class c_Robot
 			Odometrie::Config odometrie;
 			Moteur::Config moteurs[2];
 			int sicks[NUM_SICKS];
+			//unsigned long dureeMatch;
 
 			int min_speed, max_speed;
 
@@ -29,6 +30,12 @@ class c_Robot
 		void stop();
 		void consigne(float _dist, float _rot);
 		void consigne_rel(float _dist, float _rot);
+
+		// helpers
+		void translate(float _dist, bool blocking = true);
+		void rotate(float _angle, bool blocking = true);
+		void go_to(vec _dest, bool blocking = true);
+		void look_at(vec _point, bool blocking = true);
 
 		int scale(float speed);
 		bool loop_pid();
@@ -44,6 +51,7 @@ class c_Robot
 		Moteur moteurs[2];
 
 		int min_speed, max_speed;
+		//unsigned long duration;
 
 		// PID
 		PID dist, rot;

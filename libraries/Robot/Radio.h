@@ -17,7 +17,7 @@ class Radio
 		Message* loop();
 		void send(uint8_t dst, const char *msg);
 
-	//private:
+	private:
 		RF24 radio;
 		uint8_t id;
 		uint64_t pipes[2];
