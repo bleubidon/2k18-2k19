@@ -12,11 +12,13 @@ const int pinsRelais[2] = {24, 26}; // 24: IN1, 26: IN2
 const int pinAX12 = 48;
 const int pinces[2] = {11, 6}; // gauche, droite
 
-const int min_pliers_values[2] = {170,  90};
-const int max_pliers_values[2] = {300, 210};
+const int min_pliers_values[2] = {170,  0}; // 170 ; 90
+const int max_pliers_values[2] = {500, 210}; // 300 ; 210
 
-const int opened_pliers_values[2] = {290, 180}; // gauche, droite
-const int closed_pliers_values[2] = {260, 200}; // gauche, droite
+const int init_pliers_values[2] = {450, 0};
+
+const int opened_pliers_values[2] = {290, 150}; // gauche, droite ; avant : 290 ; 180
+const int closed_pliers_values[2] = {240, 185}; // gauche, droite
 
 
 void setup_ascenseur()
@@ -33,7 +35,8 @@ void setup_ascenseur()
 
 	Dynamixel.begin(1000000, pinAX12);
 
-	//montee_plateau();
+	montee_plateau();
+  set_pinces(init_pliers_values[0], init_pliers_values[1]);
 }
 
 void descente_plateau()
@@ -95,13 +98,15 @@ void cycle_ascenseur()
 
 	// 1- Relachement des palets
 	set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
-
+  delay(500);
+  
 	// 2- Descente plateau
 	descente_plateau();
 	
 	// 3- Attrapage des palets
 	set_pinces(closed_pliers_values[GAUCHE], closed_pliers_values[DROITE]);
-
+  delay(500);
+  
 	// 4- Remontée du plateau
 	montee_plateau();
 }
