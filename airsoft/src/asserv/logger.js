@@ -2,7 +2,7 @@ let logger = {
 	map: {},
 
 	update: function() {
-		let out, timeout = 10;
+		let out, timeout = 100;
 		while (timeout-- > 0 && (out = arduino.get_output()))
 		{
 			let colon = out.indexOf(":");

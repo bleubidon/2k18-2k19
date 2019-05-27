@@ -16,7 +16,7 @@ void Odometrie::setup(Odometrie::Config config)
 
 		ecart_entre_roues = config.ecart_entre_roues;
 		break;
-	
+
 	case CODEUSE_GYROSCOPE:
 		codeuse.setup(config.codeuse);
 		gyro.setup();
@@ -36,7 +36,7 @@ void Odometrie::update()
 	case DOUBLE_CODEUSE:
 		updateDoubleCodeuse();
 		break;
-	
+
 	case CODEUSE_GYROSCOPE:
 		updateCodeuseGyroscope();
 		break;

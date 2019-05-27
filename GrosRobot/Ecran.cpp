@@ -2,14 +2,12 @@
 #include <LiquidCrystal.h>
 
 const int LCD_length = 16;
-const int pinBouton = 49;
 LiquidCrystal lcd(33,31,29,27,25,23);
 char default_text[] = "AIR 2K19";
 
 void setup_ecran()
 {
 	lcd.begin(16, 2);
-	pinMode(pinBouton, INPUT_PULLUP);
 	clear_ecran();
 }
 
@@ -21,7 +19,7 @@ void clear_ecran()
 
 void affichage(const char *message, unsigned ligne, bool clear_display)
 {
-	DEBUG(Serial << "Write on LCD: " << message << endl);
+	DEBUG(Serial << "LCD: " << message << endl);
 
 	if (ligne > 1)
 		ligne = 1;

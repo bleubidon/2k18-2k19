@@ -21,7 +21,7 @@ void Moteur::setup(Moteur::Config config)
 	pinMode(pinA, OUTPUT);
 	pinMode(pinB, OUTPUT);
 	pinMode(pinPWM, OUTPUT);
-	
+
 	digitalWrite(pinA, LOW);
 	digitalWrite(pinB, LOW);
 }

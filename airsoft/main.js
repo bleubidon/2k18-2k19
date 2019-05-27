@@ -4,7 +4,7 @@ let serial = require("./serial/build/Release/serial.node");
 
 global.arduino = {
 	connected: false,
-	port: "COM7",
+	port: "COM10",
 	exec: function(cmd) {
 		serial.write(cmd + "\n");
 		return wait_output();
@@ -17,6 +17,9 @@ let mainWindow = null;
 
 app.setName('AIR Soft');
 app.on('ready', createWindow)
+app.on('window-all-closed', () => {
+  app.quit()
+})
 
 function createWindow() {
 	const windowOptions = {

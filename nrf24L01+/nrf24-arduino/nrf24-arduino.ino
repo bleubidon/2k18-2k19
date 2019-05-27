@@ -3,12 +3,12 @@
 #include "RF24.h"
 #include "printf.h"
 
-#define RF_CE 8 //pin CE sur l'arduino
-#define RF_CSN 9 //pin CSN sur l'arduino
+#define RF_CE 2 //pin CE sur l'arduino
+#define RF_CSN 4 //pin CSN sur l'arduino
 
 RF24 radio(RF_CE,RF_CSN);
 
-byte myID = 0x01; //ID de l'ardui
+byte myID = 0x03; //ID de l'ardui
 
 double pipes[] = {42, 38};
 
@@ -70,7 +70,3 @@ void loop(void)
 			sendReply(); }}
 	delay(100);
 }
-
-
-
-

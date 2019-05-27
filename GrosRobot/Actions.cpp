@@ -1,34 +1,46 @@
 #include "Actions.h"
-#include <TaskQueue.h>
 
 int robot_stop(void *);
 
 // TODO: Implement sensor management in interrupts
+// TODO: pathfinder
+// TODO: evitement obstacles mobiles (ex: robot adverse)
 
-TaskQueue do_square;
+int waitTirette(uint8_t pin, Button& selecteur)
+{
+	static const char *equipes[] = {"VIOLETTE", "JAUNE"};
+	static const char *format = "EQUIPE %s";
+
+	int equipe = GAUCHE;
+	char buf[16];
+
+	sprintf(buf, format, equipe[equipes]);
+	affichage(buf, 0);
+	affichage("Tirette");
+
+	pinMode(pin, INPUT_PULLUP);
+
+	while (true)
+	{
+		if (selecteur.loop() == State::Pressed)
+		{
+			equipe = 1 - equipe;
+			sprintf(buf, format, equipe[equipes]);
+			affichage(buf, 0);
+		}
+		if (digitalRead(pin) == HIGH)
+			break;
+	}
+
+	// Send team via raspberry to id 3 (experience)
+	Serial << "send 3 " << equipe << endl;
+
+	affichage("Debut du match !", 1, true);
+	return equipe;
+}
 
 void setup_actions()
 {
-	/*
-	do_square.enqueueWaitTirette(27);
-	do_square.enqueueBarrier();
-	*/
-
-	/*
-	do_square.enqueueMatchTimer(90000L); // = 90 secondes
-	do_square.enqueueAction(robot_stop, nullptr, nullptr, do_square.wait_previous());
-	*/
-
-	// Les angles sont en degrés
-	do_square.enqueueGoto(vec(40, 0), 90, nullptr);
-	do_square.enqueueGoto(vec(40, 30), 180);
-	do_square.enqueueGoto(vec(0, 30), 270);
-	do_square.enqueueGoto(vec(0, 0), 0);
-}
-
-void loop_actions()
-{
-	do_square.loop();
 }
 
 int robot_stop(void *)

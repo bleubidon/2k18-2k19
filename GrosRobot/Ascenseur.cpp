@@ -12,11 +12,11 @@ const int pinsRelais[2] = {24, 26}; // 24: IN1, 26: IN2
 const int pinAX12 = 48;
 const int pinces[2] = {11, 6}; // gauche, droite
 
-const int min_pliers_values[2] = {140,  90};
-const int max_pliers_values[2] = {260, 210};
+const int min_pliers_values[2] = {170,  90};
+const int max_pliers_values[2] = {300, 210};
 
-const int opened_pliers_values[2] = {260, 120};  // gauche, droite
-const int closed_pliers_values[2] = {230, 150};  // gauche, droite
+const int opened_pliers_values[2] = {290, 180}; // gauche, droite
+const int closed_pliers_values[2] = {260, 200}; // gauche, droite
 
 
 void setup_ascenseur()
@@ -33,7 +33,7 @@ void setup_ascenseur()
 
 	Dynamixel.begin(1000000, pinAX12);
 
-	// montee_plateau();
+	//montee_plateau();
 }
 
 void descente_plateau()
@@ -78,8 +78,8 @@ void set_pinces(int gauche, int droite)
 
 		if (min_pliers_values[i] <= cmds[i] && cmds[i] <= max_pliers_values[i])
 		{
-		    Dynamixel.move(pinces[i], cmds[i]);
-		    delay(20);
+			Dynamixel.move(pinces[i], cmds[i]);
+			delay(20);
 		}
 		else
 			DEBUG(Serial << "Cannot move " << names[i] << " plier: " <<

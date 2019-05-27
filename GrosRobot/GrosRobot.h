@@ -1,3 +1,5 @@
+#pragma once
+
 void set_pid(int argc, char **argv);
 void dist(int argc, char **argv);
 void rot(int argc, char **argv);

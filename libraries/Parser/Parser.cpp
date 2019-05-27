@@ -39,8 +39,7 @@ void Parser::loop()
 			{
 				cursor = 0;
 				LOG(stream->print("parser: command is too long"));
-                LOG(stream->write(0x4));  // End of transmission
-				continue ;
+				LOG(stream->write(0x4));  // End of transmission
 			}
 			buffer[cursor] = '\0';
 			cursor = 0;

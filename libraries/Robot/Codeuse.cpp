@@ -24,7 +24,7 @@ void Codeuse::setup(Codeuse::Config config)
 		SPI.setDataMode(SPI_MODE0); //data on high or low clock, pas sûr!!!
 		SPI.setClockDivider(SPI_CLOCK_DIV4); // data speed for SCK, pas sûr que ca soit 4Mhz le mieux
 	}
-	
+
 	pin = config.pin;
 	pinMode(pin, OUTPUT);
 

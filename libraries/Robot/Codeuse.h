@@ -16,7 +16,7 @@ class Codeuse
 
 		float getDistance() const; // centimetres
 		long getCounter() const;
-		
+
 		void clearCounter();
 
 	private:

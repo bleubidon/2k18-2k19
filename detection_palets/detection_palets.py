@@ -102,17 +102,24 @@ if __name__ == "__main__":
             return 'rpi_response ' + output + '\n'
 
         if ser.inWaiting():
-            received = ser.readline().decode('utf-8')[:-2]
+            received = ser.readline().decode('utf-8')[:-1]
             if logg:
                 print('_____________________________')
                 print('received: "{}"'.format(received))
                 # print(repr(received))
 
-            if received in expected_requests:
-                response = build_serial_response(stream, received)
+            args = received.split()
+            if args[0] in expected_requests:
+                response = build_serial_response(stream, args[0])
                 if logg:
                     print('sending: "{}"\n'.format(response))
                 ser.write(response.encode('utf-8'))
+
+            else if args[0] == "send"
+                from subprocess import call
+                args[0] = "../nrf24L01+/nrf24-raspberry/send"
+                print(args)
+                call(args)
 
 
     while 1:
