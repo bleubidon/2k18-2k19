@@ -62,21 +62,6 @@ void setup()
 	affichage("Debut du match !", 1, true);
 }
 
-/*
-**
-** Interface deplacement:
-**
-** Fonctions
-**  - translate
-**  - rotate
-**  - go_to
-**  - look_at
-**
-** Arguments:
-**  - angle/distance/pos relatif/absolu
-**  - bool blocking = true
- */
-
 void loop()
 {
 	/*

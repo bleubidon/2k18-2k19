@@ -1,7 +1,8 @@
 #include "Actions.h"
 #include <DynamixelSerial2.h>
 
-// Capteurs butee: PULLUP donc brancher un cote a la masse (pas au 5V) et l'autre a l'arduino
+// Capteurs butee: PULLUP donc brancher un cote a la masse (pas au 5V)
+// et l'autre a l'arduino
 const int pinBas = 28;
 const int pinHaut = 22;
 const int pinPalet = 30;
@@ -13,11 +14,13 @@ const int pinsRelais[2] = {/* IN1 */ 24, /* IN2 */ 26};
 const int pinAX12 = 48;
 const int pinces[2] = {/* gauche */ 11, /* droite */ 6};
 
-const int min_pliers_values[2] = {170,  90};
-const int max_pliers_values[2] = {300, 210};
+const int min_pliers_values[2] = {170,  0};
+const int max_pliers_values[2] = {500, 210};
 
-const int opened_pliers_values[2] = {290, 180};
-const int closed_pliers_values[2] = {260, 200};
+const int init_pliers_values[2] = {450, 0};
+
+const int opened_pliers_values[2] = {290, 150};
+const int closed_pliers_values[2] = {240, 185};
 
 
 void setup_ascenseur()
@@ -34,7 +37,8 @@ void setup_ascenseur()
 
 	Dynamixel.begin(1000000, pinAX12);
 
-	//montee_plateau();
+	montee_plateau();
+	set_pinces(init_pliers_values[0], init_pliers_values[1]);
 }
 
 void descente_plateau()
@@ -104,12 +108,14 @@ void cycle_ascenseur()
 
 	// 1- Relachement des palets
 	set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
+	delay(500);
 
 	// 2- Descente plateau
 	descente_plateau();
 	
 	// 3- Attrapage des palets
 	set_pinces(closed_pliers_values[GAUCHE], closed_pliers_values[DROITE]);
+	delay(500);
 
 	// 4- Remontée du plateau
 	montee_plateau();
