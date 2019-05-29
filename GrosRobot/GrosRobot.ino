@@ -56,8 +56,8 @@ void setup()
 		dureeMatch: 90000000L,
 		min_speed: 20,
 		max_speed: 255,
-		dist : PID(2.f, 0.f, 0.f), //25.f, 0.f, 2.f)
-		rot : PID(10.f, 0.f, 0.5f) //10.f, 0.f, 0.5f
+		dist : PID(10.f, 0.f, 5.f), //25.f, 0.f, 2.f)
+		rot : PID(2.f, 0.f, 0.f) //10.f, 0.f, 0.5f
 	});
 
 	affichage("Debut du match !", 1, true);
