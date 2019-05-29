@@ -31,8 +31,8 @@ void setup()
 
 	Robot.setup({
 		odometrie : {
-			position: POS_SYM(10, 10, equipe),
-			angle: ANGLE_SYM(90, equipe),
+			position: POS_SYM(0, 0, equipe),
+			angle: ANGLE_SYM(0, equipe),
 			mode : DOUBLE_CODEUSE,
 			{{
 				gauche : {
@@ -53,10 +53,11 @@ void setup()
 			{7, 8, 5, wheel_radius : 3.25f, DROITE}
 		},
 		sicks: {66, 67, 68, 69},
-		min_speed: 15,
+		dureeMatch: 90000000L,
+		min_speed: 20,
 		max_speed: 255,
-		dist : PID(25.f, 0.f, 2.f),
-		rot : PID(10.f, 0.f, 0.5f)
+		dist : PID(2.f, 0.f, 0.f), //25.f, 0.f, 2.f)
+		rot : PID(10.f, 0.f, 0.5f) //10.f, 0.f, 0.5f
 	});
 
 	affichage("Debut du match !", 1, true);

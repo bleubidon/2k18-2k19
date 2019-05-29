@@ -6,7 +6,7 @@
 int equipe;
 const int stepsPerRevolution = 200;
 
-byte id = 0x03; //ID de l'arduino
+byte id = 102; //ID de l'arduino
 
 Stepper myStepper(stepsPerRevolution, 7, 9, 8, 10);
 Radio radio(2, 4);
@@ -24,13 +24,19 @@ void waitTirette()
 	{
 		if ((msg = radio.loop()))
 		{
+			if (msg->source != 78)
+				continue;
 			Serial.print("Message reçu : \"");
 			Serial.print(msg->text);
 			Serial.println("\"");
 
 			equipe = atoi(msg->text);
-			radio.send(msg->source, "OK");
-			return;
+			if (equipe == 0 || equipe == 1)
+			{
+				radio.send(msg->source, "OK");
+				return;
+			}
+			radio.send(msg->source, "NO");
 		}
 	}
 }

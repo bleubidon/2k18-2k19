@@ -30,8 +30,9 @@ int waitTirette(uint8_t pin, Button& selecteur)
 	}
 
 	// Send team via raspberry to id 3 (experience)
-	Serial << "send 3 " << equipe << endl;
+	Serial << "send 102 " << equipe << endl;
 
+	Robot.start = micros();
 	return equipe;
 }
 

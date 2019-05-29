@@ -22,7 +22,7 @@ void c_Robot::setup(c_Robot::Config config)
 	min_speed = config.min_speed;
 	max_speed = config.max_speed;
 
-	//duration = config.dureeMatch;
+	duration = config.dureeMatch;
 
 	dist = config.dist;
 	rot = config.rot;
@@ -53,7 +53,6 @@ void c_Robot::stop()
 	moteurs[GAUCHE].consigne(0);
 	moteurs[DROITE].consigne(0);
 
-	consigne_pid = false;
 }
 
 void c_Robot::consigne(float _dist, float _rot)
@@ -110,6 +109,18 @@ void c_Robot::look_at(vec _point, bool blocking)
 			;
 }
 
+// timer1 interrupt 1Hz
+ISR(TIMER1_COMPA_vect)
+{
+	unsigned long now = micros();
+
+	if (now - Robot.start > Robot.duration)
+	{
+		while (1)
+			;
+	}
+}
+
 // PID
 float angle_diff(float a, float b)
 {
@@ -129,37 +140,30 @@ int c_Robot::scale(float speed)
 		return max(speed - min_speed, -max_speed);
 }
 
-// timer1 interrupt 1Hz
-ISR(TIMER1_COMPA_vect)
-{
-	int i = 0;
-
-	// Mauvaise idée de faire ca ici en fin de compte
-	// Ca devrait etre dans loop_pid puisqu'il ne faut
-	// s'arreter que si le robot se deplace (obviously)
-	while (i < NUM_SICKS)
-	{
-		if (Robot.capteurs[i++].is_active())
-		{
-			Robot.stop();
-			i = 0;
-		}
-	}
-
-	// TODO: check timer
-	// ?? use micros() maybe ?
-	// a mon avis c'est pas possible depuis un
-	// interrupt, faut trouver autre chose
-}
-
 bool c_Robot::loop_pid()
 {
 	if (!consigne_pid)
 		return false;
 
+	unsigned long stop_start = millis(); 
+	int i = 0;
+	while (i < NUM_SICKS)
+	{
+		if (capteurs[i++].is_active())
+		{
+			Serial << "STOOOOOP" << i << endl;
+			stop();
+			i = 0;
+		}
+	}
+	
+
+
 	// Mise a jour de la consigne toute les 10 millisecondes (au moins)
 	const unsigned long min_delay = 10;
 	unsigned long current_time = millis();
+	//prev_time += (current_time - stop_start);
+
 	unsigned long dt = current_time - prev_time;
 	if (dt < min_delay)
 		return true;
@@ -177,6 +181,8 @@ bool c_Robot::loop_pid()
 	if (abs(dist.erreur) < precision_dist && abs(rot.erreur) < precision_rot)
 	{
 		stop();
+		consigne_pid = false;
+
 		return false;
 	}
 	else
@@ -188,6 +194,8 @@ bool c_Robot::loop_pid()
 	// Ecrit les donnees de log sur le port serie
 	LOG(Serial << "PID:" << current_time << "," <<
 		dist.consigne << "," << position.dist() << "," <<
-		rot.consigne << "," << position.rot() << endl;)
+		rot.consigne << "," << position.rot()
+		<< "    " << vitesse_dist << "  " << vitesse_rot
+		 << endl;)
 	return true;
 }

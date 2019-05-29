@@ -28,6 +28,8 @@ inline Print &operator<<(Print &obj, T arg)
 # define DEBUG(x) x
 #endif
 
+#undef NLOG
+
 #ifdef NLOG
 # define LOG(x)
 #else

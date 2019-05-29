@@ -16,7 +16,7 @@ class c_Robot
 			Odometrie::Config odometrie;
 			Moteur::Config moteurs[2];
 			int sicks[NUM_SICKS];
-			//unsigned long dureeMatch;
+			unsigned long dureeMatch;
 
 			int min_speed, max_speed;
 
@@ -44,14 +44,15 @@ class c_Robot
 		PID& dist_pid() { return dist; }
 		PID& rot_pid() { return rot; }
 
-		Sick capteurs[NUM_SICKS];
+		unsigned long start, duration;
 
-	private:
+	//private:
 		Odometrie position;
 		Moteur moteurs[2];
 
+		Sick capteurs[NUM_SICKS];
+
 		int min_speed, max_speed;
-		//unsigned long duration;
 
 		// PID
 		PID dist, rot;
