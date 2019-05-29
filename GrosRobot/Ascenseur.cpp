@@ -38,7 +38,7 @@ void setup_ascenseur()
 	Dynamixel.begin(1000000, pinAX12);
 
 	montee_plateau();
-	set_pinces(init_pliers_values[0], init_pliers_values[1]);
+	// set_pinces(init_pliers_values[0], init_pliers_values[1]);
 }
 
 void descente_plateau()

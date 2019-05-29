@@ -145,17 +145,17 @@ bool c_Robot::loop_pid()
 	if (!consigne_pid)
 		return false;
 
-	unsigned long stop_start = millis(); 
-	int i = 0;
-	while (i < NUM_SICKS)
-	{
-		if (capteurs[i++].is_active())
-		{
-			Serial << "STOOOOOP" << i << endl;
-			stop();
-			i = 0;
-		}
-	}
+	// unsigned long stop_start = millis(); 
+	// int i = 0;
+	// while (i < NUM_SICKS)
+	// {
+	// 	if (capteurs[i++].is_active())
+	// 	{
+	// 		Serial << "STOOOOOP" << i << endl;
+	// 		stop();
+	// 		i = 0;
+	// 	}
+	// }
 	
 
 
@@ -177,7 +177,7 @@ bool c_Robot::loop_pid()
 	float vitesse_rot = rot.compute(angle_diff(rot.consigne, position.rot()), dt);
 
 	const float precision_dist = 0.5f;
-	const float precision_rot = 0.5f;
+	const float precision_rot = 0.25f; //0.5f
 	if (abs(dist.erreur) < precision_dist && abs(rot.erreur) < precision_rot)
 	{
 		stop();
@@ -187,8 +187,19 @@ bool c_Robot::loop_pid()
 	}
 	else
 	{
+        static float dist_vitesse_old = 0;
+        static float rot_vitesse_old = 0;
+        // Ecretage des accelerations
+        const float dvMax_dist = 20;
+        const float dvMax_rot = 20;
+        vitesse_dist = clamp(-dvMax_dist, (vitesse_dist - dist_vitesse_old), dvMax_dist)  + dist_vitesse_old;
+        vitesse_rot = clamp(-dvMax_rot, (vitesse_rot - rot_vitesse_old), dvMax_rot)  + rot_vitesse_old;
+
 		moteurs[0].consigne(scale(vitesse_dist + vitesse_rot));
 		moteurs[1].consigne(scale(vitesse_dist - vitesse_rot));
+
+        dist_vitesse_old = vitesse_dist;
+        rot_vitesse_old = vitesse_rot;
 	}
 
 	// Ecrit les donnees de log sur le port serie
