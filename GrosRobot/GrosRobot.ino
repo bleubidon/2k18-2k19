@@ -27,8 +27,6 @@ void setup()
 
 	button.setup(pinBouton);
 
-	equipe = waitTirette(pinTirette, button);
-
 	Robot.setup({
 		odometrie : {
 			position: POS_SYM(0, 0, equipe),
@@ -60,6 +58,10 @@ void setup()
 		rot : PID(10.f, 0.f, 0.5f) //10.f, 0.f, 0.5f
 	});
 
+	Robot.forward(10);
+	delay(100);
+	REobot.forward(-10);
+	equipe = waitTirette(pinTirette, button);
 	affichage("Debut du match !", 1, true);
 }
 
@@ -101,9 +103,11 @@ void loop()
 	Robot.stop();
 	*/
 
-	parser.loop();
-	Robot.loop_pid();
+	Robot.rotate(ANGLE_SYM(90, equipe));
+	Robot.forward(20, false);
+	while (digitalRead(Palet) Robot.loop_pid();
+	
 
-	if (button.loop() == State::Released)
-		Serial << "request" << endl; // Send request to rpi
+
+	Robot.rotate(ANGLE_SYM(-90, equipe));
 }
