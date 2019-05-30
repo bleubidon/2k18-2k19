@@ -30,6 +30,11 @@ void c_Robot::setup(c_Robot::Config config)
 	dist = config.dist;
 	rot = config.rot;
 	consigne_pid = false;
+}
+
+void c_Robot::start()
+{
+	start_time = micros();
 
 	// Setup timer interrupt
 		cli(); // Disable interrupts
@@ -55,7 +60,6 @@ void c_Robot::stop()
 {
 	moteurs[GAUCHE].consigne(0);
 	moteurs[DROITE].consigne(0);
-
 }
 
 void c_Robot::consigne(float _dist, float _rot)
@@ -117,12 +121,13 @@ ISR(TIMER1_COMPA_vect)
 {
 	unsigned long now = micros();
 
-	if (now - Robot.start > Robot.duration)
+	if (now - Robot.start_time > Robot.duration)
 	{
 		while (1)
 			;
 	}
 }
+
 
 // PID
 float angle_diff(float a, float b)
@@ -185,6 +190,7 @@ bool c_Robot::loop_pid()
 	{
 		stop();
 		consigne_pid = false;
+		Serial << position.rot() << "   " << position.dist() << endl;
 
 		return false;
 	}
@@ -194,7 +200,7 @@ bool c_Robot::loop_pid()
 		static float dist_vitesse_old = 0;
 		static float rot_vitesse_old = 0;
 		const float dvMax_dist = 20;
-		const float dvMax_rot = 20;
+		const float dvMax_rot = 10;
 		vitesse_dist = clamp(-dvMax_dist, (vitesse_dist - dist_vitesse_old), dvMax_dist)  + dist_vitesse_old;
 		vitesse_rot = clamp(-dvMax_rot, (vitesse_rot - rot_vitesse_old), dvMax_rot)  + rot_vitesse_old;
 

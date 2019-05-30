@@ -45,3 +45,5 @@ void lacher_palet();
 
 void clear_ecran();
 void affichage(const char* message, unsigned ligne = 1, bool clear_display = false);
+
+void demi_cycle();

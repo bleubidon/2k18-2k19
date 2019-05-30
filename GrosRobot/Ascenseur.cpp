@@ -100,6 +100,17 @@ void set_pinces(int gauche, int droite)
 	}
 }
 
+void demi_cycle()
+{
+	
+	// 1- Relachement des palets
+	set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
+	delay(500);
+
+	// 2- Descente plateau
+	descente_plateau();
+}
+
 void cycle_ascenseur()
 {
 	Serial << "Demarrage du cycle" << endl;

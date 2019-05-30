@@ -8,7 +8,7 @@ int waitTirette(uint8_t pin, Button& selecteur)
 	static const char *equipes[] = {"JAUNE", "VIOLETTE"};
 	static const char *format = "EQUIPE %s";
 
-	int equipe = GAUCHE;
+	int equipe = DROITE;
 	char buf[16];
 
 	sprintf(buf, format, equipe[equipes]);
@@ -19,6 +19,7 @@ int waitTirette(uint8_t pin, Button& selecteur)
 
 	while (true)
 	{
+		Serial << "awaiting tirette" << endl;
 		if (selecteur.loop() == State::Pressed)
 		{
 			equipe = 1 - equipe;
@@ -32,7 +33,6 @@ int waitTirette(uint8_t pin, Button& selecteur)
 	// Send team via raspberry to id 3 (experience)
 	Serial << "send 102 " << equipe << endl;
 
-	Robot.start = micros();
 	return equipe;
 }
 

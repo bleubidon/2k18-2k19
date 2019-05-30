@@ -25,8 +25,10 @@ class c_Robot
 
 		void setup(c_Robot::Config config);
 
-		// dist: centimetres, rot: degres
+		void start();
 		void stop();
+
+		// dist: centimetres, rot: degres
 		void consigne(float _dist, float _rot);
 		void consigne_rel(float _dist, float _rot);
 
@@ -43,15 +45,14 @@ class c_Robot
 		PID& dist_pid() { return dist; }
 		PID& rot_pid() { return rot; }
 
-		unsigned long start, duration;
 
-	//private:
 		Odometrie position;
 		Moteur moteurs[2];
 
 		int num_sicks;
 		Sick *capteurs;
 
+		unsigned long start_time, duration;
 		int min_speed, max_speed;
 
 		// PID
