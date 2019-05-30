@@ -19,7 +19,7 @@ const int max_pliers_values[2] = {500, 210};
 
 const int init_pliers_values[2] = {450, 0};
 
-const int opened_pliers_values[2] = {290, 150}; //290, 150
+const int opened_pliers_values[2] = {270, 150}; //290, 150
 const int closed_pliers_values[2] = {240, 185}; //240, 185
 
 

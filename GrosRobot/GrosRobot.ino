@@ -22,7 +22,7 @@ void setup()
 
 	affichage("Setup...");
 
-	setup_ascenseur();
+	// setup_ascenseur();
 	setup_parser();
 
 	button.setup(pinBouton);
@@ -56,19 +56,20 @@ void setup()
 		sicks: sicks,
 		dureeMatch: 90000000L,
 		min_speed: 20,
-		max_speed: 70,
+		max_speed: 40,
 		dist : PID(10.f, 0.f, 5.f), //25.f, 0.f, 2.f)
 		rot : PID(7.0f, 0.f, 2.0f) //10.f, 0.f, 0.5f
 	});
 
-	Robot.translate(10);
+	/*Robot.translate(10);
 	delay(100);
-	Robot.translate(-10);
+	Robot.translate(-10);*/
 
 	equipe = waitTirette(pinTirette, button);
 
 	Robot.start();
 	affichage("Debut du match !", 1, true);
+    launch_experience(equipe);
 }
 
 void loop()
@@ -113,23 +114,34 @@ void loop()
 	parser.loop();
 	Robot.loop_pid();
 	*/
+
+
+    /*
 	demi_cycle();
 
 	Robot.rotate(ANGLE_SYM(-90, equipe));
-	Robot.translate(20, true);
+	Robot.translate(50, true);
 	//while (digitalRead(pinPalet))
 	//	Robot.loop_pid();
 	// Robot.stop();
 	cycle_ascenseur();
 	// Robot.rotate(ANGLE_SYM(-90, equipe));
-	Robot.translate(-20);
+
+	Robot.translate(-50);
 
 	lacher_palet();
-	Robot.translate(-5);
+	Robot.translate(-5)
+    */
+
+    //demi_cycle();
+    Robot.go_to(vec(0, 30));
+    Robot.go_to(vec(0, 0));
+
 
 	affichage("Score: 6 points");
-
-	while(1)
-	;
+    while(1) {
+        Robot.loop_pid();
+        parser.loop();
+    }
 
 }

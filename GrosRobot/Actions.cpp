@@ -1,3 +1,4 @@
+#include <Radio.h>
 #include "Actions.h"
 #include "test.h"
 
@@ -34,6 +35,24 @@ int waitTirette(uint8_t pin, Button& selecteur)
 	Serial << "send 102 " << equipe << endl;
 
 	return equipe;
+}
+
+int launch_experience(int equipe) {
+    byte id = 78;
+    Radio radio(35, 37);
+    radio.setup(id, 42, 38);
+    Message *response;
+    do {
+        radio.send(102, !equipe ? "jaune" : "violette");
+        while (!(response = radio.loop())) {
+            delay(100);
+            Serial << "ping experience" << endl;
+        }
+    }
+    while (strcmp(response->text, "OK"));
+    Serial << "Experience lancee OK" << endl;
+
+    return 0;
 }
 
 void fetch_atom(int argc, char **argv)

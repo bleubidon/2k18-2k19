@@ -103,7 +103,12 @@ void c_Robot::go_to(vec _dest, bool blocking)
 	look_at(_dest, true);
 
 	// Move forward
-	translate(vec::dist(position.pos(), _dest), blocking);
+	vec dir = _dest - position.pos();
+	consigne_rel(vec::dist(position.pos(), _dest), dir.angle() - position.rot());
+    
+	if (blocking)
+		while (Robot.loop_pid())
+			;
 }
 
 void c_Robot::look_at(vec _point, bool blocking)
@@ -143,9 +148,11 @@ float angle_diff(float a, float b)
 int c_Robot::scale(float speed)
 {
 	if (speed > 0)
-		return min(speed + min_speed, max_speed);
+		return speed + min_speed;
+//		return min(speed + min_speed, max_speed);
 	else
-		return max(speed - min_speed, -max_speed);
+		return speed - min_speed;
+//		return max(speed - min_speed, -max_speed);
 }
 
 bool c_Robot::loop_pid()
@@ -204,8 +211,24 @@ bool c_Robot::loop_pid()
 		vitesse_dist = clamp(-dvMax_dist, (vitesse_dist - dist_vitesse_old), dvMax_dist)  + dist_vitesse_old;
 		vitesse_rot = clamp(-dvMax_rot, (vitesse_rot - rot_vitesse_old), dvMax_rot)  + rot_vitesse_old;
 
-		moteurs[0].consigne(scale(vitesse_dist + vitesse_rot));
-		moteurs[1].consigne(scale(vitesse_dist - vitesse_rot));
+        float vg = scale(vitesse_dist + vitesse_rot);
+        float vd = scale(vitesse_dist - vitesse_rot);
+
+        if (vg >= max_speed || vd >= max_speed)
+        {
+            float ratio = max_speed / max(vg, vd);
+            vg *= ratio;
+            vd *= ratio;
+        }
+        else if (vg <= -max_speed || vd <= -max_speed)
+        {
+            float ratio = -max_speed / min(vg, vd);
+            vg *= ratio;
+            vd *= ratio;
+        }
+
+		moteurs[0].consigne(vg);
+		moteurs[1].consigne(vd);
 
 		dist_vitesse_old = vitesse_dist;
 		rot_vitesse_old = vitesse_rot;
