@@ -22,10 +22,12 @@ void setup()
 
 	affichage("Setup...");
 
-	setup_ascenseur();
+	// setup_ascenseur();
 	setup_parser();
 
 	button.setup(pinBouton);
+
+	int sicks[] = {66, 67, 68, 69};
 
 	Robot.setup({
 		odometrie : {
@@ -50,12 +52,13 @@ void setup()
 			{4, 9, 6, wheel_radius : 3.25f, GAUCHE},
 			{7, 8, 5, wheel_radius : 3.25f, DROITE}
 		},
-		sicks: {66, 67, 68, 69},
+		num_sicks: 4,
+		sicks: sicks,
 		dureeMatch: 90000000L,
 		min_speed: 20,
-		max_speed: 255,
+		max_speed: 40,
 		dist : PID(10.f, 0.f, 5.f), //25.f, 0.f, 2.f)
-		rot : PID(2.f, 0.f, 0.1f) //10.f, 0.f, 0.5f
+		rot : PID(7.0f, 0.f, 2.0f) //10.f, 0.f, 0.5f
 	});
 
 	/*Robot.translate(10);
@@ -63,7 +66,10 @@ void setup()
 	Robot.translate(-10);*/
 
 	equipe = waitTirette(pinTirette, button);
+
+	Robot.start();
 	affichage("Debut du match !", 1, true);
+    launch_experience(equipe);
 }
 
 void loop()
@@ -140,6 +146,4 @@ void loop()
 //
      while(1)
      ;
-  
-
 }

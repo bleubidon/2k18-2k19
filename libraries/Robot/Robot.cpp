@@ -16,7 +16,10 @@ void c_Robot::setup(c_Robot::Config config)
 	moteurs[GAUCHE].setup(config.moteurs[GAUCHE]);
 	moteurs[DROITE].setup(config.moteurs[DROITE]);
 
-	for (int i(0); i < NUM_SICKS; i++)
+	num_sicks = config.num_sicks;
+	capteurs = new Sick[num_sicks];
+	//capteurs = (Sick*)malloc(num_sicks * sizeof(Sick));
+	for (int i(0); i < num_sicks; i++)
 		capteurs[i].setup(config.sicks[i]);
 
 	min_speed = config.min_speed;
@@ -27,6 +30,11 @@ void c_Robot::setup(c_Robot::Config config)
 	dist = config.dist;
 	rot = config.rot;
 	consigne_pid = false;
+}
+
+void c_Robot::start()
+{
+	start_time = micros();
 
 	// Setup timer interrupt
 		cli(); // Disable interrupts
@@ -52,7 +60,6 @@ void c_Robot::stop()
 {
 	moteurs[GAUCHE].consigne(0);
 	moteurs[DROITE].consigne(0);
-
 }
 
 void c_Robot::consigne(float _dist, float _rot)
@@ -96,7 +103,12 @@ void c_Robot::go_to(vec _dest, bool blocking)
 	look_at(_dest, true);
 
 	// Move forward
-	translate(vec::dist(position.pos(), _dest), blocking);
+	vec dir = _dest - position.pos();
+	consigne_rel(vec::dist(position.pos(), _dest), dir.angle() - position.rot());
+    
+	if (blocking)
+		while (Robot.loop_pid())
+			;
 }
 
 void c_Robot::look_at(vec _point, bool blocking)
@@ -114,12 +126,13 @@ ISR(TIMER1_COMPA_vect)
 {
 	unsigned long now = micros();
 
-	if (now - Robot.start > Robot.duration)
+	if (now - Robot.start_time > Robot.duration)
 	{
 		while (1)
 			;
 	}
 }
+
 
 // PID
 float angle_diff(float a, float b)
@@ -135,9 +148,11 @@ float angle_diff(float a, float b)
 int c_Robot::scale(float speed)
 {
 	if (speed > 0)
-		return min(speed + min_speed, max_speed);
+		return speed + min_speed;
+//		return min(speed + min_speed, max_speed);
 	else
-		return max(speed - min_speed, -max_speed);
+		return speed - min_speed;
+//		return max(speed - min_speed, -max_speed);
 }
 
 bool c_Robot::loop_pid()
@@ -148,7 +163,7 @@ bool c_Robot::loop_pid()
 
 	unsigned long stop_start = millis(); 
 	int i = 0;
-	while (i < NUM_SICKS)
+	while (i < num_sicks)
 	{
 
 		if (capteurs[i++].is_active())
@@ -184,6 +199,7 @@ bool c_Robot::loop_pid()
 	{
 		stop();
 		consigne_pid = false;
+		Serial << position.rot() << "   " << position.dist() << endl;
 
 		return false;
 	}
@@ -193,12 +209,28 @@ bool c_Robot::loop_pid()
 		static float dist_vitesse_old = 0;
 		static float rot_vitesse_old = 0;
 		const float dvMax_dist = 20;
-		const float dvMax_rot = 20;
+		const float dvMax_rot = 10;
 		vitesse_dist = clamp(-dvMax_dist, (vitesse_dist - dist_vitesse_old), dvMax_dist)  + dist_vitesse_old;
 		vitesse_rot = clamp(-dvMax_rot, (vitesse_rot - rot_vitesse_old), dvMax_rot)  + rot_vitesse_old;
 
-		moteurs[0].consigne(scale(vitesse_dist + vitesse_rot));
-		moteurs[1].consigne(scale(vitesse_dist - vitesse_rot));
+        float vg = scale(vitesse_dist + vitesse_rot);
+        float vd = scale(vitesse_dist - vitesse_rot);
+
+        if (vg >= max_speed || vd >= max_speed)
+        {
+            float ratio = max_speed / max(vg, vd);
+            vg *= ratio;
+            vd *= ratio;
+        }
+        else if (vg <= -max_speed || vd <= -max_speed)
+        {
+            float ratio = -max_speed / min(vg, vd);
+            vg *= ratio;
+            vd *= ratio;
+        }
+
+		moteurs[0].consigne(vg);
+		moteurs[1].consigne(vd);
 
 		dist_vitesse_old = vitesse_dist;
 		rot_vitesse_old = vitesse_rot;

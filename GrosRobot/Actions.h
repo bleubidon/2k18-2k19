@@ -29,6 +29,7 @@ extern const int pinPalet;
 
 
 int waitTirette(uint8_t pin, Button& selecteur);
+int launch_experience(int equipe);
 
 void setup_ecran();
 void setup_parser();
@@ -45,3 +46,5 @@ void lacher_palet();
 
 void clear_ecran();
 void affichage(const char* message, unsigned ligne = 1, bool clear_display = false);
+
+void demi_cycle();

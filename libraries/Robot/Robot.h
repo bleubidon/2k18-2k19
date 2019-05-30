@@ -6,7 +6,6 @@
 #include "Moteur.h"
 #include "Odometrie.h"
 
-const int NUM_SICKS = 4;
 
 class c_Robot
 {
@@ -15,7 +14,7 @@ class c_Robot
 		{
 			Odometrie::Config odometrie;
 			Moteur::Config moteurs[2];
-			int sicks[NUM_SICKS];
+			int num_sicks, *sicks;
 			unsigned long dureeMatch;
 
 			int min_speed, max_speed;
@@ -26,8 +25,10 @@ class c_Robot
 
 		void setup(c_Robot::Config config);
 
-		// dist: centimetres, rot: degres
+		void start();
 		void stop();
+
+		// dist: centimetres, rot: degres
 		void consigne(float _dist, float _rot);
 		void consigne_rel(float _dist, float _rot);
 
@@ -44,14 +45,14 @@ class c_Robot
 		PID& dist_pid() { return dist; }
 		PID& rot_pid() { return rot; }
 
-		unsigned long start, duration;
 
-	//private:
 		Odometrie position;
 		Moteur moteurs[2];
 
-		Sick capteurs[NUM_SICKS];
+		int num_sicks;
+		Sick *capteurs;
 
+		unsigned long start_time, duration;
 		int min_speed, max_speed;
 
 		// PID
