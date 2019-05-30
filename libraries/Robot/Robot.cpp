@@ -16,7 +16,10 @@ void c_Robot::setup(c_Robot::Config config)
 	moteurs[GAUCHE].setup(config.moteurs[GAUCHE]);
 	moteurs[DROITE].setup(config.moteurs[DROITE]);
 
-	for (int i(0); i < NUM_SICKS; i++)
+	num_sicks = config.num_sicks;
+	capteurs = new Sick[num_sicks];
+	//capteurs = (Sick*)malloc(num_sicks * sizeof(Sick));
+	for (int i(0); i < num_sicks; i++)
 		capteurs[i].setup(config.sicks[i]);
 
 	min_speed = config.min_speed;
@@ -147,7 +150,7 @@ bool c_Robot::loop_pid()
 
 	unsigned long stop_start = millis(); 
 	int i = 0;
-	while (i < NUM_SICKS)
+	while (i < num_sicks)
 	{
 		if (capteurs[i++].is_active())
 		{

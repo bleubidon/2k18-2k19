@@ -6,7 +6,6 @@
 #include "Moteur.h"
 #include "Odometrie.h"
 
-const int NUM_SICKS = 4;
 
 class c_Robot
 {
@@ -15,7 +14,7 @@ class c_Robot
 		{
 			Odometrie::Config odometrie;
 			Moteur::Config moteurs[2];
-			int sicks[NUM_SICKS];
+			int num_sicks, *sicks;
 			unsigned long dureeMatch;
 
 			int min_speed, max_speed;
@@ -50,7 +49,8 @@ class c_Robot
 		Odometrie position;
 		Moteur moteurs[2];
 
-		Sick capteurs[NUM_SICKS];
+		int num_sicks;
+		Sick *capteurs;
 
 		int min_speed, max_speed;
 

@@ -27,6 +27,8 @@ void setup()
 
 	button.setup(pinBouton);
 
+	int sicks[] = {66, 67, 68, 69};
+
 	Robot.setup({
 		odometrie : {
 			position: POS_SYM(0, 0, equipe),
@@ -50,7 +52,8 @@ void setup()
 			{4, 9, 6, wheel_radius : 3.25f, GAUCHE},
 			{7, 8, 5, wheel_radius : 3.25f, DROITE}
 		},
-		sicks: {66, 67, 68, 69},
+		num_sicks: 4,
+		sicks: sicks,
 		dureeMatch: 90000000L,
 		min_speed: 20,
 		max_speed: 255,
