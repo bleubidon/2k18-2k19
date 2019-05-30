@@ -123,6 +123,11 @@ void set_axd(int argc, char **argv)
 	set_pinces(-1, atoi(argv[1]));
 }
 
+void open_pliers(int argc, char **argv)
+{
+    set_pinces(opened_pliers_values[0], opened_pliers_values[1]);
+}
+
 #define LAMBDA(cmd) [] (int, char**) { cmd(); }
 
 void setup_parser()
@@ -146,6 +151,8 @@ void setup_parser()
 	} );
 	parser.add("axg", set_axg);
 	parser.add("axd", set_axd);
+
+	parser.add("open", open_pliers);
 
 	parser.add("rpi_response", fetch_atom);
 }

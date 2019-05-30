@@ -19,8 +19,8 @@ const int max_pliers_values[2] = {500, 210};
 
 const int init_pliers_values[2] = {450, 0};
 
-const int opened_pliers_values[2] = {290, 150}; //290, 150
-const int closed_pliers_values[2] = {240, 185}; //240, 185
+const int opened_pliers_values[2] = {270, 140}; //290, 150
+const int closed_pliers_values[2] = {235, 190}; //240, 185
 
 
 void setup_ascenseur()
@@ -92,7 +92,7 @@ void set_pinces(int gauche, int droite)
 		if (min_pliers_values[i] <= cmds[i] && cmds[i] <= max_pliers_values[i])
 		{
 			Dynamixel.move(pinces[i], cmds[i]);
-			delay(20);
+			delay(100);
 		}
 		else
 			DEBUG(Serial << "Cannot move " << names[i] << " plier: " <<

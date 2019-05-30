@@ -58,9 +58,9 @@ void setup()
 		rot : PID(2.f, 0.f, 0.1f) //10.f, 0.f, 0.5f
 	});
 
-	//Robot.translate(10);
-	// delay(100);
-	// Robot.translate(-10);
+	/*Robot.translate(10);
+	delay(100);
+	Robot.translate(-10);*/
 
 	equipe = waitTirette(pinTirette, button);
 	affichage("Debut du match !", 1, true);
@@ -104,20 +104,42 @@ void loop()
 	Robot.stop();
 	*/
 
-	parser.loop();
+	//parser.loop();
+  
 
-	// Robot.rotate(ANGLE_SYM(-90, equipe));
-	// Robot.translate(20, false);
-	// while (digitalRead(pinPalet))
-	// 	Robot.loop_pid();
-	// Robot.stop();
-	// cycle_ascenseur();
-	// // Robot.rotate(ANGLE_SYM(-90, equipe));
-	// Robot.translate(-20);
+  set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
+  descente_plateau();
 
-	// lacher_palet();
+  //côté violet
+  // Positionnement vers palet bluenium
+  Robot.go_to(vec(30, 0));
+  Serial << "NEXT MOVE" << endl;
+  delay(500);
+  Robot.look_at(vec(30, -10));
+  Serial << "NEXT MOVE" << endl;
 
-	// while(1)
-	// ;
+  // Attrape palet bluenium
+  Robot.go_to(vec(30, -25));
+  cycle_ascenseur();
+  Robot.go_to(vec(0, -25));
+  Robot.go_to(vec(-30, -60));
+  Robot.go_to(vec(-30, 0));
+
+
+//  Robot.rotate(ANGLE_SYM(-90, equipe));
+//  Robot.translate(20, true);
+// // while (digitalRead(pinPalet))
+// //   Robot.loop_pid();
+//  Robot.stop();
+//  cycle_ascenseur();
+//  // Robot.rotate(ANGLE_SYM(-90, equipe));
+//  Robot.translate(-20);
+//
+//  lacher_palet();
+//  Robot.translate(-5);
+//
+     while(1)
+     ;
+  
 
 }

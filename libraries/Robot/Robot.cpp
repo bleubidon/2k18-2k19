@@ -142,6 +142,7 @@ int c_Robot::scale(float speed)
 
 bool c_Robot::loop_pid()
 {
+    Serial << consigne_pid << endl;
 	if (!consigne_pid)
 		return false;
 
@@ -149,6 +150,7 @@ bool c_Robot::loop_pid()
 	int i = 0;
 	while (i < NUM_SICKS)
 	{
+
 		if (capteurs[i++].is_active())
 		{
 			Serial << "STOOOOOP" << i << endl;
