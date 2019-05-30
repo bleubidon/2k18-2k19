@@ -1,5 +1,5 @@
 #include <Robot.h>
+#include <Parser.h>
 
-
-void setup_actions();
-void loop_actions();
+extern Parser parser;
+void setup_parser();

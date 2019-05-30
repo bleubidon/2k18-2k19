@@ -19,8 +19,8 @@ const int max_pliers_values[2] = {500, 210};
 
 const int init_pliers_values[2] = {450, 0};
 
-const int opened_pliers_values[2] = {290, 150};
-const int closed_pliers_values[2] = {240, 185};
+const int opened_pliers_values[2] = {290, 150}; //290, 150
+const int closed_pliers_values[2] = {240, 185}; //240, 185
 
 
 void setup_ascenseur()
@@ -38,7 +38,7 @@ void setup_ascenseur()
 	Dynamixel.begin(1000000, pinAX12);
 
 	montee_plateau();
-	// set_pinces(init_pliers_values[0], init_pliers_values[1]);
+	set_pinces(init_pliers_values[0], init_pliers_values[1]);
 }
 
 void descente_plateau()
@@ -104,6 +104,9 @@ void cycle_ascenseur()
 {
 	Serial << "Demarrage du cycle" << endl;
 
+	Dynamixel.torqueStatus( 11, true);
+	Dynamixel.torqueStatus( 6, true);
+
 	delay(1000);
 
 	// 1- Relachement des palets
@@ -119,4 +122,8 @@ void cycle_ascenseur()
 
 	// 4- Remontée du plateau
 	montee_plateau();
+}
+
+void lacher_palet() {
+	set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
 }

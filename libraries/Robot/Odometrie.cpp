@@ -58,8 +58,6 @@ void Odometrie::updateDoubleCodeuse()
 
 	direction.set( cos(rad), sin(rad) );
 	position += dL * direction;
-
-	// Serial << distance << "   " << Lg << "    " << Ld << endl;
 }
 
 void Odometrie::updateCodeuseGyroscope()

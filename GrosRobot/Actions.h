@@ -41,6 +41,7 @@ void montee_plateau();
 void set_pinces(int gauche, int droite);
 
 void cycle_ascenseur();
+void lacher_palet();
 
 void clear_ecran();
 void affichage(const char* message, unsigned ligne = 1, bool clear_display = false);

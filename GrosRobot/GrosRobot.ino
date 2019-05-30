@@ -55,12 +55,13 @@ void setup()
 		min_speed: 20,
 		max_speed: 255,
 		dist : PID(10.f, 0.f, 5.f), //25.f, 0.f, 2.f)
-		rot : PID(2.f, 0.f, 0.f) //10.f, 0.f, 0.5f
+		rot : PID(2.f, 0.f, 0.1f) //10.f, 0.f, 0.5f
 	});
 
-	Robot.forward(10);
-	delay(100);
-	REobot.forward(-10);
+	//Robot.translate(10);
+	// delay(100);
+	// Robot.translate(-10);
+
 	equipe = waitTirette(pinTirette, button);
 	affichage("Debut du match !", 1, true);
 }
@@ -103,11 +104,20 @@ void loop()
 	Robot.stop();
 	*/
 
-	Robot.rotate(ANGLE_SYM(90, equipe));
-	Robot.forward(20, false);
-	while (digitalRead(Palet) Robot.loop_pid();
-	
+	parser.loop();
 
+	// Robot.rotate(ANGLE_SYM(-90, equipe));
+	// Robot.translate(20, false);
+	// while (digitalRead(pinPalet))
+	// 	Robot.loop_pid();
+	// Robot.stop();
+	// cycle_ascenseur();
+	// // Robot.rotate(ANGLE_SYM(-90, equipe));
+	// Robot.translate(-20);
 
-	Robot.rotate(ANGLE_SYM(-90, equipe));
+	// lacher_palet();
+
+	// while(1)
+	// ;
+
 }
