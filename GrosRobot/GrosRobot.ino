@@ -112,6 +112,8 @@ void loop()
 
     set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
     Robot.go_to_bkwd(vec(-30, -20 * coef_de_sym));
+
+    affichage("Score : 53 pts");
     while(1)
     ;
 }
