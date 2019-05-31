@@ -1,11 +1,15 @@
 #include "Actions.h"
+#include <Servo.h>
+
+Servo bras_vigor;
+int consigne_vigor = 172;
 
 // NOTE Parser: mettre l'option fin de ligne dans la console Arduino pour
 // pouvoir envoyer des commandes
 
 // TODO: Setup initial position and orientation
 
-//#define mode_parser
+// #define mode_parser
 
 const int pinTirette = 65;
 const int pinBouton = 49;
@@ -30,6 +34,10 @@ void setup()
 	setup_parser();
 
 	button.setup(pinBouton);
+
+	bras_vigor.attach(44);
+	bras_vigor.write(0);
+
 
 	int sicks[] = {66, 67, 68, 69};
 
@@ -58,7 +66,7 @@ void setup()
 		},
 		num_sicks: 4,
 		sicks: sicks,
-		dureeMatch: 90000000L,
+		dureeMatch: 99999999L,
 		min_speed: 20,
 		max_speed: 70,
 		dist : PID(10.f, 0.f, 5.f),
@@ -70,7 +78,7 @@ void setup()
 	delay(100);
 	Robot.translate(-10);
 #endif
-
+	
 	equipe = waitTirette(pinTirette, button);
 
 	Robot.start();
@@ -83,48 +91,75 @@ void loop()
 {
 #ifdef mode_parser
 	while(1)
-	{parser.loop();
-	Robot.loop_pid();
+	{
+		parser.loop();
+		Robot.loop_pid();
 	}
 #endif
 
-    set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
-    descente_plateau();
+	/*
+	set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
+	descente_plateau();
 
-    //côté violet
-    // Positionnement vers palet bluenium
-    Robot.go_to(POS_SYM(105, 25));
-    Serial << "NEXT MOVE" << endl;
-    delay(500);
-    Serial << "NEXT MOVE" << endl;
+	//côté violet
+	// Positionnement vers palet bluenium
+	Robot.go_to(POS_SYM(105, 25));
+	Serial << "NEXT MOVE" << endl;
+	delay(500);
+	Serial << "NEXT MOVE" << endl;
 
-    // Attrape palet bluenium
-    Robot.go_to(POS_SYM(105, 50));
-    cycle_ascenseur();
+	// Attrape palet bluenium
+	Robot.go_to(POS_SYM(105, 50));
+	cycle_ascenseur();
 
-    // Attrape palet greenium
-    Robot.go_to(POS_SYM(60, 50));
+	// Attrape palet greenium
+	Robot.go_to(POS_SYM(60, 50));
 
-    // Depose palet bluenium et greenium avec palet redium et recule (safe strat)
-    set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
-    Serial.println("backward");
-    Robot.go_to_bkwd(POS_SYM(90, 50));
+	// Depose palet bluenium et greenium avec palet redium et recule (safe strat)
+	set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
+	Serial.println("backward");
+	Robot.go_to_bkwd(POS_SYM(90, 50));
 
-    // Detour pour pousser palets dans redium
-    Robot.go_to(POS_SYM(45, 85));
+	// Detour pour pousser palets dans redium
+	Robot.go_to(POS_SYM(45, 85));
 
-    // Pousser palets dans redium
-    Robot.go_to(POS_SYM(45, 25));
+	// Pousser palets dans redium
+	Robot.go_to(POS_SYM(45, 25));
 
-    Robot.go_to_bkwd(POS_SYM(45, 50));
+	Robot.go_to_bkwd(POS_SYM(45, 50));
 
-    // Récup palets chaos:
-    Robot.go_to(POS_SYM(45, 134));
-    Robot.go_to(POS_SYM(129, 134));
-    // Pousser palets dans redium
-    Robot.go_to(POS_SYM(50, 40));
+	// Récup palets chaos:
+	Robot.go_to(POS_SYM(45, 134));
+	Robot.go_to(POS_SYM(129, 134));
+	// Pousser palets dans redium
+	Robot.go_to(POS_SYM(50, 40));
+	*/
 
-    affichage("Sur la feuille !");
-    while(1)
-    ;
+	// Accelerateur de particules
+	bras_vigor.write(consigne_vigor);
+
+	if (equipe == 0) // jaune
+	{
+		Robot.go_to(POS_SYM(45, 118));
+		Robot.look_at(POS_SYM(90, 118));
+		Robot.go_to_bkwd(POS_SYM(18, 118));
+		Robot.look_at(POS_SYM(18, 150));
+		Robot.translate(-3, false);
+
+	}
+	else if (equipe == 1) // violet
+	{
+		Robot.go_to(POS_SYM(45, 142));
+		Robot.go_to(POS_SYM(18, 142));
+		Robot.look_at(POS_SYM(18, 10));
+		Robot.translate(3, false);
+
+	}
+
+	while(Robot.loop_pid())
+		bras_vigor.write(consigne_vigor);
+
+	affichage("Sur la feuille !");
+	while(1)
+		;
 }

@@ -46,6 +46,8 @@ class c_Robot
 		PID& dist_pid() { return dist; }
 		PID& rot_pid() { return rot; }
 
+		void check_sicks();
+		void check_timer();
 
 		Odometrie position;
 		Moteur moteurs[2];

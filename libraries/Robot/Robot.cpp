@@ -37,25 +37,6 @@ void c_Robot::setup(c_Robot::Config config)
 void c_Robot::start()
 {
 	start_time = micros();
-
-	// Setup timer interrupt
-		cli(); // Disable interrupts
-
-		// Set timer1 interrupt at 1Hz
-		TCCR1A = 0; // set entire TCCR1A register to 0
-		TCCR1B = 0; // same for TCCR1B
-		TCNT1  = 0; // initialize counter value to 0
-
-		// Set compare match register for 1hz increments
-		OCR1A = 15624; // = (16*10^6) / (1*1024) - 1 (must be <65536)
-		// turn on CTC mode
-		TCCR1B |= (1 << WGM12);
-		// Set CS12 and CS10 bits for 1024 prescaler
-		TCCR1B |= (1 << CS12) | (1 << CS10);
-		// enable timer compare interrupt
-		TIMSK1 |= (1 << OCIE1A);
-
-		sei(); // Enable interrupts
 }
 
 void c_Robot::stop()
@@ -118,10 +99,10 @@ void c_Robot::go_to(vec _dest, bool blocking)
 			;
 }
 
-void c_Robot::go_to_bkwd(vec _dest, bool blocking)
+void c_Robot::go_to_bkwd(vec _dest, bool blocking)  // Cette fonction ne fait pas de look_at
 {
     // Rotate toward destination (blocking)
-//    look_at(_dest, true);
+//    look_at(2 * position.pos - _dest, true);
 
     // Move backward
     vec dir = _dest - position.pos();
@@ -148,19 +129,6 @@ void c_Robot::look_at(vec _point, bool blocking)
 	Sick::enable = true;
 }
 
-// timer1 interrupt 1Hz
-ISR(TIMER1_COMPA_vect)
-{
-	unsigned long now = micros();
-
-	if (now - Robot.start_time > Robot.duration)
-	{
-		while (1)
-			;
-	}
-}
-
-
 // PID
 float angle_diff(float a, float b)
 {
@@ -182,28 +150,43 @@ int c_Robot::scale(float speed)
 //		return max(speed - min_speed, -max_speed);
 }
 
+void c_Robot::check_sicks()
+{
+	if (!Sick::enable)
+		return;
+
+	int i = 0;
+	while (i < num_sicks)
+	{
+		if (capteurs[i++].is_active())
+		{
+			Serial << "STOOOOOP" << i << endl;
+			moteurs[GAUCHE].consigne(0);
+			moteurs[DROITE].consigne(0);
+			i = 0;
+		}
+	}
+}
+
+void c_Robot::check_timer()
+{
+	unsigned long now = micros();
+
+	if (now - start_time > duration)
+	{
+		while (1)
+			;
+	}
+}
+
 bool c_Robot::loop_pid()
 {
 	if (!consigne_pid)
 		return false;
 
 	unsigned long stop_start = millis();
-	if (Sick::enable)
-	{
-		int i = 0;
-		while (i < num_sicks)
-		{
-
-			if (capteurs[i++].is_active())
-			{
-				Serial << "STOOOOOP" << i << endl;
-				moteurs[GAUCHE].consigne(0);
-				moteurs[DROITE].consigne(0);
-				i = 0;
-			}
-		}
-	}
-	
+	check_sicks();
+	check_timer();
 
 
 	// Mise a jour de la consigne toute les 10 millisecondes (au moins)

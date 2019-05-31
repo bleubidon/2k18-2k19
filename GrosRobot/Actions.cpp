@@ -20,7 +20,6 @@ int waitTirette(uint8_t pin, Button& selecteur)
 
 	while (true)
 	{
-		Serial << "awaiting tirette" << endl;
 		if (selecteur.loop() == State::Pressed)
 		{
 			equipe = 1 - equipe;
