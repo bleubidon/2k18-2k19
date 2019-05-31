@@ -16,6 +16,8 @@ class Sick
 			return digitalRead(pin);
 		}
 
+		static bool enable;
+
 	private:
 		uint8_t pin;
 };

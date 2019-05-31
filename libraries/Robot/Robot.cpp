@@ -6,6 +6,8 @@ const uint8_t GAUCHE = 0;
 const uint8_t DROITE = 1;
 const char endl = '\n';
 
+bool Sick::enable = true;
+
 c_Robot Robot;
 
 void c_Robot::setup(c_Robot::Config config)
@@ -60,6 +62,8 @@ void c_Robot::stop()
 {
 	moteurs[GAUCHE].consigne(0);
 	moteurs[DROITE].consigne(0);
+
+	consigne_pid = false;
 }
 
 void c_Robot::consigne(float _dist, float _rot)
@@ -133,12 +137,15 @@ void c_Robot::go_to_bkwd(vec _dest, bool blocking)
 
 void c_Robot::look_at(vec _point, bool blocking)
 {
+	Sick::enable = false;
 	vec dir = _point - position.pos();
 	consigne(position.dist(), dir.angle());
 
 	if (blocking)
 		while (Robot.loop_pid())
 			;
+
+	Sick::enable = true;
 }
 
 // timer1 interrupt 1Hz
@@ -177,20 +184,23 @@ int c_Robot::scale(float speed)
 
 bool c_Robot::loop_pid()
 {
-    Serial << consigne_pid << endl;
 	if (!consigne_pid)
 		return false;
 
-	unsigned long stop_start = millis(); 
-	int i = 0;
-	while (i < num_sicks)
+	unsigned long stop_start = millis();
+	if (Sick::enable)
 	{
-
-		if (capteurs[i++].is_active())
+		int i = 0;
+		while (i < num_sicks)
 		{
-			Serial << "STOOOOOP" << i << endl;
-			stop();
-			i = 0;
+
+			if (capteurs[i++].is_active())
+			{
+				Serial << "STOOOOOP" << i << endl;
+				moteurs[GAUCHE].consigne(0);
+				moteurs[DROITE].consigne(0);
+				i = 0;
+			}
 		}
 	}
 	
@@ -233,21 +243,21 @@ bool c_Robot::loop_pid()
 		vitesse_dist = clamp(-dvMax_dist, (vitesse_dist - dist_vitesse_old), dvMax_dist)  + dist_vitesse_old;
 		vitesse_rot = clamp(-dvMax_rot, (vitesse_rot - rot_vitesse_old), dvMax_rot)  + rot_vitesse_old;
 
-        float vg = scale(vitesse_dist + vitesse_rot);
-        float vd = scale(vitesse_dist - vitesse_rot);
+		float vg = scale(vitesse_dist + vitesse_rot);
+		float vd = scale(vitesse_dist - vitesse_rot);
 
-        if (vg >= max_speed || vd >= max_speed)
-        {
-            float ratio = max_speed / max(vg, vd);
-            vg *= ratio;
-            vd *= ratio;
-        }
-        else if (vg <= -max_speed || vd <= -max_speed)
-        {
-            float ratio = -max_speed / min(vg, vd);
-            vg *= ratio;
-            vd *= ratio;
-        }
+		if (vg >= max_speed || vd >= max_speed)
+		{
+			float ratio = max_speed / max(vg, vd);
+			vg *= ratio;
+			vd *= ratio;
+		}
+		else if (vg <= -max_speed || vd <= -max_speed)
+		{
+			float ratio = -max_speed / min(vg, vd);
+			vg *= ratio;
+			vd *= ratio;
+        	}
 
 		moteurs[0].consigne(vg);
 		moteurs[1].consigne(vd);

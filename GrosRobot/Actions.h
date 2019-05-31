@@ -14,8 +14,8 @@
 #define WAIT_RASP 2
 
 // JAUNE = 0 : VIOLET = 1
-#define POS_SYM(x, y, equipe) (!equipe ? vec(x, y) :  vec(300 - x, 200 - y))
-#define ANGLE_SYM(a, equipe) (!equipe ? a : -a)
+#define POS_SYM(x, y) (!equipe ? vec(x - 75, y - 25) :  vec(x - 75, - y + 25))
+#define ANGLE_SYM(a) (!equipe ? a : -a)
 
 extern Parser parser;
 extern byte chaos_zone_state;

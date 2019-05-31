@@ -5,6 +5,8 @@
 
 // TODO: Setup initial position and orientation
 
+//#define mode_parser
+
 const int pinTirette = 65;
 const int pinBouton = 49;
 
@@ -33,8 +35,8 @@ void setup()
 
 	Robot.setup({
 		odometrie : {
-			position: POS_SYM(0, 0, equipe),
-			angle: ANGLE_SYM(0, equipe),
+			position: vec(0, 0),
+			angle: 0,
 			mode : DOUBLE_CODEUSE,
 			{{
 				gauche : {
@@ -59,61 +61,70 @@ void setup()
 		dureeMatch: 90000000L,
 		min_speed: 20,
 		max_speed: 70,
-		dist : PID(10.f, 0.f, 5.f), //25.f, 0.f, 2.f)
-		rot : PID(7.0f, 0.f, 2.0f) //10.f, 0.f, 0.5f
+		dist : PID(10.f, 0.f, 5.f),
+		rot : PID(7.0f, 0.f, 2.0f)
 	});
 
+#ifndef mode_parser
 	Robot.translate(10);
 	delay(100);
 	Robot.translate(-10);
+#endif
 
 	equipe = waitTirette(pinTirette, button);
 
 	Robot.start();
 	affichage("Debut du match !", 1, true);
-    launch_experience(equipe);
+
+	launch_experience(equipe);
 }
 
 void loop()
 {
-    parser.loop();
-
-    int coef_de_sym = equipe ? 1: -1;
+#ifdef mode_parser
+	while(1)
+	{parser.loop();
+	Robot.loop_pid();
+	}
+#endif
 
     set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
     descente_plateau();
 
     //côté violet
     // Positionnement vers palet bluenium
-    Robot.go_to(vec(30, 0 * coef_de_sym));
+    Robot.go_to(POS_SYM(105, 25));
     Serial << "NEXT MOVE" << endl;
     delay(500);
-    Robot.look_at(vec(30, -10 * coef_de_sym));
     Serial << "NEXT MOVE" << endl;
 
     // Attrape palet bluenium
-    Robot.go_to(vec(30, -25 * coef_de_sym));
+    Robot.go_to(POS_SYM(105, 50));
     cycle_ascenseur();
 
     // Attrape palet greenium
-    Robot.rotate(-90.f * coef_de_sym);
-//    Robot.go_to(vec(0, -25 * coef_de_sym));
+    Robot.go_to(POS_SYM(60, 50));
 
-    // Depose palet bluenium avec palet redium et recule (safe strat)
-    Robot.go_to(vec(-15, -25 * coef_de_sym));
+    // Depose palet bluenium et greenium avec palet redium et recule (safe strat)
+    set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
     Serial.println("backward");
-    Robot.go_to_bkwd(vec(15, -25));
+    Robot.go_to_bkwd(POS_SYM(90, 50));
 
     // Detour pour pousser palets dans redium
-    Robot.go_to(vec(-30, -60 * coef_de_sym));
+    Robot.go_to(POS_SYM(45, 85));
 
     // Pousser palets dans redium
-    Robot.go_to(vec(-30, -10 * coef_de_sym));
+    Robot.go_to(POS_SYM(45, 25));
 
-    set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
-    Robot.go_to_bkwd(vec(-30, -20 * coef_de_sym));
+    Robot.go_to_bkwd(POS_SYM(45, 50));
 
-    affichage("Score : 53 pts");
+    // Récup palets chaos:
+    Robot.go_to(POS_SYM(45, 134));
+    Robot.go_to(POS_SYM(129, 134));
+    // Pousser palets dans redium
+    Robot.go_to(POS_SYM(50, 40));
+
+    affichage("Sur la feuille !");
     while(1)
     ;
 }
