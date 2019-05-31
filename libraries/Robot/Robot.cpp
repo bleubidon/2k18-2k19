@@ -124,7 +124,7 @@ void c_Robot::go_to_bkwd(vec _dest, bool blocking)
 
     Serial << "current angle: " << position.rot() << endl;
 
-    consigne_rel(-vec::dist(position.pos(), _dest), dir.angle() - position.rot() + 180);
+    consigne_rel(-vec::dist(position.pos(), _dest), 0); // dir.angle() - position.rot() + 180
 
     if (blocking)
         while (Robot.loop_pid())
