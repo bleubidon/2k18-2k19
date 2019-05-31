@@ -22,7 +22,9 @@ void setup()
 
 	affichage("Setup...");
 
-	// setup_ascenseur();
+	delay(1000);
+
+	setup_ascenseur();
 	setup_parser();
 
 	button.setup(pinBouton);
@@ -56,7 +58,7 @@ void setup()
 		sicks: sicks,
 		dureeMatch: 90000000L,
 		min_speed: 20,
-		max_speed: 40,
+		max_speed: 70,
 		dist : PID(10.f, 0.f, 5.f), //25.f, 0.f, 2.f)
 		rot : PID(7.0f, 0.f, 2.0f) //10.f, 0.f, 0.5f
 	});
@@ -74,76 +76,42 @@ void setup()
 
 void loop()
 {
-	/*
-	// Recuperer premier palet devant le spawn
-	Robot.translate(10);
-	cycle_ascenseur();
+    parser.loop();
 
-	// Avancer jusqua la zone de chaos
-	Robot.go_to(vec(x, x)); // pos de la zone de chaos
-	Robot.look_at(vec(x, x)); // pos du centre de la zone de chaos
+    int coef_de_sym = equipe ? 1: -1;
 
-	// Recuperer les palets
-	do
-	{
-		chaos_zone_state = WAIT_RASP;
-		Serial << "request" << endl;
-		while (chaos_zone_state == WAIT_RASP)
-			parser.loop();
-	}
-	while (chaos_zone_state != NO_MORE_ATOM);
-		
-	// Revenir a la zone de depart
-	Robot.go_to(vec(x, x)); // pos de la zone de depart
-	open_pinces();
-	Robot.translate(10); // pousse les palets
-	Robot.translate(-10);
+    set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
+    descente_plateau();
 
-	// Monter la rampe
-	Robot.go_to(vec(x, x)); // pos de devant la rampe
-	Robot.go_to(vec(x, x)); // pos du haut de la rampe
-	open_pinces();
-	Robot.translate(-10);
-	close_pinces();
-	Robot.translate(10); // pousse les palets
+    //côté violet
+    // Positionnement vers palet bluenium
+    Robot.go_to(vec(30, 0 * coef_de_sym));
+    Serial << "NEXT MOVE" << endl;
+    delay(500);
+    Robot.look_at(vec(30, -10 * coef_de_sym));
+    Serial << "NEXT MOVE" << endl;
 
-	Robot.stop();
-	*/
+    // Attrape palet bluenium
+    Robot.go_to(vec(30, -25 * coef_de_sym));
+    cycle_ascenseur();
 
-	//parser.loop();
-  
+    // Attrape palet greenium
+    Robot.rotate(-90.f * coef_de_sym);
+//    Robot.go_to(vec(0, -25 * coef_de_sym));
 
-  set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
-  descente_plateau();
+    // Depose palet bluenium avec palet redium et recule (safe strat)
+    Robot.go_to(vec(-15, -25 * coef_de_sym));
+    Serial.println("backward");
+    Robot.go_to_bkwd(vec(15, -25));
 
-  //côté violet
-  // Positionnement vers palet bluenium
-  Robot.go_to(vec(30, 0));
-  Serial << "NEXT MOVE" << endl;
-  delay(500);
-  Robot.look_at(vec(30, -10));
-  Serial << "NEXT MOVE" << endl;
+    // Detour pour pousser palets dans redium
+    Robot.go_to(vec(-30, -60 * coef_de_sym));
 
-  // Attrape palet bluenium
-  Robot.go_to(vec(30, -25));
-  cycle_ascenseur();
-  Robot.go_to(vec(0, -25));
-  Robot.go_to(vec(-30, -60));
-  Robot.go_to(vec(-30, 0));
+    // Pousser palets dans redium
+    Robot.go_to(vec(-30, -10 * coef_de_sym));
 
-
-//  Robot.rotate(ANGLE_SYM(-90, equipe));
-//  Robot.translate(20, true);
-// // while (digitalRead(pinPalet))
-// //   Robot.loop_pid();
-//  Robot.stop();
-//  cycle_ascenseur();
-//  // Robot.rotate(ANGLE_SYM(-90, equipe));
-//  Robot.translate(-20);
-//
-//  lacher_palet();
-//  Robot.translate(-5);
-//
-     while(1)
-     ;
+    set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
+    Robot.go_to_bkwd(vec(-30, -20 * coef_de_sym));
+    while(1)
+    ;
 }

@@ -36,6 +36,7 @@ class c_Robot
 		void translate(float _dist, bool blocking = true);
 		void rotate(float _angle, bool blocking = true);
 		void go_to(vec _dest, bool blocking = true);
+		void go_to_bkwd(vec _dest, bool blocking = true);
 		void look_at(vec _point, bool blocking = true);
 
 		int scale(float speed);

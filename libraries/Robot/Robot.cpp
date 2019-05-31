@@ -64,6 +64,9 @@ void c_Robot::stop()
 
 void c_Robot::consigne(float _dist, float _rot)
 {
+    Serial << "consigne: ";
+    Serial <<_dist << endl;
+
 	dist.set_consigne(_dist);
 	rot.set_consigne(_rot);
 
@@ -75,7 +78,7 @@ void c_Robot::consigne(float _dist, float _rot)
 
 void c_Robot::consigne_rel(float _dist, float _rot)
 {
-	consigne(position.dist() + _dist, position.rot() + _rot);
+	consigne((position.dist() + _dist), position.rot() + _rot);
 }
 
 // Helpers
@@ -109,6 +112,23 @@ void c_Robot::go_to(vec _dest, bool blocking)
 	if (blocking)
 		while (Robot.loop_pid())
 			;
+}
+
+void c_Robot::go_to_bkwd(vec _dest, bool blocking)
+{
+    // Rotate toward destination (blocking)
+//    look_at(_dest, true);
+
+    // Move backward
+    vec dir = _dest - position.pos();
+
+    Serial << "current angle: " << position.rot() << endl;
+
+    consigne_rel(-vec::dist(position.pos(), _dest), dir.angle() - position.rot() + 180);
+
+    if (blocking)
+        while (Robot.loop_pid())
+            ;
 }
 
 void c_Robot::look_at(vec _point, bool blocking)

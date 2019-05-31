@@ -37,7 +37,11 @@ int waitTirette(uint8_t pin, Button& selecteur)
 	return equipe;
 }
 
+unsigned int exp_timeout = 3000;
+unsigned long exp_start = 0;
+bool temp_boolean = false;
 int launch_experience(int equipe) {
+    exp_start = millis();
     byte id = 78;
     Radio radio(35, 37);
     radio.setup(id, 42, 38);
@@ -45,12 +49,17 @@ int launch_experience(int equipe) {
     do {
         radio.send(102, !equipe ? "jaune" : "violette");
         while (!(response = radio.loop())) {
+            if (millis() - exp_start > exp_timeout) {
+                temp_boolean = true;
+                break;
+            }
             delay(100);
             Serial << "ping experience" << endl;
         }
+        if (temp_boolean) break;
     }
     while (strcmp(response->text, "OK"));
-    Serial << "Experience lancee OK" << endl;
+    Serial << "Experience lancee OK ou timeout" << endl;
 
     return 0;
 }
