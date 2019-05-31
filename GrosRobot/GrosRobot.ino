@@ -63,9 +63,9 @@ void setup()
 		rot : PID(7.0f, 0.f, 2.0f) //10.f, 0.f, 0.5f
 	});
 
-	/*Robot.translate(10);
+	Robot.translate(10);
 	delay(100);
-	Robot.translate(-10);*/
+	Robot.translate(-10);
 
 	equipe = waitTirette(pinTirette, button);
 
