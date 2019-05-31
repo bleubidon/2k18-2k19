@@ -3,7 +3,9 @@
 #include <Radio.h>
 
 
-int equipe;
+//int equipe;
+//initialisation equipe tests
+int equipe = 1;
 const int stepsPerRevolution = 200;
 
 byte id = 102; //ID de l'arduino
@@ -29,14 +31,17 @@ void waitTirette()
 			Serial.print("Message reçu : \"");
 			Serial.print(msg->text);
 			Serial.println("\"");
-
-			equipe = atoi(msg->text);
-			if (equipe == 0 || equipe == 1)
-			{
-				radio.send(msg->source, "OK");
-				return;
-			}
-			radio.send(msg->source, "NO");
+      if (strcmp(msg->text,"jaune")==0){
+        equipe = 0;
+        radio.send(msg->source, "OK");
+        return;
+      }else if (strcmp(msg->text,"violette")==0){
+        equipe =  1;
+        radio.send(msg->source, "OK");
+        return;
+      }else{
+        radio.send(msg->source, "no");
+      }
 		}
 	}
 }
@@ -46,17 +51,34 @@ void setup()
 {
 	Serial.begin(9600);
 
-	const int motorSpeed = 60;
+	const int motorSpeed = 100;
 	myStepper.setSpeed(motorSpeed);
 
 	radio.setup(id, 38, 42);
+	
+	
+	
 	waitTirette();
 }
 
 void loop()
 {
-	if (equipe == 0) // Equipe jaune
-		myStepper.step(stepsPerRevolution);
-	else // Equipe violette
-		myStepper.step(stepsPerRevolution);
+  double beginTime = millis();
+  Serial.print(beginTime);
+  double currentTime = millis();
+  /*while ((currentTime - beginTime) < 2000) {
+    currentTime = millis();
+  }*/
+  while ((currentTime - beginTime) < 64000) {
+    //Serial.println((currentTime - beginTime)/1000);
+    currentTime = millis();
+    if (equipe == 0) // Equipe jaune
+      myStepper.step(stepsPerRevolution);
+    else // Equipe violette
+      myStepper.step(-stepsPerRevolution);
+  }
+  while(1) { 
+    //myStepper.setSpeed(0);
+   }
+  
 }
