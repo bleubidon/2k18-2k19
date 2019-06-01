@@ -31,6 +31,8 @@ void setup()
 	setup_parser();
 
 	button.setup(pinBouton);
+	pinMode(vigorTriggerPin, OUTPUT);
+	digitalWrite(vigorTriggerPin, 0);
 
 	int sicks[] = {66, 67, 68, 69};
 
@@ -97,7 +99,6 @@ void loop()
 	set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
 	descente_plateau();
 
-	/*
 	// Positionnement vers palet bluenium
 	Robot.go_to(POS_SYM(105, 25));
 	Serial << "NEXT MOVE" << endl;
@@ -130,10 +131,9 @@ void loop()
 	Robot.go_to(POS_SYM(129, 134));
 	// Pousser palets dans redium
 	Robot.go_to(POS_SYM(45, 25));
-	*/
 
 	// Accelerateur de particules
-    Serial << "Lancement vigor" << endl;
+	Serial << "Lancement vigor" << endl;
 	digitalWrite(vigorTriggerPin, HIGH);
 
 	if (equipe == 0) // jaune
