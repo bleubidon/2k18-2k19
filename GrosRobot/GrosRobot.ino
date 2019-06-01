@@ -122,7 +122,7 @@ void loop()
     Robot.go_to(POS_SYM(45, 134));
     Robot.go_to(POS_SYM(129, 134));
     // Pousser palets dans redium
-    Robot.go_to(POS_SYM(50, 40));
+    Robot.go_to(POS_SYM(75, 25));
 
     affichage("Sur la feuille !");
     while(1)
