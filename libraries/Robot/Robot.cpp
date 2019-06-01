@@ -120,6 +120,9 @@ void c_Robot::look_at(vec _point, bool blocking)
 {
 	Sick::enable = false;
 	vec dir = _point - position.pos();
+    Serial << "point: " << _point.x << "   " << _point.y << endl;   
+    Serial << "pos: " << position.pos().x << "   " << position.pos().y << endl;   
+    Serial << "dir: " << dir.x << "   " << dir.y << endl;   
 	consigne(position.dist(), dir.angle());
 
 	if (blocking)

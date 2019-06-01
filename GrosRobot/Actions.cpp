@@ -9,7 +9,7 @@ int waitTirette(uint8_t pin, Button& selecteur)
 	static const char *equipes[] = {"JAUNE", "VIOLETTE"};
 	static const char *format = "EQUIPE %s";
 
-	int equipe = DROITE;
+	int equipe = GAUCHE;
 	char buf[16];
 
 	sprintf(buf, format, equipe[equipes]);

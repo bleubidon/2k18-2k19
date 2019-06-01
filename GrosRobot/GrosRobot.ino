@@ -1,8 +1,5 @@
 #include "Actions.h"
-#include <Servo.h>
-
-Servo bras_vigor;
-int consigne_vigor = 172;
+int vigorTriggerPin = 30;
 
 // NOTE Parser: mettre l'option fin de ligne dans la console Arduino pour
 // pouvoir envoyer des commandes
@@ -34,10 +31,6 @@ void setup()
 	setup_parser();
 
 	button.setup(pinBouton);
-
-	bras_vigor.attach(44);
-	bras_vigor.write(0);
-
 
 	int sicks[] = {66, 67, 68, 69};
 
@@ -73,6 +66,7 @@ void setup()
 		rot : PID(7.0f, 0.f, 2.0f)
 	});
 
+
 #ifndef mode_parser
 	Robot.translate(10);
 	delay(100);
@@ -89,6 +83,8 @@ void setup()
 
 void loop()
 {
+    
+
 #ifdef mode_parser
 	while(1)
 	{
@@ -97,11 +93,11 @@ void loop()
 	}
 #endif
 
-	/*
+    
 	set_pinces(opened_pliers_values[GAUCHE], opened_pliers_values[DROITE]);
 	descente_plateau();
 
-	//côté violet
+	/*
 	// Positionnement vers palet bluenium
 	Robot.go_to(POS_SYM(105, 25));
 	Serial << "NEXT MOVE" << endl;
@@ -127,37 +123,40 @@ void loop()
 	Robot.go_to(POS_SYM(45, 25));
 
 	Robot.go_to_bkwd(POS_SYM(45, 50));
+    
 
 	// Récup palets chaos:
 	Robot.go_to(POS_SYM(45, 134));
 	Robot.go_to(POS_SYM(129, 134));
 	// Pousser palets dans redium
-	Robot.go_to(POS_SYM(50, 40));
+	Robot.go_to(POS_SYM(45, 25));
 	*/
 
 	// Accelerateur de particules
-	bras_vigor.write(consigne_vigor);
+    Serial << "Lancement vigor" << endl;
+	digitalWrite(vigorTriggerPin, HIGH);
 
 	if (equipe == 0) // jaune
 	{
-		Robot.go_to(POS_SYM(45, 118));
-		Robot.look_at(POS_SYM(90, 118));
-		Robot.go_to_bkwd(POS_SYM(18, 118));
-		Robot.look_at(POS_SYM(18, 150));
-		Robot.translate(-3, false);
+		Robot.go_to(POS_SYM(75, 170));
+        delay(2000);
+		Robot.look_at(POS_SYM(0, 170));
+        delay(2000);
+		Robot.go_to(POS_SYM(38, 170));
+        delay(2000);
+		Robot.look_at(POS_SYM(38, 200));
+        delay(2000);
+		Robot.go_to(POS_SYM(38, 220));
 
 	}
 	else if (equipe == 1) // violet
 	{
-		Robot.go_to(POS_SYM(45, 142));
-		Robot.go_to(POS_SYM(18, 142));
-		Robot.look_at(POS_SYM(18, 10));
-		Robot.translate(3, false);
-
+		Robot.go_to(POS_SYM(45, 170));
+		Robot.look_at(POS_SYM(100, 170));
+		Robot.go_to_bkwd(POS_SYM(33, 170));
+		Robot.look_at(POS_SYM(33, 10));
+		Robot.translate(-50);
 	}
-
-	while(Robot.loop_pid())
-		bras_vigor.write(consigne_vigor);
 
 	affichage("Sur la feuille !");
 	while(1)
